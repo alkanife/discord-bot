@@ -3,10 +3,10 @@ package fr.alkanife.alkabot.commands;
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.commands.utils.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Emote;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.RichCustomEmoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -30,7 +30,7 @@ public class InfoCommands {
         StringBuilder description = new StringBuilder();
         description.append(Alkabot.t("serverinfo-command-members")).append(" `").append(guild.getMemberCount()).append("`\n");
         description.append(Alkabot.t("serverinfo-command-channels")).append(" `").append(guild.getChannels().size()).append("`\n");
-        description.append(Alkabot.t("serverinfo-command-emotes")).append(" `").append(guild.getEmotes().size()).append("`\n");
+        description.append(Alkabot.t("serverinfo-command-emotes")).append(" `").append(guild.getEmojis().size()).append("`\n");
         description.append(Alkabot.t("serverinfo-command-roles")).append(" `").append(guild.getRoles().size()).append("`\n");
         description.append(Alkabot.t("serverinfo-command-boosters")).append(" `").append(guild.getBoosters().size()).append("`\n");
         description.append(Alkabot.t("serverinfo-command-boosts")).append(" `").append(guild.getBoostCount()).append("`\n");
@@ -74,24 +74,24 @@ public class InfoCommands {
 
         String emoteID = args[2].replaceAll(">", "");
 
-        Emote emote = slashCommandEvent.getJDA().getEmoteById(emoteID);
+        RichCustomEmoji richCustomEmoji = slashCommandEvent.getJDA().getEmojiById(emoteID);
 
-        if (emote == null) {
+        if (richCustomEmoji == null) {
             slashCommandEvent.reply(Alkabot.t("emoteinfo-command-error")).setEphemeral(true).queue();
             return;
         }
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle(emote.getName());
-        embedBuilder.setThumbnail(emote.getImageUrl());
+        embedBuilder.setTitle(richCustomEmoji.getName());
+        embedBuilder.setThumbnail(richCustomEmoji.getImageUrl());
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        if (emote.getGuild() != null)
-            stringBuilder.append(Alkabot.t("emoteinfo-command-guild")).append(" `").append(emote.getGuild().getName()).append("`\n");
+        if (richCustomEmoji.getGuild() != null)
+            stringBuilder.append(Alkabot.t("emoteinfo-command-guild")).append(" `").append(richCustomEmoji.getGuild().getName()).append("`\n");
 
-        stringBuilder.append(Alkabot.t("emoteinfo-command-creation-date")).append(" `").append(offsetToString(emote.getTimeCreated())).append("`\n");
-        stringBuilder.append("\n[URL](").append(emote.getImageUrl()).append(")");
+        stringBuilder.append(Alkabot.t("emoteinfo-command-creation-date")).append(" `").append(offsetToString(richCustomEmoji.getTimeCreated())).append("`\n");
+        stringBuilder.append("\n[URL](").append(richCustomEmoji.getImageUrl()).append(")");
 
         embedBuilder.setDescription(stringBuilder);
 

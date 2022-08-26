@@ -19,14 +19,13 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -44,8 +43,8 @@ public class Alkabot {
     private static HashMap<String, Object> TRANSLATIONS = new HashMap<>();
     private static JDA JDA;
     private static Guild GUILD;
-    private static String VERSION = "1.0-SNAPSHOT";
-    private static TextChannel LAST_COMMAND_CHANNEL;
+    private static String VERSION = "1.1";
+    private static MessageChannelUnion LAST_COMMAND_CHANNEL;
     private static AudioPlayerManager AUDIO_PLAYER_MANAGER;
     private static AudioPlayer AUDIO_PLAYER;
     private static TrackScheduler TRACK_SCHEDULER;
@@ -155,7 +154,8 @@ public class Alkabot {
                     GatewayIntent.GUILD_VOICE_STATES,
                     GatewayIntent.GUILD_BANS,
                     GatewayIntent.GUILD_MESSAGES,
-                    GatewayIntent.DIRECT_MESSAGES);
+                    GatewayIntent.DIRECT_MESSAGES,
+                    GatewayIntent.MESSAGE_CONTENT);
             jdaBuilder.setMemberCachePolicy(MemberCachePolicy.ALL);
             jdaBuilder.addEventListeners(new Events());
             jdaBuilder.addEventListeners(new LogEvents());
@@ -220,11 +220,11 @@ public class Alkabot {
         return VERSION;
     }
 
-    public static TextChannel getLastCommandChannel() {
+    public static MessageChannelUnion getLastCommandChannel() {
         return LAST_COMMAND_CHANNEL;
     }
 
-    public static void setLastCommandChannel(TextChannel lastCommandChannel) {
+    public static void setLastCommandChannel(MessageChannelUnion lastCommandChannel) {
         LAST_COMMAND_CHANNEL = lastCommandChannel;
     }
 

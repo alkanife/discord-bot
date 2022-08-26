@@ -10,18 +10,21 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.Presence;
 
 import java.awt.*;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class AdminCommands {
 
     public static void help(MessageReceivedEvent messageReceivedEvent) {
-        messageReceivedEvent.getMessage().reply("Administrative commands: `stop`, `info`, `reload`").queue();
+        messageReceivedEvent.getMessage().reply("Administrative commands: `stop`, `seeconfig`, `status`, `reload`").queue();
     }
 
     /*@Command(name = "test", administrative = true)
@@ -29,16 +32,40 @@ public class AdminCommands {
 
     }*/
 
+    @Command(name = "status", administrative = true)
+    public void status(MessageReceivedEvent messageReceivedEvent) {
+        //build embed
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle("Using Alkabot-" + Alkabot.getVersion());
+        SelfUser selfUser = messageReceivedEvent.getJDA().getSelfUser();
+        embedBuilder.setThumbnail(selfUser.getAvatarUrl());
+
+        //get uptime
+        long millis = ManagementFactory.getRuntimeMXBean().getUptime();
+        String hms = String.format("%02d:%02d:%02d.%03d",  TimeUnit.MILLISECONDS.toHours(millis),
+                TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1),
+                millis % 1000);
+
+        // TODO : stats
+
+        //build description and send
+        embedBuilder.setDescription("**Client:**" + selfUser.getAsTag() + "\n" +
+                "**Uptime:** " + hms);
+
+        messageReceivedEvent.getMessage().replyEmbeds(embedBuilder.build()).queue();
+    }
+
     @Command(name = "reload", administrative = true)
     public void reload(MessageReceivedEvent messageReceivedEvent) {
         String content = messageReceivedEvent.getMessage().getContentDisplay().toLowerCase(Locale.ROOT);
 
         String[] args = content.split(" ");
 
-        //TODO bug quand on fait juste reload (out of bound)
+        if (args.length == 0)
+            return;
 
         switch (args[1]) {
-
             case "configuration":
                 messageReceivedEvent.getMessage().reply("Reloading configuration").queue(message -> {
                     try {
@@ -114,8 +141,8 @@ public class AdminCommands {
         });
     }
 
-    @Command(name = "info", administrative = true)
-    public void info(MessageReceivedEvent messageReceivedEvent) {
+    @Command(name = "seeconfig", administrative = true)
+    public void seeconfig(MessageReceivedEvent messageReceivedEvent) {
         // Display everything about the current configuration
         EmbedBuilder embedBuilder = new EmbedBuilder();
 

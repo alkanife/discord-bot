@@ -93,7 +93,7 @@ public class MusicCommands {
 
     @Command(name = "jukebox")
     public void music(SlashCommandInteractionEvent slashCommandEvent) {
-        Alkabot.setLastCommandChannel(slashCommandEvent.getTextChannel());
+        Alkabot.setLastCommandChannel(slashCommandEvent.getChannel());
 
         String subCommand = slashCommandEvent.getSubcommandName();
 
@@ -289,7 +289,7 @@ public class MusicCommands {
         }
     }
 
-    private boolean endsWithZero(int i) {
+    private boolean endsWithZero(int i) { //what an ugly way
         return Integer.toString(i).endsWith("0");
     }
 

@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -66,14 +67,14 @@ public class LogEvents extends ListenerAdapter {
             beforeMessage = Alkabot.t("logs-unknown");
 
         User user = messageUpdateEvent.getAuthor();
-        TextChannel textChannel = messageUpdateEvent.getTextChannel();
+        MessageChannelUnion messageChannelUnion = messageUpdateEvent.getChannel();
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(Alkabot.t("logs-message-edited"));
         embedBuilder.setThumbnail(user.getAvatarUrl());
         embedBuilder.setColor(new Color(61, 141, 132));
         embedBuilder.setDescription("[" + Alkabot.t("logs-message") + "](" + messageUpdateEvent.getMessage().getJumpUrl() + ")");
         embedBuilder.addField(Alkabot.t("logs-member"), user.getAsTag() + " (" + user.getAsMention() + ")", true);
-        embedBuilder.addField(Alkabot.t("logs-channel"), textChannel.getName() +  " (" + textChannel.getAsMention() + ")", true);
+        embedBuilder.addField(Alkabot.t("logs-channel"), messageChannelUnion.getName() +  " (" + messageChannelUnion.getAsMention() + ")", true);
         embedBuilder.addField(Alkabot.t("logs-message-edited-before"), beforeMessage, false);
 
         String after = Alkabot.limitString(messageUpdateEvent.getMessage().getContentDisplay(), 1000);
@@ -91,7 +92,7 @@ public class LogEvents extends ListenerAdapter {
         if (!Alkabot.getConfig().getLogs().isDelete())
             return;
 
-        TextChannel textChannel = messageDeleteEvent.getTextChannel();
+        MessageChannelUnion messageChannelUnion = messageDeleteEvent.getChannel();
 
         LoggedMessage loggedMessage = null;
 
@@ -105,7 +106,7 @@ public class LogEvents extends ListenerAdapter {
             embedBuilder.setTitle(Alkabot.t("logs-message-deleted"));
             embedBuilder.setColor(new Color(141, 61, 61));
             embedBuilder.addField(Alkabot.t("logs-message-deleted-author"), Alkabot.t("logs-unknown"), true);
-            embedBuilder.addField(Alkabot.t("logs-channel"), textChannel.getName() +  " (" + textChannel.getAsMention() + ")", true);
+            embedBuilder.addField(Alkabot.t("logs-channel"), messageChannelUnion.getName() +  " (" + messageChannelUnion.getAsMention() + ")", true);
             embedBuilder.addField(Alkabot.t("logs-message"), Alkabot.t("logs-unknown"), false);
             Alkabot.discordLog(embedBuilder.build());
         } else {
@@ -123,7 +124,7 @@ public class LogEvents extends ListenerAdapter {
             embedBuilder.setTitle(Alkabot.t("logs-message-deleted"));
             embedBuilder.setColor(new Color(141, 61, 61));
             embedBuilder.addField(Alkabot.t("logs-message-deleted-author"), author, true);
-            embedBuilder.addField(Alkabot.t("logs-channel"), textChannel.getName() +  " (" + textChannel.getAsMention() + ")", true);
+            embedBuilder.addField(Alkabot.t("logs-channel"), messageChannelUnion.getName() +  " (" + messageChannelUnion.getAsMention() + ")", true);
             embedBuilder.addField(Alkabot.t("logs-message"), Alkabot.limitString(loggedMessage.getContent().equals("") ? Alkabot.t("logs-message-edited-after-nomessage") : loggedMessage.getContent(), 1000), false);
             Alkabot.discordLog(embedBuilder.build());
         }

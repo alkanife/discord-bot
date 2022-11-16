@@ -10,10 +10,9 @@ import fr.alkanife.alkabot.Alkabot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class Music {
 
@@ -27,13 +26,14 @@ public class Music {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setTitle(Alkabot.t("jukebox-command-play-added-title") + " " + (priority ? Alkabot.t("jukebox-command-priority") : ""));
                 embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ") " + Alkabot.t("jukebox-by")
-                        + " [" + track.getInfo().author + "](" + track.getInfo().uri + ") [" + Alkabot.musicDuration(track.getDuration()) + "]" +
+                        + " [" + track.getInfo().author + "](" + track.getInfo().uri + ") " + Alkabot.musicDuration(track.getDuration()) +
                         (priority ? "" : ("\n\n" + (Alkabot.t("jukebox-command-play-added-position") + " `" + (Alkabot.getTrackScheduler().getQueue().size() + 1) + "`"))));
                 embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
 
                 slashCommandInteractionEvent.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
 
-                connectAndPlay(slashCommandInteractionEvent.getGuild(), slashCommandInteractionEvent.getMember(), track, priority);
+                connect(slashCommandInteractionEvent.getGuild(), slashCommandInteractionEvent.getMember());
+                Alkabot.getTrackScheduler().queue(track, priority);
             }
 
             @Override
@@ -43,15 +43,17 @@ public class Music {
                 if (firstTrack == null)
                     firstTrack = playlist.getTracks().get(0);
 
-                connectAndPlay(slashCommandInteractionEvent.getGuild(), slashCommandInteractionEvent.getMember(), firstTrack, priority);
+                connect(slashCommandInteractionEvent.getGuild(), slashCommandInteractionEvent.getMember());
 
                 if (url.startsWith("ytsearch")) {
                     //Satania.addAddedMusics();
 
+                    Alkabot.getTrackScheduler().queue(firstTrack, priority);
+
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setTitle(Alkabot.t("jukebox-command-play-added-title") + " " + (priority ? Alkabot.t("jukebox-command-priority") : ""));
                     embedBuilder.setDescription("[" + firstTrack.getInfo().title + "](" + firstTrack.getInfo().uri + ") " + Alkabot.t("jukebox-by")
-                            + " [" + firstTrack.getInfo().author + "](" + firstTrack.getInfo().uri + ") [" + Alkabot.musicDuration(firstTrack.getDuration()) + "]" +
+                            + " [" + firstTrack.getInfo().author + "](" + firstTrack.getInfo().uri + ") " + Alkabot.musicDuration(firstTrack.getDuration()) +
                             (priority ? "" : ("\n\n" + (Alkabot.t("jukebox-command-play-added-position") + " `" + (Alkabot.getTrackScheduler().getQueue().size() + 1) + "`"))));
                     embedBuilder.setThumbnail("https://img.youtube.com/vi/" + firstTrack.getIdentifier() + "/0.jpg");
 
@@ -59,13 +61,13 @@ public class Music {
                 } else {
                     //Satania.addAddedPlaylists();
 
-                    Alkabot.getTrackScheduler().queuePrioritizePlaylist(playlist);
+                    Alkabot.getTrackScheduler().queuePlaylist(firstTrack, playlist, priority);
 
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setTitle(Alkabot.t("jukebox-command-play-playlist-added") + " " + (priority ? Alkabot.t("jukebox-command-priority") : ""));
-                    embedBuilder.setDescription("[" + playlist.getName() + "](" + firstTrack.getInfo().uri + ")\n\n" +
+                    embedBuilder.setDescription("[" + playlist.getName() + "](" + url + ")\n\n" +
                             Alkabot.t("jukebox-command-play-playlist-entries") + " `" + playlist.getTracks().size() + "`\n" +
-                            Alkabot.t("jukebox-command-play-playlist-newtime") + " `" + Alkabot.musicDuration(Alkabot.getTrackScheduler().getQueueDuration()) + "`");
+                            Alkabot.t("jukebox-command-play-playlist-newtime") + " `" + Alkabot.playlistDuration(Alkabot.getTrackScheduler().getQueueDuration()) + "`");
 
                     embedBuilder.setThumbnail("https://img.youtube.com/vi/" + firstTrack.getIdentifier() + "/0.jpg");
 
@@ -86,7 +88,7 @@ public class Music {
         });
     }
 
-    public static void connectAndPlay(@Nullable Guild guild, Member member, AudioTrack audioTrack, boolean priority) {
+    public static void connect(@Nullable Guild guild, Member member) {
         if (guild == null)
             return;
 
@@ -106,8 +108,6 @@ public class Music {
                 connectToFirst(guild);
             }
         }
-
-        Alkabot.getTrackScheduler().queue(audioTrack, priority);
     }
 
     private static void connectToFirst(Guild guild) {

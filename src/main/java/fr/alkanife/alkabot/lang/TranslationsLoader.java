@@ -27,7 +27,6 @@ public class TranslationsLoader {
         InputStream inputStream = new FileInputStream(langFile);
         Yaml yaml = new Yaml();
         translations = yaml.load(inputStream);
-        //Alkabot.debug("RAW LANG: " + configurationRaw);
 
         Alkabot.getLogger().info("Loaded " + translations.size() + " translations");
     }

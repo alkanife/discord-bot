@@ -1,16 +1,14 @@
 package fr.alkanife.alkabot.events;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.Colors;
 import fr.alkanife.alkabot.music.Music;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -19,7 +17,6 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.*;
 
 public class Events extends ListenerAdapter {
@@ -49,18 +46,32 @@ public class Events extends ListenerAdapter {
             //
             // LOG SUCCESSFUL CONNECTION
             //
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(Alkabot.t("logs-power-on-title"));
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("`[Alkabot ").append(Alkabot.getVersion()).append("]`\n\n").append(Alkabot.t("logs-power-on-help"));
-            embedBuilder.setDescription(stringBuilder.toString());
-            String[] okMemes = Alkabot.t("ok-memes").split("\n");
-            int random = new Random().nextInt(okMemes.length);
-            String okmeme = okMemes[random];
-            embedBuilder.setThumbnail(okmeme);
-            embedBuilder.setColor(new Color(150, 224, 136));
-            if (Alkabot.getConfig().getLogs().isAdmin())
+            if (Alkabot.getConfig().getLogs().isAdmin()) {
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setTitle(Alkabot.t("logs-power-on-title"));
+                embedBuilder.setColor(Colors.BIG_GREEN);
+
+                String[] okMemes = Alkabot.t("ok-memes").split("\n");
+                int random = new Random().nextInt(okMemes.length);
+                embedBuilder.setThumbnail(okMemes[random]);
+
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append("Alkabot v")
+                        .append(Alkabot.getVersion())
+                        .append("\n\n");
+
+                if (Alkabot.getConfig().getAdministrators_id().size() > 0) {
+                    stringBuilder.append(Alkabot.t("logs-power-on-admin"));
+                    for (String admin : Alkabot.getConfig().getAdministrators_id())
+                        stringBuilder.append(" <@").append(admin).append(">");
+                    stringBuilder.append("\n\n");
+                }
+
+                stringBuilder.append(Alkabot.t("logs-power-on-help"));
+                embedBuilder.setDescription(stringBuilder.toString());
+
                 Alkabot.discordLog(embedBuilder.build());
+            }
         } catch (Exception exception) {
             exception.printStackTrace();
             readyEvent.getJDA().shutdownNow();
@@ -83,50 +94,6 @@ public class Events extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent messageReceivedEvent) {
-        // eastereggs
-        if (messageReceivedEvent.getChannelType().equals(ChannelType.TEXT)) {
-            String content = messageReceivedEvent.getMessage().getContentDisplay().toLowerCase(Locale.ROOT).replaceAll(",", "");
-
-            switch (content) {
-                case "alexa play despacito" -> {
-                    Alkabot.getAudioPlayerManager().loadItemOrdered(Alkabot.getAudioPlayer(), "https://www.youtube.com/watch?v=kJQP7kiw5Fk", new AudioLoadResultHandler() {
-                        @Override
-                        public void trackLoaded(AudioTrack audioTrack) {
-                            Music.connectAndPlay(messageReceivedEvent.getGuild(), messageReceivedEvent.getMember(), audioTrack, true);
-
-                            messageReceivedEvent.getMessage().reply("Sí, sabes que ya llevo un rato mirándote\n" +
-                                    "Tengo que bailar contigo hoy (DY)\n" +
-                                    "Vi que tu mirada ya estaba llamándome\n" +
-                                    "Muéstrame el camino que yo voy\n\n" +
-                                    "Oh, tú, tú eres el imán y yo soy el metal\n" +
-                                    "Me voy acercando y voy armando el plan\n" +
-                                    "Solo con pensarlo se acelera el pulso (oh yeah)\n\n" +
-                                    "Ya, ya me estás gustando más de lo normal\n" +
-                                    "Todos mis sentidos van pidiendo más\n" +
-                                    "Esto hay que tomarlo sin ningún apuro\n\n" +
-                                    "Despacito\n" +
-                                    "Quiero respirar tu cuello despacito\n" +
-                                    "Deja que te diga cosas al oído\n" +
-                                    "Para que te acuerdes si no estás conmigo\n" +
-                                    "Despacito\n" +
-                                    "Quiero desnudarte a besos despacito\n" +
-                                    "Firmar las paredes de tu laberinto\n" +
-                                    "Y hacer de tu cuerpo todo un manuscrito \uD83C\uDFB6").queue();
-                        }
-
-                        @Override
-                        public void playlistLoaded(AudioPlaylist audioPlaylist) {}
-                        @Override
-                        public void noMatches() {}
-                        @Override
-                        public void loadFailed(FriendlyException e) {}
-                    });
-                }
-            }
-            return;
-        }
-        // ---------
-
         // If in DM, handle admin commands
         if (!messageReceivedEvent.getChannelType().equals(ChannelType.PRIVATE))
             return;

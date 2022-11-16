@@ -18,7 +18,7 @@ public class InfoCommands {
 
     @Command(name = "info")
     public void info(SlashCommandInteractionEvent slashCommandInteractionEvent) {
-        slashCommandInteractionEvent.reply(Alkabot.t("info-command") + Alkabot.getVersion() + " (https://github.com/alkanife/alkabot)").setEphemeral(true).queue();
+        slashCommandInteractionEvent.reply(Alkabot.t("info-command")).setEphemeral(true).queue();
     }
 
     @Command(name = "serverinfo")

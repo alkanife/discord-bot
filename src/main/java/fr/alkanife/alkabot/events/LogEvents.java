@@ -1,11 +1,15 @@
 package fr.alkanife.alkabot.events;
 
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.Colors;
 import fr.alkanife.alkabot.LoggedMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
@@ -37,7 +41,7 @@ public class LogEvents extends ListenerAdapter {
         if (messageReceivedEvent.getChannelType().equals(ChannelType.PRIVATE))
             return;
 
-        // Do nothing if but
+        // Do nothing if bot
         if (messageReceivedEvent.getAuthor().isBot())
             return;
 
@@ -71,7 +75,7 @@ public class LogEvents extends ListenerAdapter {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(Alkabot.t("logs-message-edited"));
         embedBuilder.setThumbnail(user.getAvatarUrl());
-        embedBuilder.setColor(new Color(61, 141, 132));
+        embedBuilder.setColor(Colors.CYAN);
         embedBuilder.setDescription("[" + Alkabot.t("logs-message") + "](" + messageUpdateEvent.getMessage().getJumpUrl() + ")");
         embedBuilder.addField(Alkabot.t("logs-member"), user.getAsTag() + " (" + user.getAsMention() + ")", true);
         embedBuilder.addField(Alkabot.t("logs-channel"), messageChannelUnion.getName() +  " (" + messageChannelUnion.getAsMention() + ")", true);
@@ -104,7 +108,7 @@ public class LogEvents extends ListenerAdapter {
         if (loggedMessage == null) {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(Alkabot.t("logs-message-deleted"));
-            embedBuilder.setColor(new Color(141, 61, 61));
+            embedBuilder.setColor(Colors.RED);
             embedBuilder.addField(Alkabot.t("logs-message-deleted-author"), Alkabot.t("logs-unknown"), true);
             embedBuilder.addField(Alkabot.t("logs-channel"), messageChannelUnion.getName() +  " (" + messageChannelUnion.getAsMention() + ")", true);
             embedBuilder.addField(Alkabot.t("logs-message"), Alkabot.t("logs-unknown"), false);
@@ -122,7 +126,7 @@ public class LogEvents extends ListenerAdapter {
             }
 
             embedBuilder.setTitle(Alkabot.t("logs-message-deleted"));
-            embedBuilder.setColor(new Color(141, 61, 61));
+            embedBuilder.setColor(Colors.RED);
             embedBuilder.addField(Alkabot.t("logs-message-deleted-author"), author, true);
             embedBuilder.addField(Alkabot.t("logs-channel"), messageChannelUnion.getName() +  " (" + messageChannelUnion.getAsMention() + ")", true);
             embedBuilder.addField(Alkabot.t("logs-message"), Alkabot.limitString(loggedMessage.getContent().equals("") ? Alkabot.t("logs-message-edited-after-nomessage") : loggedMessage.getContent(), 1000), false);
@@ -140,7 +144,7 @@ public class LogEvents extends ListenerAdapter {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(Alkabot.t("logs-voice-deafen"));
             embedBuilder.setThumbnail(target.getAvatarUrl());
-            embedBuilder.setColor(new Color(141, 61, 61));
+            embedBuilder.setColor(Colors.RED);
             embedBuilder.addField(Alkabot.t("logs-member"), target.getAsTag() + " (" + target.getAsMention() + ")", true);
 
             GuildVoiceState guildVoiceState = guildVoiceGuildDeafenEvent.getMember().getVoiceState();
@@ -157,7 +161,7 @@ public class LogEvents extends ListenerAdapter {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(Alkabot.t("logs-voice-undeafen"));
             embedBuilder.setThumbnail(target.getAvatarUrl());
-            embedBuilder.setColor(new Color(50, 137, 168));
+            embedBuilder.setColor(Colors.CYAN);
             embedBuilder.addField(Alkabot.t("logs-member"), target.getAsTag() + " (" + target.getAsMention() + ")", true);
 
             GuildVoiceState guildVoiceState = guildVoiceGuildDeafenEvent.getMember().getVoiceState();
@@ -179,7 +183,7 @@ public class LogEvents extends ListenerAdapter {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(Alkabot.t("logs-voice-muted"));
             embedBuilder.setThumbnail(target.getAvatarUrl());
-            embedBuilder.setColor(new Color(141, 61, 61));
+            embedBuilder.setColor(Colors.RED);
             embedBuilder.addField(Alkabot.t("logs-member"), target.getAsTag() + " (" + target.getAsMention() + ")", true);
 
             GuildVoiceState guildVoiceState = guildVoiceGuildMuteEvent.getMember().getVoiceState();
@@ -196,7 +200,7 @@ public class LogEvents extends ListenerAdapter {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(Alkabot.t("logs-voice-unmuted"));
             embedBuilder.setThumbnail(target.getAvatarUrl());
-            embedBuilder.setColor(new Color(50, 137, 168));
+            embedBuilder.setColor(Colors.CYAN);
             embedBuilder.addField(Alkabot.t("logs-member"), target.getAsTag() + " (" + target.getAsMention() + ")", true);
 
             GuildVoiceState guildVoiceState = guildVoiceGuildMuteEvent.getMember().getVoiceState();
@@ -209,53 +213,58 @@ public class LogEvents extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildVoiceJoin(@NotNull GuildVoiceJoinEvent guildVoiceJoinEvent) {
-        if (!Alkabot.getConfig().getLogs().isJoin_voice())
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent guildVoiceUpdateEvent) {
+        if (guildVoiceUpdateEvent.getMember().getUser().isBot())
             return;
 
-        if (guildVoiceJoinEvent.getMember().getUser().isBot())
+        AudioChannelUnion joinChannelUnion = guildVoiceUpdateEvent.getChannelJoined();
+        AudioChannelUnion leftChannelUnion = guildVoiceUpdateEvent.getChannelLeft();
+
+        if (joinChannelUnion == null && leftChannelUnion == null)
             return;
 
-        User target = guildVoiceJoinEvent.getMember().getUser();
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle(Alkabot.t("logs-voice-join"));
-        embedBuilder.setThumbnail(target.getAvatarUrl());
-        embedBuilder.setColor(new Color(50, 137, 168));
-        embedBuilder.addField(Alkabot.t("logs-member"), target.getAsTag() + " (" + target.getAsMention() + ")", true);
-        embedBuilder.addField(Alkabot.t("logs-channel"), guildVoiceJoinEvent.getChannelJoined().getName() + " (" + guildVoiceJoinEvent.getChannelJoined().getAsMention() + ")", true);
-        Alkabot.discordLog(embedBuilder.build());
-    }
+        User target = guildVoiceUpdateEvent.getMember().getUser();
 
-    @Override
-    public void onGuildVoiceLeave(@NotNull GuildVoiceLeaveEvent guildVoiceLeaveEvent) {
-        if (!Alkabot.getConfig().getLogs().isLeft_voice())
+        if (joinChannelUnion == null) { // Left
+            if (!Alkabot.getConfig().getLogs().isLeft_voice())
+                return;
+
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setTitle(Alkabot.t("logs-voice-left"));
+            embedBuilder.setThumbnail(target.getAvatarUrl());
+            embedBuilder.setColor(Colors.CYAN);
+            embedBuilder.addField(Alkabot.t("logs-member"), target.getAsTag() + " (" + target.getAsMention() + ")", true);
+            embedBuilder.addField(Alkabot.t("logs-channel"), leftChannelUnion.getName() + " (" + leftChannelUnion.getAsMention() + ")", true);
+            Alkabot.discordLog(embedBuilder.build());
             return;
+        }
 
-        User target = guildVoiceLeaveEvent.getMember().getUser();
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle(Alkabot.t("logs-voice-left"));
-        embedBuilder.setThumbnail(target.getAvatarUrl());
-        embedBuilder.setColor(new Color(50, 137, 168));
-        embedBuilder.addField(Alkabot.t("logs-member"), target.getAsTag() + " (" + target.getAsMention() + ")", true);
-        embedBuilder.addField(Alkabot.t("logs-channel"), guildVoiceLeaveEvent.getChannelLeft().getName() + " (" + guildVoiceLeaveEvent.getChannelLeft().getAsMention() + ")", true);
-        Alkabot.discordLog(embedBuilder.build());
-    }
+        if (leftChannelUnion == null) { // Join
+            if (!Alkabot.getConfig().getLogs().isJoin_voice())
+                return;
 
-    @Override
-    public void onGuildVoiceMove(@NotNull GuildVoiceMoveEvent guildVoiceMoveEvent) {
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setTitle(Alkabot.t("logs-voice-join"));
+            embedBuilder.setThumbnail(target.getAvatarUrl());
+            embedBuilder.setColor(Colors.CYAN);
+            embedBuilder.addField(Alkabot.t("logs-member"), target.getAsTag() + " (" + target.getAsMention() + ")", true);
+            embedBuilder.addField(Alkabot.t("logs-channel"), joinChannelUnion.getName() + " (" + joinChannelUnion.getAsMention() + ")", true);
+            Alkabot.discordLog(embedBuilder.build());
+            return;
+        }
+
+        // Move
         if (!Alkabot.getConfig().getLogs().isMove_voice())
             return;
 
-        User target = guildVoiceMoveEvent.getMember().getUser();
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(Alkabot.t("logs-voice-move"));
         embedBuilder.setThumbnail(target.getAvatarUrl());
-        embedBuilder.setColor(new Color(50, 137, 168));
+        embedBuilder.setColor(Colors.CYAN);
         embedBuilder.addField(Alkabot.t("logs-member"), target.getAsTag() + " (" + target.getAsMention() + ")", false);
-        embedBuilder.addField(Alkabot.t("logs-old-channel"), guildVoiceMoveEvent.getChannelLeft().getName() + " (" + guildVoiceMoveEvent.getChannelLeft().getAsMention() + ")", true);
-        embedBuilder.addField(Alkabot.t("logs-new-channel"), guildVoiceMoveEvent.getChannelJoined().getName() + " (" + guildVoiceMoveEvent.getChannelJoined().getAsMention() + ")", true);
+        embedBuilder.addField(Alkabot.t("logs-old-channel"), leftChannelUnion.getName() + " (" + leftChannelUnion.getAsMention() + ")", true);
+        embedBuilder.addField(Alkabot.t("logs-new-channel"), joinChannelUnion.getName() + " (" + joinChannelUnion.getAsMention() + ")", true);
         Alkabot.discordLog(embedBuilder.build());
-
     }
 
     @Override
@@ -282,7 +291,7 @@ public class LogEvents extends ListenerAdapter {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(Alkabot.t("logs-user-banned"));
             embedBuilder.setThumbnail(target.getAvatarUrl());
-            embedBuilder.setColor(new Color(141, 61, 61));
+            embedBuilder.setColor(Colors.RED);
             embedBuilder.addField(Alkabot.t("logs-user"), target.getAsTag() + " (" + target.getAsMention() + ")", true);
 
             String admin = Alkabot.t("logs-unknown");
@@ -324,7 +333,7 @@ public class LogEvents extends ListenerAdapter {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(Alkabot.t("logs-user-unbanned"));
             embedBuilder.setThumbnail(target.getAvatarUrl());
-            embedBuilder.setColor(new Color(50, 137, 168));
+            embedBuilder.setColor(Colors.CYAN);
             embedBuilder.addField(Alkabot.t("logs-user"), target.getAsTag() + " (" + target.getAsMention() + ")", true);
 
             String admin = Alkabot.t("logs-unknown");
@@ -360,7 +369,7 @@ public class LogEvents extends ListenerAdapter {
             exception.printStackTrace();
         }
 
-        //Auto-role
+        // Auto-role
         boolean failedAutorole = false;
         try {
             if (Alkabot.getConfig().getAuto_role().isEnable()) {
@@ -381,7 +390,7 @@ public class LogEvents extends ListenerAdapter {
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(Alkabot.t("logs-member-join"));
             embedBuilder.setThumbnail(user.getAvatarUrl());
-            embedBuilder.setColor(new Color(93, 154, 74));
+            embedBuilder.setColor(Colors.GREEN);
             embedBuilder.addField(Alkabot.t("logs-member"), user.getAsTag() + " (" + user.getAsMention() + ")", true);
 
             if (failedAutorole || failedToWelcome) {
@@ -416,18 +425,16 @@ public class LogEvents extends ListenerAdapter {
                         kick = true;
 
                 EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setThumbnail(user.getAvatarUrl());
+                embedBuilder.setColor(Colors.RED);
                 if (kick && Alkabot.getConfig().getLogs().isKick()) {
                     embedBuilder.setTitle(Alkabot.t("logs-member-kicked"));
-                    embedBuilder.setThumbnail(user.getAvatarUrl());
-                    embedBuilder.setColor(new Color(141, 61, 61));
                     embedBuilder.addField(Alkabot.t("logs-member"), user.getAsTag() + " (" + user.getAsMention() + ")", true);
                     User admin = latest.getUser();
                     embedBuilder.addField(Alkabot.t("logs-admin"), admin == null ? Alkabot.t("logs-unknown") : (admin.getAsTag() + " (" + admin.getAsMention() + ")"), true);
                     embedBuilder.addField(Alkabot.t("logs-reason"), latest.getReason() == null ? Alkabot.t("logs-none") : latest.getReason(), false);
                 } else {
                     embedBuilder.setTitle(Alkabot.t("logs-member-left"));
-                    embedBuilder.setThumbnail(user.getAvatarUrl());
-                    embedBuilder.setColor(new Color(141, 61, 61));
                     embedBuilder.addField(Alkabot.t("logs-member"), user.getAsTag() + " (" + user.getAsMention() + ")", false);
                 }
 
@@ -439,13 +446,5 @@ public class LogEvents extends ListenerAdapter {
             exception.printStackTrace();
         }
     }
-
-    /*@Override TODO TIMEOUT > can just say when it ends, but not when it starts
-    public void onGuildMemberUpdateTimeOut(@NotNull GuildMemberUpdateTimeOutEvent guildMemberUpdateTimeOutEvent) {
-        Alkabot.getLogger().info("member " + guildMemberUpdateTimeOutEvent.getMember().getUser().getAsTag());
-        Alkabot.getLogger().info("new_end " + guildMemberUpdateTimeOutEvent.getNewTimeOutEnd());
-        Alkabot.getLogger().info("old_end " + guildMemberUpdateTimeOutEvent.getOldTimeOutEnd());
-        Alkabot.getLogger().info("------");
-    }*/
 
 }

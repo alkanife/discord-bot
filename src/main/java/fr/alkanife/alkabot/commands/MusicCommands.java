@@ -172,13 +172,6 @@ public class MusicCommands {
                 }
             }
 
-                /*Collections.shuffle(audioTracks);
-                BlockingQueue<AudioTrack> blockingQueue = new LinkedBlockingQueue<>();
-                for (AudioTrack audioTrack : audioTracks)
-                    blockingQueue.offer(audioTrack);
-                Satania.getTrackScheduler().setQueue(blockingQueue);*/
-
-
             case "skip" -> {
                 //Satania.addSkipCommand();
 
@@ -262,25 +255,25 @@ public class MusicCommands {
                 if (tracks.size() == 0) {
                     embedBuilder.setTitle(Alkabot.t("jukebox-command-queue-now-playing"));
                     embedBuilder.setThumbnail("https://img.youtube.com/vi/" + current.getIdentifier() + "/0.jpg");
-                    desc += "**[" + current.getInfo().title + "](" + current.getInfo().uri + ")** [" + musicDuration(current.getDuration()) + "]";
+                    desc += "**[" + current.getInfo().title + "](" + current.getInfo().uri + ")** " + Alkabot.musicDuration(current.getDuration());
                 } else {                                                                           // '~' because String.valueOf don't work?
                     embedBuilder.setTitle(Alkabot.t("jukebox-command-queue-queued-title", "~" + Alkabot.getTrackScheduler().getQueue().size()));
                     embedBuilder.setThumbnail(Alkabot.t("jukebox-command-plgif"));
                     desc = "__" + Alkabot.t("jukebox-command-queue-queued-now-playing") + "__\n" +
-                            "**[" + current.getInfo().title + "](" + current.getInfo().uri + ")** [" + musicDuration(current.getDuration()) + "]\n" +
+                            "**[" + current.getInfo().title + "](" + current.getInfo().uri + ")** " + Alkabot.musicDuration(current.getDuration()) + "\n" +
                             "\n" +
                             "__" + Alkabot.t("jukebox-command-queue-queued-incoming") + "__\n";
 
                     for (int i = (page * 10); i < ((page * 10) + 10); i++) {
                         try {
                             AudioTrack audioTrack = tracks.get(i);
-                            desc += "`" + (i + 1) + ".` [" + audioTrack.getInfo().title + "](" + audioTrack.getInfo().uri + ") [" + Alkabot.musicDuration(audioTrack.getDuration()) + "]\n";
+                            desc += "`" + (i + 1) + ".` [" + audioTrack.getInfo().title + "](" + audioTrack.getInfo().uri + ") " + Alkabot.musicDuration(audioTrack.getDuration()) + "\n";
                         } catch (Exception e) {
                             break;
                         }
                     }
 
-                    desc += "\n__" + Alkabot.t("jukebox-command-queue-queued-time") + "__ `" + musicDuration(Alkabot.getTrackScheduler().getQueueDuration()) + "`\n\n" +
+                    desc += "\n__" + Alkabot.t("jukebox-command-queue-queued-time") + "__ `" + Alkabot.playlistDuration(Alkabot.getTrackScheduler().getQueueDuration()) + "`\n\n" +
                             "**PAGE " + (page + 1) + " / " + pages + "**\n\n";
                 }
                 embedBuilder.setDescription(desc);
@@ -291,17 +284,6 @@ public class MusicCommands {
 
     private boolean endsWithZero(int i) { //what an ugly way
         return Integer.toString(i).endsWith("0");
-    }
-
-    private String musicDuration(long duration) {
-        if (duration >= 3600000) {
-            return String.format("%02d:%02d:%02d",  TimeUnit.MILLISECONDS.toHours(duration),
-                    TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
-                    TimeUnit.MILLISECONDS.toSeconds(duration) % TimeUnit.MINUTES.toSeconds(1));
-        } else {
-            return String.format("%02d:%02d",  TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
-                    TimeUnit.MILLISECONDS.toSeconds(duration) % TimeUnit.MINUTES.toSeconds(1));
-        }
     }
 
 }

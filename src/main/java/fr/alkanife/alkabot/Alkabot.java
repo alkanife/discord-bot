@@ -19,18 +19,21 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Alkabot {
@@ -43,7 +46,7 @@ public class Alkabot {
     private static HashMap<String, Object> TRANSLATIONS = new HashMap<>();
     private static JDA JDA;
     private static Guild GUILD;
-    private static String VERSION = "1.1";
+    private static String VERSION = "1.2";
     private static MessageChannelUnion LAST_COMMAND_CHANNEL;
     private static AudioPlayerManager AUDIO_PLAYER_MANAGER;
     private static AudioPlayer AUDIO_PLAYER;
@@ -144,11 +147,8 @@ public class Alkabot {
             JDABuilder jdaBuilder = JDABuilder.createDefault(getConfig().getToken());
             jdaBuilder.setRawEventsEnabled(true);
             jdaBuilder.setStatus(OnlineStatus.valueOf(getConfig().getPresence().getStatus()));
-            if (getConfig().getPresence().getActivity().isShow()) {
-                debug("Building activity");
-                Activity.ActivityType activityType = Activity.ActivityType.valueOf(getConfig().getPresence().getActivity().getType());
-                jdaBuilder.setActivity(Activity.of(activityType, getConfig().getPresence().getActivity().getText()));
-            }
+            if (getConfig().getPresence().getActivity().isShow())
+                jdaBuilder.setActivity(buildActivity());
 
             jdaBuilder.enableIntents(GatewayIntent.GUILD_MEMBERS,
                     GatewayIntent.GUILD_VOICE_STATES,
@@ -164,7 +164,6 @@ public class Alkabot {
             JDA = jdaBuilder.build();
         } catch (Exception exception) {
             exception.printStackTrace();
-            return;
         }
     }
 
@@ -295,6 +294,7 @@ public class Alkabot {
 
             if (textChannel == null) {
                 getLogger().warn("No log channel provided / failed to log embed title = " + embed.getTitle());
+                getLogger().warn("Description: " + embed.getDescription());
                 getLogger().warn("Disable logging or provide a valid channel id");
                 return;
             }
@@ -319,6 +319,20 @@ public class Alkabot {
     }
 
     public static String musicDuration(long duration) {
+        if (duration >= 72000000)
+            return "";
+
+        if (duration >= 3600000) {
+            return "[" + String.format("%02d:%02d:%02d",  TimeUnit.MILLISECONDS.toHours(duration),
+                    TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
+                    TimeUnit.MILLISECONDS.toSeconds(duration) % TimeUnit.MINUTES.toSeconds(1)) + "]";
+        } else {
+            return "[" + String.format("%02d:%02d",  TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
+                    TimeUnit.MILLISECONDS.toSeconds(duration) % TimeUnit.MINUTES.toSeconds(1)) + "]";
+        }
+    }
+
+    public static String playlistDuration(long duration) {
         if (duration >= 3600000) {
             return String.format("%02d:%02d:%02d",  TimeUnit.MILLISECONDS.toHours(duration),
                     TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
@@ -331,5 +345,11 @@ public class Alkabot {
 
     public static boolean isURL(String s) {
         return s.toLowerCase(Locale.ROOT).startsWith("http");
+    }
+
+    public static Activity buildActivity() {
+        debug("Building activity");
+        Activity.ActivityType activityType = Activity.ActivityType.valueOf(getConfig().getPresence().getActivity().getType());
+        return Activity.of(activityType, getConfig().getPresence().getActivity().getText());
     }
 }

@@ -1,0 +1,49 @@
+{
+  "token": "",
+  "administrators_id": [
+    ""
+  ],
+  "guild_id": "",
+  "admin_only": false,
+  "debug": true,
+  "presence": {
+    "status": "ONLINE",
+    "activity": {
+      "show": false,
+      "type": "WATCHING",
+      "text": "you"
+    }
+  },
+  "welcome_message": {
+    "enable": false,
+    "channel_id": ""
+  },
+  "auto_role": {
+    "enable": false,
+    "role_id": ""
+  },
+  "logs": {
+    "channel_id": "",
+    "message_cache": 20,
+    "admin": true,
+    "join": true,
+    "left": true,
+    "join_voice": true,
+    "left_voice": true,
+    "move_voice": true,
+    "voice_deafen": true,
+    "voice_undeafen": true,
+    "voice_mute": true,
+    "voice_unmute": true,
+    "ban": true,
+    "unban": true,
+    "kick": true,
+    "edit": true,
+    "delete": true
+  },
+  "commands": {
+    "music": true,
+    "info": true,
+    "utilities": true
+  }
+}

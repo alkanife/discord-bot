@@ -1,9 +1,10 @@
 ok-memes: |
-  https://i.pinimg.com/736x/f8/0e/ea/f80eea105e4e34591964c8438f465185.jpg
-  https://tarheeltrailblazers.com/wp/wp-content/uploads/2020/08/computer-kid.jpeg
-  https://memegenerator.net/img/images/15978004.jpg
-  https://s.keepmeme.com/files/en_posts/20200819/f9f6f589f3bc55abf4a23d8bb4a621af2-cats-with-thumbs-up-sign-like.jpg
-  https://memegenerator.net/img/instances/38115705/thumbs-up-bro.jpg
+  https://share.alkanife.fr/ok-memes/1.png
+  https://share.alkanife.fr/ok-memes/2.png
+  https://share.alkanife.fr/ok-memes/3.png
+  https://share.alkanife.fr/ok-memes/4.png
+  https://share.alkanife.fr/ok-memes/5.png
+  https://share.alkanife.fr/ok-memes/6.png
 
 welcome-messages: "Hey {0}, mets toi bien."
 
@@ -44,7 +45,7 @@ logs-message-deleted: "Un message a été supprimé"
 logs-message-deleted-author: "Auteur du message"
 logs-message-deleted-author-notamember: "n''est pas présent sur le serveur"
 
-command-error: "Une erreur s'est produite lors de l''éxécution de votre commande... *sad_face*"
+command-error: "Une erreur s''est produite lors de l''éxécution de votre commande... *sad_face*"
 command-no-perms: "Vous ne pouvez pas utiliser cette commande !"
 
 info-command-description: "Qui suis-je ?"
@@ -95,7 +96,12 @@ jukebox-command-play-playlist-added: "Playlist ajoutée à la file d'attente"
 jukebox-command-play-playlist-newtime: "Nouvelle durée du jukebox :"
 jukebox-command-play-playlist-entries: "Entrées :"
 jukebox-command-play-nomatches: "Désolé, je n''ai rien trouvé qui corresponde à votre recherche."
-jukebox-command-play-error: "Désolé, je ne peux pas jouer ce titre !"
+jukebox-command-play-error: "Désolé, je ne peux pas jouer ce titre ! (et pourtant j''ai bien essayé...) Le lien n''est peut-être pas opérationnel, ou son format n'est pas lisible pour moi. Pour YouTube veuillez noter que je ne peux pas jouer des vidéos restreintes (contenu YT Premium, pour enfant, sensible etc)."
+jukebox-command-play-spotify-error: "Désolé, j''ai eu un problème en essayant de lire la playlist Spotify."
+jukebox-command-play-source-url: "Commande (lien direct)"
+jukebox-command-play-source-yt-search: "Commande (recherche YouTube - vidéo)"
+jukebox-command-play-source-yt-search-playlist: "Commande (recherche YouTube - playlist)"
+jukebox-command-play-source-spotify-playlist: "Commande (playlist Spotify)"
 
 jukebox-command-skip-description: "Passer une ou plusieurs musiques"
 jukebox-command-skip-input-description: "Nombre de musiques à passer"
@@ -103,6 +109,7 @@ jukebox-command-skip-one: "⏭👍🏻"
 jukebox-command-skip-mult: "Saut de `{0}` musiques effecuté."
 
 jukebox-command-notenough: "Il n''y a pas assez de musiques dans la file d''attente."
+jukebox-command-spotify-playlist: "Playlist Spotify"
 
 jukebox-command-stop: "Bye ! 👋🏻"
 jukebox-command-stop-description: "Arrêter le jukebox"
@@ -129,10 +136,17 @@ jukebox-command-remove-input-description: "Position dans la file de la musique (
 
 jukebox-playing-error-title: "Je n''ai pas réussi à jouer le morceau suivant"
 jukebox-by: "par"
-jukebox-playing-error-message: "Le lien n''est peut-être pas opérationnel, ou son format n'est pas lisible pour moi. Pour YouTube veuillez noter que je ne peux pas jouer des vidéos restreintes (contenu YT Premium, pour enfant, sensible etc)."
+jukebox-playing-error-message: "Il semblerait que je ne puisse pas lire ce titre (et oui, j''ai déjà ré-essayé). Le lien n''est peut-être pas opérationnel, ou son format n'est pas lisible pour moi. Pour YouTube veuillez noter que je ne peux pas jouer des vidéos restreintes (contenu YT Premium, pour enfant, sensible etc)."
+jukebox-playing-error-message-retried: "Même en ré-essayant, il semblerait que ce titre soit inaccessible pour moi."
+jukebox-playing-retrying: "Je me suis permis de ré-ajouter ce titre à ma file d'attente, car la première tentative avait échouée."
 
 jukebox-playing-error-nomembers-title: "Y''a quelqu''un ?"
 jukebox-playing-error-nomembers-desc: "Je me suis déconnectée car il n''y avait plus personne dans mon salon."
+
+jukebox-playing-error-notfound-title: "Je n''ai pas trouvé le titre suivant"
+jukebox-playing-error-notfound-description: "Malheureusement, je n''ai pas trouvé sur YouTube de vidéo qui portait comme titre le nom du morceau présent dans la playlist Spotify."
+jukebox-playing-error-added-by: "Ajouté par"
+jukebox-playing-error-origin: "Origine :"
 
 playlists-command-description: "Gestion des playlists"
 playlists-command-add-description: "Ajouter une playlist"
@@ -150,3 +164,5 @@ playlists-command-remove-failed: "Je n''ai pas réussi à supprimer cette playli
 playlists-command-list-noentries: "Aucune playlist n''ai présente dans ma base de données ! Faites ''/playlists add'' pour en ajouter une."
 playlists-command-list-title: "playlists"
 playlists-command-list-addedby: "ajoutée par"
+playlists-command-info-description: "Donne toutes les informations possibles sur une playlist."
+playlists-command-info-name-description: "Nom de la playlist"

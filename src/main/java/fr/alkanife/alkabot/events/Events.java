@@ -109,41 +109,30 @@ public class Events extends ListenerAdapter {
         //
         // MUSIC
         //
-        SlashCommandData jukebox = Commands.slash("jukebox", Alkabot.t("jukebox-command-description"));
-
-        SubcommandData jukeboxPlay = new SubcommandData("play", Alkabot.t("jukebox-command-play-description"))
+        SlashCommandData play = Commands.slash("play", Alkabot.t("jukebox-command-play-description"))
                 .addOption(OptionType.STRING, "input", Alkabot.t("jukebox-command-play-input-description"), true);
-
-        SubcommandData jukeboxPlaynext = new SubcommandData("play_next", Alkabot.t("jukebox-command-play-priority-description"))
+        SlashCommandData playNext = Commands.slash("forceplay", Alkabot.t("jukebox-command-play-priority-description"))
                 .addOption(OptionType.STRING, "input", Alkabot.t("jukebox-command-play-input-description"), true);
-
-        SubcommandData jukeboxSkip = new SubcommandData("skip", Alkabot.t("jukebox-command-skip-description"))
+        SlashCommandData skip = Commands.slash("skip", Alkabot.t("jukebox-command-skip-description"))
                 .addOption(OptionType.INTEGER, "input", Alkabot.t("jukebox-command-skip-input-description"), false);
-
-        SubcommandData jukeboxRemove = new SubcommandData("remove", Alkabot.t("jukebox-command-remove-description"))
+        SlashCommandData remove = Commands.slash("remove", Alkabot.t("jukebox-command-remove-description"))
                 .addOption(OptionType.INTEGER, "input", Alkabot.t("jukebox-command-remove-input-description"), false);
-
-        SubcommandData jukeboxQueue = new SubcommandData("queue", Alkabot.t("jukebox-command-queue-description"))
+        SlashCommandData queue = Commands.slash("queue", Alkabot.t("jukebox-command-queue-description"))
                 .addOption(OptionType.INTEGER, "input", Alkabot.t("jukebox-command-queue-input-description"), false);
+        SlashCommandData shuffle = Commands.slash("shuffle", Alkabot.t("jukebox-command-shuffle-description"));
+        SlashCommandData stop = Commands.slash("stop", Alkabot.t("jukebox-command-stop-description"));
+        SlashCommandData clear = Commands.slash("clear", Alkabot.t("jukebox-command-clear-description"));
 
-        SubcommandData jukeboxShuffle = new SubcommandData("shuffle", Alkabot.t("jukebox-command-shuffle-description"));
-        SubcommandData jukeboxStop = new SubcommandData("stop", Alkabot.t("jukebox-command-stop-description"));
-        SubcommandData jukeboxClear = new SubcommandData("clear", Alkabot.t("jukebox-command-clear-description"));
-        jukebox.addSubcommands(jukeboxPlay, jukeboxPlaynext, jukeboxSkip, jukeboxShuffle, jukeboxQueue, jukeboxStop, jukeboxClear, jukeboxRemove);
-
-
-        SlashCommandData playlists = Commands.slash("playlists", Alkabot.t("playlists-command-description"));
-
+        SlashCommandData playlists = Commands.slash("playlist", Alkabot.t("playlists-command-description"));
         SubcommandData playlistsAdd = new SubcommandData("add", Alkabot.t("playlists-command-add-description"))
                 .addOption(OptionType.STRING, "name", Alkabot.t("playlists-command-add-name-description"), true)
                 .addOption(OptionType.STRING, "url", Alkabot.t("playlists-command-add-url-description"), true);
-
         SubcommandData playlistsRemove = new SubcommandData("remove", Alkabot.t("playlists-command-remove-description"))
                 .addOption(OptionType.STRING, "name", Alkabot.t("playlists-command-remove-name-description"), true);
-
+        SubcommandData playlistsInfo = new SubcommandData("info", Alkabot.t("playlists-command-info-description"))
+                .addOption(OptionType.STRING, "name", Alkabot.t("playlists-command-info-name-description"), true);
         SubcommandData playlistsList = new SubcommandData("list", Alkabot.t("playlists-command-list-description"));
-
-        playlists.addSubcommands(playlistsAdd, playlistsRemove, playlistsList);
+        playlists.addSubcommands(playlistsAdd, playlistsRemove, playlistsInfo, playlistsList);
 
         //
         // INFO
@@ -167,7 +156,14 @@ public class Events extends ListenerAdapter {
         Collection<CommandData> commandDataCollection = new ArrayList<>();
 
         if (Alkabot.getConfig().getCommands().isMusic()) {
-            commandDataCollection.add(jukebox);
+            commandDataCollection.add(play);
+            commandDataCollection.add(playNext);
+            commandDataCollection.add(skip);
+            commandDataCollection.add(remove);
+            commandDataCollection.add(queue);
+            commandDataCollection.add(shuffle);
+            commandDataCollection.add(stop);
+            commandDataCollection.add(clear);
             commandDataCollection.add(playlists);
         }
 

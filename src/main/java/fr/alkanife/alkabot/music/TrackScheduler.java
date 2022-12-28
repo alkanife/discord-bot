@@ -3,7 +3,6 @@ package fr.alkanife.alkabot.music;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import fr.alkanife.alkabot.Alkabot;
@@ -11,13 +10,17 @@ import fr.alkanife.alkabot.Colors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class TrackScheduler extends AudioEventAdapter {
 
     private final AudioPlayer player;
-    private BlockingQueue<AudioTrack> queue;
+    private BlockingQueue<AlkabotTrack> queue;
+
+    private List<String> retriedTracks = new ArrayList<>();
 
     public TrackScheduler(AudioPlayer player) {
         this.player = player;
@@ -27,56 +30,60 @@ public class TrackScheduler extends AudioEventAdapter {
     public long getQueueDuration() {
         long duration = 0;
 
-        for (AudioTrack audioTrack : queue)
-            if (audioTrack.getDuration() < 72000000)
-                duration += audioTrack.getDuration();
+        for (AlkabotTrack alkabotTrack : queue)
+            if (alkabotTrack.getDuration() < 72000000)
+                duration += alkabotTrack.getDuration();
 
         return duration;
     }
 
-    public void queue(AudioTrack track, boolean priority) {
-        if (!player.startTrack(track, true)) {
-            if (priority) {
-                BlockingQueue<AudioTrack> newQueue = new LinkedBlockingQueue<>();
-                newQueue.offer(track);
-                newQueue.addAll(queue);
-                queue = newQueue;
-            } else {
-                queue.offer(track);
-            }
+    public void queue(AlkabotTrack track) {
+        if (player.getPlayingTrack() == null) {
+            MusicLoader.play(track);
+            return;
+        }
+
+        if (track.isPriority()) {
+            BlockingQueue<AlkabotTrack> newQueue = new LinkedBlockingQueue<>();
+            newQueue.offer(track);
+            newQueue.addAll(queue);
+            queue = newQueue;
+        } else {
+            queue.offer(track);
         }
     }
 
-    public void queuePlaylist(AudioTrack firstTrack, AudioPlaylist audioPlaylist, boolean priority) {
-        BlockingQueue<AudioTrack> newQueue = new LinkedBlockingQueue<>();
+    public void queuePlaylist(AlkabotTrack firstTrack, List<AlkabotTrack> alkabotTrackList) {
+        BlockingQueue<AlkabotTrack> newQueue = new LinkedBlockingQueue<>();
 
-        if (!priority)
+        if (!firstTrack.isPriority())
             newQueue.addAll(queue);
 
-        if (player.startTrack(firstTrack, true)) {
-            for (AudioTrack audioTrack : audioPlaylist.getTracks())
-                if (!audioTrack.getIdentifier().equals(firstTrack.getIdentifier()))
-                    newQueue.offer(audioTrack);
+        if (player.getPlayingTrack() == null) {
+            MusicLoader.play(firstTrack);
+
+            for (AlkabotTrack a : alkabotTrackList)
+                if (!a.getQuery().equals(firstTrack.getQuery()))
+                    newQueue.offer(a);
         } else {
-            newQueue.addAll(audioPlaylist.getTracks());
+            newQueue.addAll(alkabotTrackList);
         }
 
-        if (priority)
+        if (firstTrack.isPriority())
             newQueue.addAll(queue);
 
         queue = newQueue;
     }
 
-    public void nextTrack() {
-        player.startTrack(queue.poll(), false);
-        //Satania.addPlayedMusics();
+    public AudioPlayer getPlayer() {
+        return player;
     }
 
-    public BlockingQueue<AudioTrack> getQueue() {
+    public BlockingQueue<AlkabotTrack> getQueue() {
         return queue;
     }
 
-    public void setQueue(BlockingQueue<AudioTrack> queue) {
+    public void setQueue(BlockingQueue<AlkabotTrack> queue) {
         this.queue = queue;
     }
 
@@ -88,35 +95,48 @@ public class TrackScheduler extends AudioEventAdapter {
             if (voiceChannel.getMembers().size() == 1) {
                 Music.reset();
 
-                EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-nomembers-title"));
-                embedBuilder.setColor(Colors.BIG_RED);
-                embedBuilder.setDescription(Alkabot.t("jukebox-playing-error-nomembers-desc"));
+                if (Alkabot.getLastCommandChannel() != null) {
+                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-nomembers-title"));
+                    embedBuilder.setColor(Colors.BIG_RED);
+                    embedBuilder.setDescription(Alkabot.t("jukebox-playing-error-nomembers-desc"));
 
-                Alkabot.getLastCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                    Alkabot.getLastCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                }
                 return;
             }
         }
 
-        if (endReason.mayStartNext) {
-            nextTrack();
-        }
+        if (endReason.mayStartNext)
+            MusicLoader.play(Alkabot.getTrackScheduler().getQueue().poll());
     }
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        //Satania.addFailedToPlay();
-
         if (Alkabot.getLastCommandChannel() != null) {
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-title"));
-            embedBuilder.setColor(Colors.BIG_RED);
-            embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")"
-                    + " " + Alkabot.t("jukebox-by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
-                    Alkabot.t("jukebox-playing-error-message"));
-            embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
 
-            Alkabot.getLastCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+
+            if (retriedTracks.contains(track.getInfo().title)) {
+                embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-title"));
+                embedBuilder.setColor(Colors.BIG_RED);
+                embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")"
+                        + " " + Alkabot.t("jukebox-by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
+                        Alkabot.t("jukebox-playing-error-message"));
+                embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
+            } else {
+                embedBuilder.setTitle(Alkabot.t("jukebox-command-play-added-title") + " " + Alkabot.t("jukebox-command-priority"));
+                embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ") " + Alkabot.t("jukebox-by")
+                        + " [" + track.getInfo().author + "](" + track.getInfo().uri + ") " + Alkabot.musicDuration(track.getDuration()) +
+                        "\n\n" + Alkabot.t("jukebox-playing-retrying"));
+                embedBuilder.setColor(Colors.CYAN);
+                embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
+
+                retriedTracks.add(track.getInfo().title);
+            }
+
+            if (Alkabot.getLastCommandChannel() != null)
+                Alkabot.getLastCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
         }
     }
 }

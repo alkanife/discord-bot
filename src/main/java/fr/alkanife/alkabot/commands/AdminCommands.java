@@ -187,8 +187,8 @@ public class AdminCommands {
 
     }
 
-    @Command(name = "stop", administrative = true)
-    public void stop(MessageReceivedEvent messageReceivedEvent) {
+    @Command(name = "shutdown", administrative = true)
+    public void shutdown(MessageReceivedEvent messageReceivedEvent) {
         messageReceivedEvent.getMessage().reply("Stopping (may take a moment!)").queue(message -> {
             // Log
             EmbedBuilder embedBuilder = new EmbedBuilder();

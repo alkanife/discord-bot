@@ -1,16 +1,15 @@
 package fr.alkanife.alkabot.commands.utils;
 
+import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.commands.AdminCommands;
 import fr.alkanife.alkabot.commands.BotCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class CommandHandler {
 
@@ -43,9 +42,9 @@ public class CommandHandler {
         }
     }
 
-    public void handleSlash(SlashCommandInteractionEvent slashCommandInteractionEvent) {
+    public void handleSlash(SlashCommandInteractionEvent event) {
         try {
-            BotCommand botCommand = getCommand(slashCommandInteractionEvent.getName().toLowerCase(Locale.ROOT));
+            BotCommand botCommand = getCommand(event.getName().toLowerCase(Locale.ROOT));
 
             if (botCommand == null)
                 return;
@@ -56,12 +55,14 @@ public class CommandHandler {
                 return;
 
             if (parameters[0].getType().equals(SlashCommandInteractionEvent.class)) {
-                botCommand.getMethod().invoke(botCommand.getObject(), slashCommandInteractionEvent);
+                botCommand.getMethod().invoke(botCommand.getObject(), event);
 
                 //success(slashCommandEvent);
             }
         } catch (Exception exception) {
-            //fail(slashCommandEvent, exception);
+            event.reply(Alkabot.t("command-error")).queue();
+            Alkabot.getLogger().error("Failed to handle a command:\n" + buildTrace(event));
+            exception.printStackTrace();
         }
     }
 
@@ -82,12 +83,49 @@ public class CommandHandler {
 
             if (parameters[0].getType().equals(MessageReceivedEvent.class)) {
                 botCommand.getMethod().invoke(botCommand.getObject(), messageReceivedEvent);
-                //TODO success
             }
         } catch (Exception exception) {
             messageReceivedEvent.getMessage().reply("An error prevented me from processing your command, check logs").queue();
+            Alkabot.getLogger().error("Failed to handle an admin command:");
             exception.printStackTrace();
         }
+    }
+
+    public static String buildTrace(SlashCommandInteractionEvent event) {
+        StringBuilder stringBuilder = new StringBuilder("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv").append("\n");
+
+        stringBuilder.append("* getId() / getCommandId() -> ").append(event.getId()).append(" / ").append(event.getCommandId()).append("\n");
+        stringBuilder.append("* getName() -> ").append(event.getName()).append("\n");
+        stringBuilder.append("* getFullCommandName() -> ").append(event.getFullCommandName()).append("\n");
+        stringBuilder.append("* getCommandString() -> ").append(event.getCommandString()).append("\n");
+        stringBuilder.append("* getSubcommandGroup() -> ").append(event.getSubcommandGroup()).append("\n");
+        stringBuilder.append("* getSubcommandName() -> ").append(event.getSubcommandName()).append("\n");
+        stringBuilder.append("* getChannel().getName() -> ").append(event.getChannel().getName()).append("\n");
+        stringBuilder.append("* getChannelType() -> ").append(event.getChannelType().name()).append("\n");
+
+        stringBuilder.append("* getMember().getEffectiveName() -> ");
+        if (event.getMember() == null)
+            stringBuilder.append("null");
+        else
+            stringBuilder.append(event.getMember().getEffectiveName());
+
+        stringBuilder.append("\n* getOptions() -> ").append(event.getOptions().size()).append("\n");
+        int i = 0;
+        for (OptionMapping optionMapping : event.getOptions()) {
+            if (i != 0)
+                stringBuilder.append("- ").append(i).append(" ---------").append("\n");
+
+            stringBuilder.append(" * getName() ").append(optionMapping.getName()).append("\n");
+            stringBuilder.append(" * getType() -> ").append(optionMapping.getType()).append("\n");
+            stringBuilder.append(" * getChannelType() -> ").append(optionMapping.getChannelType().name()).append("\n");
+            stringBuilder.append(" * optionMapping -> ").append(optionMapping).append("\n");
+
+            i++;
+        }
+        
+        stringBuilder.append("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+
+        return stringBuilder.toString();
     }
 
 }

@@ -4,8 +4,10 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import fr.alkanife.alkabot.commands.AdminCommands;
 import fr.alkanife.alkabot.commands.InfoCommands;
-import fr.alkanife.alkabot.commands.MusicCommands;
 import fr.alkanife.alkabot.commands.UtilitiesCommands;
+import fr.alkanife.alkabot.commands.music.PlayerCommands;
+import fr.alkanife.alkabot.commands.music.PlaylistCommand;
+import fr.alkanife.alkabot.commands.music.QueueCommand;
 import fr.alkanife.alkabot.commands.utils.CommandHandler;
 import fr.alkanife.alkabot.configuration.Configuration;
 import fr.alkanife.alkabot.configuration.ConfigurationLoader;
@@ -26,7 +28,6 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -46,7 +47,7 @@ public class Alkabot {
     private static HashMap<String, Object> TRANSLATIONS = new HashMap<>();
     private static JDA JDA;
     private static Guild GUILD;
-    private static String VERSION = "1.2";
+    private static String VERSION = "1.3.beta1";
     private static MessageChannelUnion LAST_COMMAND_CHANNEL;
     private static AudioPlayerManager AUDIO_PLAYER_MANAGER;
     private static AudioPlayer AUDIO_PLAYER;
@@ -116,7 +117,12 @@ public class Alkabot {
             debug("Setting up commands");
 
             COMMAND_HANDLER = new CommandHandler();
-            getCommandHandler().registerCommands(new AdminCommands(), new MusicCommands(), new InfoCommands(), new UtilitiesCommands());
+            getCommandHandler().registerCommands(new AdminCommands(),
+                    new PlayerCommands(),
+                    new PlaylistCommand(),
+                    new QueueCommand(),
+                    new InfoCommands(),
+                    new UtilitiesCommands());
 
             getLogger().info(COMMAND_HANDLER.getCommands().size() + " commands ready");
 

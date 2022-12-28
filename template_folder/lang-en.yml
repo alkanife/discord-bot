@@ -1,9 +1,10 @@
 ok-memes: |
-  https://i.pinimg.com/736x/f8/0e/ea/f80eea105e4e34591964c8438f465185.jpg
-  https://tarheeltrailblazers.com/wp/wp-content/uploads/2020/08/computer-kid.jpeg
-  https://memegenerator.net/img/images/15978004.jpg
-  https://s.keepmeme.com/files/en_posts/20200819/f9f6f589f3bc55abf4a23d8bb4a621af2-cats-with-thumbs-up-sign-like.jpg
-  https://memegenerator.net/img/instances/38115705/thumbs-up-bro.jpg
+  https://share.alkanife.fr/ok-memes/1.png
+  https://share.alkanife.fr/ok-memes/2.png
+  https://share.alkanife.fr/ok-memes/3.png
+  https://share.alkanife.fr/ok-memes/4.png
+  https://share.alkanife.fr/ok-memes/5.png
+  https://share.alkanife.fr/ok-memes/6.png
 
 welcome-messages: "Welcome {0}!"
 
@@ -95,7 +96,12 @@ jukebox-command-play-playlist-added: "Playlist added to queue"
 jukebox-command-play-playlist-newtime: "New jukebox duration:"
 jukebox-command-play-playlist-entries: "Entries:"
 jukebox-command-play-nomatches: "Sorry, I couldn''t find anything that matches your search."
-jukebox-command-play-error: "Sorry, I can't play this track!"
+jukebox-command-play-error: "Sorry, I can't play this track! (and I tried really hard...)"
+jukebox-command-play-spotify-error: "Sorry, an error occurred when I tried to load this playlist."
+jukebox-command-play-source-url: "Command (direct link)"
+jukebox-command-play-source-yt-search: "Command (YouTube search - video)"
+jukebox-command-play-source-yt-search-playlist: "Command (YouTube search - playlist)"
+jukebox-command-play-source-spotify-playlist: "Command (Spotify playlist)"
 
 jukebox-command-skip-description: "Skip one or multiple music"
 jukebox-command-skip-input-description: "Number of songs to skip (min. 1)"
@@ -103,6 +109,7 @@ jukebox-command-skip-one: "⏭👍🏻"
 jukebox-command-skip-mult: "Skipped `{0}` music(s)."
 
 jukebox-command-notenough: "There are not enough songs in the queue."
+jukebox-command-spotify-playlist: "Spotify playlist"
 
 jukebox-command-stop: "Ciao! 👋🏻"
 jukebox-command-stop-description: "Stop the jukebox"
@@ -129,17 +136,24 @@ jukebox-command-remove-input-description: "Position in the music queue (/jukebox
 
 jukebox-playing-error-title: "I failed to play this title"
 jukebox-by: "by"
-jukebox-playing-error-message: "The link may not working, or its format is not readable for me. For YouTube please note that I cannot play restricted videos (YT Premium, YT Kids, sensitive content etc)."
+jukebox-playing-error-message: "I retried. The link may not working, or its format is not readable for me. For YouTube please note that I cannot play restricted videos (YT Premium, YT Kids, sensitive content etc)."
+jukebox-playing-error-message-retried: "Even trying again, it seems that this track is inaccessible to me."
+jukebox-playing-retrying: "I allowed myself to re-add this title to my queue, because the first attempt had failed."
 
 jukebox-playing-error-nomembers-title: "Someone there?"
 jukebox-playing-error-nomembers-desc: "I logged out of the voice channel because there was no one in my channel."
 
+jukebox-playing-error-notfound-title: "I did not found this title"
+jukebox-playing-error-notfound-description: "Unfortunately, I couldn't find a video on YouTube that bore the title of the song present in the Spotify playlist."
+jukebox-playing-error-notfound-added-by: "Added by"
+jukebox-playing-error-notfound-origin: "Origin :"
+
 playlists-command-description: "Playlist management"
 playlists-command-add-description: "Add a playlist"
-playlists-command-add-name-description: "Playlist's name"
+playlists-command-add-name-description: "Playlist''s name"
 playlists-command-add-url-description: "Youtube URL of the playlist"
 playlists-command-remove-description: "Delete a playlist"
-playlists-command-remove-name-description: "Playlist's name to delete"
+playlists-command-remove-name-description: "Playlist''s name to delete"
 playlists-command-list-description: "List existing playlists"
 playlists-command-add-nope: "This playlist already exists in my database!"
 playlists-command-add-success: "Playlist {0} was successfully added to my database."
@@ -150,3 +164,5 @@ playlists-command-remove-failed: "I was unable to delete this playlist from my d
 playlists-command-list-noentries: "No playlist in my database! Do ''/playlists add'' to add one."
 playlists-command-list-title: "playlists"
 playlists-command-list-addedby: "added by"
+playlists-command-info-description: "Show all information about a playlist"
+playlists-command-info-name-description: "Playlist''s name"

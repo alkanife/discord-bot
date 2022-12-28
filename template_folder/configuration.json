@@ -1,5 +1,9 @@
 {
   "token": "",
+  "spotify": {
+    "client_id": "",
+    "client_secret": ""
+  },
   "administrators_id": [
     ""
   ],

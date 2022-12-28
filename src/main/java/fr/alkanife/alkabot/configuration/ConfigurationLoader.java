@@ -23,7 +23,8 @@ public class ConfigurationLoader {
 
         // Reading configuration file
         String configurationRaw = Files.readString(configurationFile.toPath());
-        //Alkabot.debug("RAW CONFIGURATION: " + configurationRaw);
+        if (Alkabot.isDebugging())
+            Alkabot.getLogger().info(configurationRaw);
 
         Gson gson = new Gson();
         configuration = gson.fromJson(configurationRaw, Configuration.class);

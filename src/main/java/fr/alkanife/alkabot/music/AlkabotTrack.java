@@ -52,12 +52,20 @@ public class AlkabotTrack {
     }
 
     public AlkabotTrack(Track track, String trackSource, String addedByID, boolean priority) {
-        this.url = track.getHref();
+        this.url = "https://open.spotify.com/track/" + track.getId();
         this.trackSource = trackSource;
         this.dateAdded = new Date();
         this.addedByID = addedByID;
         this.priority = priority;
-        this.thumbUrl = track.getPreviewUrl();
+
+        if (track.getAlbum() != null)
+            if (track.getAlbum().getImages() != null)
+                if (track.getAlbum().getImages().length > 0)
+                    this.thumbUrl = track.getAlbum().getImages()[0].getUrl();
+
+        if (thumbUrl == null)
+            this.thumbUrl = "https://share.alkanife.fr/alkabot/spotify.png";
+
         this.title = track.getName();
 
         List<String> artists = new ArrayList<>();

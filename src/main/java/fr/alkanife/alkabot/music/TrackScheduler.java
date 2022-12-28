@@ -95,13 +95,13 @@ public class TrackScheduler extends AudioEventAdapter {
             if (voiceChannel.getMembers().size() == 1) {
                 Music.reset();
 
-                if (Alkabot.getLastCommandChannel() != null) {
+                if (Alkabot.getLastSlashPlayChannel() != null) {
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-nomembers-title"));
                     embedBuilder.setColor(Colors.BIG_RED);
                     embedBuilder.setDescription(Alkabot.t("jukebox-playing-error-nomembers-desc"));
 
-                    Alkabot.getLastCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                    Alkabot.getLastSlashPlayChannel().sendMessageEmbeds(embedBuilder.build()).queue();
                 }
                 return;
             }
@@ -113,30 +113,29 @@ public class TrackScheduler extends AudioEventAdapter {
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        if (Alkabot.getLastCommandChannel() != null) {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
 
-            EmbedBuilder embedBuilder = new EmbedBuilder();
+        if (retriedTracks.contains(track.getInfo().title)) {
+            embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-title"));
+            embedBuilder.setColor(Colors.BIG_RED);
+            embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")"
+                    + " " + Alkabot.t("jukebox-by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
+                    Alkabot.t("jukebox-playing-error-message"));
+            embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
+        } else {
+            embedBuilder.setTitle(Alkabot.t("jukebox-command-play-added-title") + " " + Alkabot.t("jukebox-command-priority"));
+            embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ") " + Alkabot.t("jukebox-by")
+                    + " [" + track.getInfo().author + "](" + track.getInfo().uri + ") " + Alkabot.musicDuration(track.getDuration()) +
+                    "\n\n" + Alkabot.t("jukebox-playing-retrying"));
+            embedBuilder.setColor(Colors.CYAN);
+            embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
 
-            if (retriedTracks.contains(track.getInfo().title)) {
-                embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-title"));
-                embedBuilder.setColor(Colors.BIG_RED);
-                embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")"
-                        + " " + Alkabot.t("jukebox-by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
-                        Alkabot.t("jukebox-playing-error-message"));
-                embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
-            } else {
-                embedBuilder.setTitle(Alkabot.t("jukebox-command-play-added-title") + " " + Alkabot.t("jukebox-command-priority"));
-                embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ") " + Alkabot.t("jukebox-by")
-                        + " [" + track.getInfo().author + "](" + track.getInfo().uri + ") " + Alkabot.musicDuration(track.getDuration()) +
-                        "\n\n" + Alkabot.t("jukebox-playing-retrying"));
-                embedBuilder.setColor(Colors.CYAN);
-                embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
+            retriedTracks.add(track.getInfo().title);
 
-                retriedTracks.add(track.getInfo().title);
-            }
-
-            if (Alkabot.getLastCommandChannel() != null)
-                Alkabot.getLastCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+            Alkabot.getTrackScheduler().queue(new AlkabotTrack(track, Alkabot.getJDA().getSelfUser().getName(), Alkabot.getJDA().getSelfUser().getId(), true));
         }
+
+        if (Alkabot.getLastSlashPlayChannel() != null)
+            Alkabot.getLastSlashPlayChannel().sendMessageEmbeds(embedBuilder.build()).queue();
     }
 }

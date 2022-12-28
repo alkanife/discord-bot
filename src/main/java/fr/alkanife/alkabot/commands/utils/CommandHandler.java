@@ -29,6 +29,7 @@ public class CommandHandler {
     }
 
     public void registerCommand(Object object) {
+        Alkabot.debug("In: " + object.getClass().getName() + ":");
         for (Method method : object.getClass().getDeclaredMethods()) {
             if (method.isAnnotationPresent(Command.class)) {
                 Command command = method.getAnnotation(Command.class);
@@ -38,6 +39,7 @@ public class CommandHandler {
                 BotCommand simpleCommand = new BotCommand(command.name(), command.administrative(), object, method);
 
                 commands.put(command.name(), simpleCommand);
+                Alkabot.debug("  - " + simpleCommand.getName() + ", " + command.administrative());
             }
         }
     }
@@ -55,6 +57,7 @@ public class CommandHandler {
                 return;
 
             if (parameters[0].getType().equals(SlashCommandInteractionEvent.class)) {
+                Alkabot.debug("Invoking '" + botCommand.getMethod().getName() + "' method (command: " + event.getFullCommandName() + ")");
                 botCommand.getMethod().invoke(botCommand.getObject(), event);
 
                 //success(slashCommandEvent);
@@ -82,6 +85,7 @@ public class CommandHandler {
                 return;
 
             if (parameters[0].getType().equals(MessageReceivedEvent.class)) {
+                Alkabot.debug("Invoking '" + botCommand.getMethod().getName() + "' method (input: " + messageReceivedEvent.getMessage().getContentRaw() + ")");
                 botCommand.getMethod().invoke(botCommand.getObject(), messageReceivedEvent);
             }
         } catch (Exception exception) {

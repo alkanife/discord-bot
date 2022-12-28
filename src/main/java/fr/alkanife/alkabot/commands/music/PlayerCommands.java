@@ -20,6 +20,8 @@ public class PlayerCommands {
 
     @Command(name = "play")
     public void play(SlashCommandInteractionEvent event) {
+        Alkabot.setLastSlashPlayChannel(event.getChannel());
+
         event.deferReply().queue();
 
         Music.connect(event.getMember());
@@ -44,6 +46,8 @@ public class PlayerCommands {
 
     @Command(name = "forceplay")
     public void forceplay(SlashCommandInteractionEvent event) {
+        Alkabot.setLastSlashPlayChannel(event.getChannel());
+
         event.deferReply().queue();
 
         Music.connect(event.getMember());
@@ -78,7 +82,7 @@ public class PlayerCommands {
         if (removeOption != null) {
             remove = removeOption.getAsLong();
 
-            if (remove >= Alkabot.getTrackScheduler().getQueue().size()) {
+            if (remove > Alkabot.getTrackScheduler().getQueue().size()) {
                 event.reply(Alkabot.t("jukebox-command-notenough")).queue();
                 return;
             }
@@ -110,6 +114,8 @@ public class PlayerCommands {
 
     @Command(name = "skip")
     public void skip(SlashCommandInteractionEvent event) {
+        Alkabot.setLastSlashPlayChannel(event.getChannel());
+
         if (Alkabot.getAudioPlayer().getPlayingTrack() == null) {
             event.reply(Alkabot.t("jukebox-command-no-current")).queue();
             return;
@@ -140,7 +146,7 @@ public class PlayerCommands {
     public void stop(SlashCommandInteractionEvent event) {
         event.reply(Alkabot.t("jukebox-command-stop")).queue();
         Alkabot.getGuild().getAudioManager().closeAudioConnection();
-        //Music.reset();
+        //Music.reset(); Disabled, it's not a bug it's a F E A T U R E
     }
 
     @Command(name = "shuffle")

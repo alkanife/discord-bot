@@ -88,7 +88,7 @@ public class AdminCommands {
         stringBuilder.append("```yaml\n[STATUS]\n\n");
 
         SelfUser selfUser = messageReceivedEvent.getJDA().getSelfUser();
-        stringBuilder.append("Client: ").append(selfUser.getAsTag()).append(" (").append(selfUser.getId()).append(")\n");
+        stringBuilder.append("Client: ").append(selfUser.getAsTag()).append(" [").append(selfUser.getId()).append("]\n");
 
         Duration duration = Duration.ofMillis(ManagementFactory.getRuntimeMXBean().getUptime());
         String formattedElapsedTime = String.format("%d days, %02d hours, %02d minutes, %02d seconds",

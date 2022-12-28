@@ -47,8 +47,8 @@ public class Alkabot {
     private static HashMap<String, Object> TRANSLATIONS = new HashMap<>();
     private static JDA JDA;
     private static Guild GUILD;
-    private static String VERSION = "1.3.beta1";
-    private static MessageChannelUnion LAST_COMMAND_CHANNEL;
+    private static String VERSION = "1.3.beta2";
+    private static MessageChannelUnion LAST_SLASH_PLAY_CHANNEL;
     private static AudioPlayerManager AUDIO_PLAYER_MANAGER;
     private static AudioPlayer AUDIO_PLAYER;
     private static TrackScheduler TRACK_SCHEDULER;
@@ -225,12 +225,12 @@ public class Alkabot {
         return VERSION;
     }
 
-    public static MessageChannelUnion getLastCommandChannel() {
-        return LAST_COMMAND_CHANNEL;
+    public static MessageChannelUnion getLastSlashPlayChannel() {
+        return LAST_SLASH_PLAY_CHANNEL;
     }
 
-    public static void setLastCommandChannel(MessageChannelUnion lastCommandChannel) {
-        LAST_COMMAND_CHANNEL = lastCommandChannel;
+    public static void setLastSlashPlayChannel(MessageChannelUnion lastSlashPlayChannel) {
+        LAST_SLASH_PLAY_CHANNEL = lastSlashPlayChannel;
     }
 
     public static AudioPlayerManager getAudioPlayerManager() {

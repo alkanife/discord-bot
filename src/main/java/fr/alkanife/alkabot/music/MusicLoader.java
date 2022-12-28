@@ -29,6 +29,8 @@ public class MusicLoader {
 
     // From command
     public static void load(SlashCommandInteractionEvent slashCommandInteractionEvent, final String url, boolean priority) {
+        Alkabot.debug("Loading music from '" + url + "' (" + priority + ")...");
+
         Alkabot.getAudioPlayerManager().loadItemOrdered(Alkabot.getAudioPlayer(), url, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
@@ -50,6 +52,8 @@ public class MusicLoader {
                 embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
                 slashCommandInteractionEvent.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
+
+                Alkabot.debug("Track loaded! Using URL: " + alkabotTrack.getUrl());
             }
 
             @Override
@@ -78,6 +82,8 @@ public class MusicLoader {
                     embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
                     slashCommandInteractionEvent.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
+
+                    Alkabot.debug("Track loaded (youtube search)! Using URL: " + alkabotTrack.getUrl());
                 } else {
                     List<AlkabotTrack> alkabotTrackList = new ArrayList<>();
 
@@ -99,6 +105,8 @@ public class MusicLoader {
                     embedBuilder.setThumbnail(firstAlkabotTrack.getThumbUrl());
 
                     slashCommandInteractionEvent.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
+
+                    Alkabot.debug("Playlist '" + playlist.getName() + "' loaded! (" + playlist.getTracks().size() + " tracks)");
                 }
             }
 
@@ -107,6 +115,7 @@ public class MusicLoader {
                 loadRetrying = false;
 
                 slashCommandInteractionEvent.getHook().sendMessage(Alkabot.t("jukebox-command-play-nomatches")).queue();
+                Alkabot.debug("No matches!");
             }
 
             @Override
@@ -114,16 +123,21 @@ public class MusicLoader {
                 Alkabot.getLogger().warn("Load fail - retry = " + loadRetrying);
                 if (loadRetrying) {
                     slashCommandInteractionEvent.getHook().sendMessage(Alkabot.t("jukebox-command-play-error")).queue();
+                    Alkabot.debug("Failed to load!");
                     loadRetrying = false;
                 } else {
                     loadRetrying = true;
                     MusicLoader.load(slashCommandInteractionEvent, url, priority);
+                    Alkabot.debug("Failed to load! Retrying...");
                 }
             }
         });
     }
 
     public static void loadSpotifyPlaylist(SlashCommandInteractionEvent slashCommandInteractionEvent, final String url, boolean priority) {
+        Alkabot.debug("Loading music from '" + url + "' (" + priority + ")...");
+
+        Alkabot.debug("Requesting Spotify client credentials...");
         SpotifyApi spotifyApi = new SpotifyApi.Builder()
                 .setClientId(Alkabot.getConfig().getSpotify().getClient_id())
                 .setClientSecret(Alkabot.getConfig().getSpotify().getClient_secret())
@@ -146,6 +160,7 @@ public class MusicLoader {
         }
         spotifyApi.setAccessToken(access);
 
+        Alkabot.debug("Requesting Spotify playlist info...");
         // tracks playlists
         String id = url.replaceAll("https://open.spotify.com/playlist/", "");
 
@@ -181,6 +196,8 @@ public class MusicLoader {
             embedBuilder.setThumbnail(alkabotTrackList.get(0).getThumbUrl());
 
             slashCommandInteractionEvent.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
+            Alkabot.debug("Spotify playlist loaded! (" + alkabotTrackList.size() + " tracks)");
+            Alkabot.debug("First track url: " + alkabotTrackList.get(0).getUrl());
         } catch (Exception e) {
             Alkabot.getLogger().error("Failed to get spotify playlist:");
             e.printStackTrace();
@@ -193,10 +210,13 @@ public class MusicLoader {
         if (alkabotTrack == null)
             throw new NullPointerException("The track cannot be null!");
 
+        Alkabot.debug("Trying to play '" + alkabotTrack.getTitle() + "' by '" + alkabotTrack.getArtists() + "' (" + alkabotTrack.getUrl() + ")...");
+
         Alkabot.getAudioPlayerManager().loadItemOrdered(Alkabot.getAudioPlayer(), alkabotTrack.getQuery(), new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 playLoadRetrying = false;
+                Alkabot.debug("Now playing: " + track.getInfo().uri);
                 Alkabot.getTrackScheduler().getPlayer().startTrack(track, false);
             }
 
@@ -210,15 +230,18 @@ public class MusicLoader {
                 if (firstTrack == null)
                     firstTrack = playlist.getTracks().get(0);
 
-                if (alkabotTrack.getQuery().startsWith("ytsearch"))
+                if (alkabotTrack.getQuery().startsWith("ytsearch")) {
+                    Alkabot.debug("Now playing (from spotify query): " + firstTrack.getInfo().uri);
                     Alkabot.getTrackScheduler().getPlayer().startTrack(firstTrack, false);
+                }
             }
 
             @Override
             public void noMatches() {
                 playLoadRetrying = false;
+                Alkabot.debug("No matches!");
 
-                if (Alkabot.getLastCommandChannel() != null) {
+                if (Alkabot.getLastSlashPlayChannel() != null) {
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-notfound-title"));
                     embedBuilder.setColor(Colors.BIG_RED);
@@ -229,7 +252,7 @@ public class MusicLoader {
                             Alkabot.t("jukebox-playing-error-notfound-description"));
                     embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
-                    Alkabot.getLastCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                    Alkabot.getLastSlashPlayChannel().sendMessageEmbeds(embedBuilder.build()).queue();
                 }
 
                 MusicLoader.play(Alkabot.getTrackScheduler().getQueue().poll());
@@ -238,7 +261,7 @@ public class MusicLoader {
             @Override
             public void loadFailed(FriendlyException exception) {
                 if (playLoadRetrying) {
-                    if (Alkabot.getLastCommandChannel() != null) {
+                    if (Alkabot.getLastSlashPlayChannel() != null) {
                         EmbedBuilder embedBuilder = new EmbedBuilder();
                         embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-title"));
                         embedBuilder.setColor(Colors.BIG_RED);
@@ -249,12 +272,14 @@ public class MusicLoader {
                                 Alkabot.t("jukebox-playing-error-message"));
                         embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
-                        Alkabot.getLastCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                        Alkabot.getLastSlashPlayChannel().sendMessageEmbeds(embedBuilder.build()).queue();
                     }
 
                     playLoadRetrying = false;
                     MusicLoader.play(Alkabot.getTrackScheduler().getQueue().poll());
+                    Alkabot.debug("Failed to play this track! Skipping...");
                 } else {
+                    Alkabot.debug("Failed to play this track! Retrying...");
                     playLoadRetrying = true;
                     MusicLoader.play(alkabotTrack);
                 }

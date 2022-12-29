@@ -15,8 +15,9 @@ import fr.alkanife.alkabot.events.Events;
 import fr.alkanife.alkabot.events.LogEvents;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
 import fr.alkanife.alkabot.music.TrackScheduler;
-import fr.alkanife.alkabot.playlists.Playlist;
-import fr.alkanife.alkabot.playlists.PlaylistsManager;
+import fr.alkanife.alkabot.music.playlists.Playlist;
+import fr.alkanife.alkabot.music.playlists.PlaylistsManager;
+import fr.alkanife.alkabot.utils.AlkabotUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -39,15 +40,19 @@ import java.util.concurrent.TimeUnit;
 
 public class Alkabot {
 
+    private static String VERSION = "1.3.beta2";
+    private static String WEBSITE = "https://github.com/alkanife/alkabot";
+
     private static boolean DEBUG = false;
-    private static String ABSOLUTE_PATH = ""; // Path where the .jar is located
+    private static String TOKENS_FILE_PATH = "tokens.json";
+    private static String CONFIGURATION_FILE_PATH = "configuration.json";
+    private static String ABSOLUTE_PATH;
     private static Logger LOGGER;
     private static Configuration CONFIGURATION;
     private static CommandHandler COMMAND_HANDLER;
     private static HashMap<String, Object> TRANSLATIONS = new HashMap<>();
     private static JDA JDA;
     private static Guild GUILD;
-    private static String VERSION = "1.3.beta2";
     private static MessageChannelUnion LAST_SLASH_PLAY_CHANNEL;
     private static AudioPlayerManager AUDIO_PLAYER_MANAGER;
     private static AudioPlayer AUDIO_PLAYER;
@@ -57,19 +62,57 @@ public class Alkabot {
 
     public static void main(String[] args) {
         try {
-            //
-            // Checking advancedDebug argument
-            //
-            if (args.length > 0)
+            // Reading arguments
+            if (args.length > 0) {
+                if (args[0].equalsIgnoreCase("help")) {
+                    System.out.println("This is Alkabot version " + VERSION);
+                    System.out.println("Usage:\n" +
+                            "  java -jar alkabot.jar [help]\n" +
+                            "  java -jar alkabot.jar [debug/prod] [tokens file path] [configuration file path]");
+                    System.out.println("Default args: prod tokens.json configuration.json");
+                    System.out.println("For more details go to " + WEBSITE);
+                    return;
+                }
+
                 if (args[0].equalsIgnoreCase("debug"))
                     DEBUG = true;
 
-            //
-            // Moving old 'latest.log' file to the logs/ folder
-            //
-            ABSOLUTE_PATH = Paths.get("").toAbsolutePath().toString();
-            debug("ABSOLUTE_PATH: " + ABSOLUTE_PATH);
+                if (args.length >= 2) {
+                    TOKENS_FILE_PATH = args[1];
 
+                    if (args.length >= 3)
+                        CONFIGURATION_FILE_PATH = args[2];
+                }
+            }
+
+            // Splash text
+            System.out.println("           _ _         _           _");
+            System.out.println("     /\\   | | |       | |         | |");
+            System.out.println("    /  \\  | | | ____ _| |__   ___ | |_");
+            System.out.println("   / /\\ \\ | | |/ / _` | '_ \\ / _ \\| __|");
+            System.out.println("  / ____ \\| |   < (_| | |_) | (_) | |_ ");
+            System.out.println(" /_/    \\_\\_|_|\\_\\__,_|_.__/ \\___/ \\__|");
+            System.out.println();
+            System.out.println(" " + WEBSITE);
+            System.out.println(" Version " + VERSION);
+            System.out.println();
+
+            if (AlkabotUtils.isDevBuild())
+                System.out.println("***                                                                                ***\n" +
+                        "*** THIS VERSION IS A DEV BUILD AND SHOULD NOT BE USED IN A PRODUCTION ENVIRONMENT ***\n" +
+                        "***                                                                                ***");
+
+            // Setting default path (this is the path where the .jar is located)
+            ABSOLUTE_PATH = Paths.get("").toAbsolutePath().toString();
+
+            // Output for debug
+            debug("Debug override");
+            debug("Absolute path: " + ABSOLUTE_PATH);
+            debug("Tokens path: " + TOKENS_FILE_PATH);
+            debug("Configuration path: " + CONFIGURATION_FILE_PATH);
+
+            // Moving old latest.log file
+            debug("Moving old 'latest.log' file to the logs/ folder");
             File latestLogs = new File(ABSOLUTE_PATH + "/latest.log");
 
             if (latestLogs.exists()) {
@@ -101,9 +144,7 @@ public class Alkabot {
             debug("Creating logger");
             LOGGER = LoggerFactory.getLogger(Alkabot.class);
 
-            //
             // Initializing configuration
-            //
             ConfigurationLoader configurationLoader = new ConfigurationLoader(false);
 
             if (configurationLoader.getConfiguration() == null)
@@ -111,9 +152,7 @@ public class Alkabot {
 
             CONFIGURATION = configurationLoader.getConfiguration();
 
-            //
             // Initializing commands
-            //
             debug("Setting up commands");
 
             COMMAND_HANDLER = new CommandHandler();
@@ -126,9 +165,7 @@ public class Alkabot {
 
             getLogger().info(COMMAND_HANDLER.getCommands().size() + " commands ready");
 
-            //
             // Initializing translations
-            //
             debug("Reading translations");
 
             TranslationsLoader translationsLoader = new TranslationsLoader(false);
@@ -138,23 +175,19 @@ public class Alkabot {
 
             TRANSLATIONS = translationsLoader.getTranslations();
 
-            //
             // Initializing playlists
-            //
             debug("Reading playlists");
             PLAYLIST_MANAGER = new PlaylistsManager();
             getPlaylistManager().read();
 
-            //
             // Building JDA
-            //
             getLogger().info("Building JDA...");
 
             JDABuilder jdaBuilder = JDABuilder.createDefault(getConfig().getToken());
             jdaBuilder.setRawEventsEnabled(true);
             jdaBuilder.setStatus(OnlineStatus.valueOf(getConfig().getPresence().getStatus()));
             if (getConfig().getPresence().getActivity().isShow())
-                jdaBuilder.setActivity(buildActivity());
+                jdaBuilder.setActivity(AlkabotUtils.buildActivity());
 
             jdaBuilder.enableIntents(GatewayIntent.GUILD_MEMBERS,
                     GatewayIntent.GUILD_VOICE_STATES,
@@ -183,6 +216,14 @@ public class Alkabot {
 
     public static String absolutePath() {
         return ABSOLUTE_PATH;
+    }
+
+    public static String getTokensFilePath() {
+        return TOKENS_FILE_PATH;
+    }
+
+    public static String getConfigurationFilePath() {
+        return CONFIGURATION_FILE_PATH;
     }
 
     public static Logger getLogger() {
@@ -282,9 +323,9 @@ public class Alkabot {
     public static void debug(String s) {
         if (DEBUG)
             if (getLogger() == null)
-                System.out.println("(debug) " + s);
+                System.out.println("[Debug] " + s);
             else
-                getLogger().info("(debug) " + s);
+                getLogger().info("* " + s);
     }
 
     public static String t(String key, String... values) {
@@ -312,50 +353,5 @@ public class Alkabot {
             getLogger().error("Description: " + embed.getDescription());
             exception.printStackTrace();
         }
-    }
-
-    public static String limitString(String value, int length) {
-        StringBuilder buf = new StringBuilder(value);
-        if (buf.length() > length) {
-            buf.setLength(length - 5);
-            buf.append("`...`");
-        }
-
-        return buf.toString();
-    }
-
-    public static String musicDuration(long duration) {
-        if (duration >= 72000000)
-            return "";
-
-        if (duration >= 3600000) {
-            return "[" + String.format("%02d:%02d:%02d",  TimeUnit.MILLISECONDS.toHours(duration),
-                    TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
-                    TimeUnit.MILLISECONDS.toSeconds(duration) % TimeUnit.MINUTES.toSeconds(1)) + "]";
-        } else {
-            return "[" + String.format("%02d:%02d",  TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
-                    TimeUnit.MILLISECONDS.toSeconds(duration) % TimeUnit.MINUTES.toSeconds(1)) + "]";
-        }
-    }
-
-    public static String playlistDuration(long duration) {
-        if (duration >= 3600000) {
-            return String.format("%02d:%02d:%02d",  TimeUnit.MILLISECONDS.toHours(duration),
-                    TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
-                    TimeUnit.MILLISECONDS.toSeconds(duration) % TimeUnit.MINUTES.toSeconds(1));
-        } else {
-            return String.format("%02d:%02d",  TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
-                    TimeUnit.MILLISECONDS.toSeconds(duration) % TimeUnit.MINUTES.toSeconds(1));
-        }
-    }
-
-    public static boolean isURL(String s) {
-        return s.toLowerCase(Locale.ROOT).startsWith("http");
-    }
-
-    public static Activity buildActivity() {
-        debug("Building activity");
-        Activity.ActivityType activityType = Activity.ActivityType.valueOf(getConfig().getPresence().getActivity().getType());
-        return Activity.of(activityType, getConfig().getPresence().getActivity().getText());
     }
 }

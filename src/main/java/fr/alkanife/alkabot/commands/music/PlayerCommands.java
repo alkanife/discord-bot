@@ -5,7 +5,8 @@ import fr.alkanife.alkabot.commands.utils.Command;
 import fr.alkanife.alkabot.music.AlkabotTrack;
 import fr.alkanife.alkabot.music.Music;
 import fr.alkanife.alkabot.music.MusicLoader;
-import fr.alkanife.alkabot.playlists.Playlist;
+import fr.alkanife.alkabot.music.playlists.Playlist;
+import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -31,7 +32,7 @@ public class PlayerCommands {
         if (url.startsWith("https://open.spotify.com/playlist")) {
             MusicLoader.loadSpotifyPlaylist(event, url, false);
         } else {
-            if (!Alkabot.isURL(url)) {
+            if (!StringUtils.isURL(url)) {
                 Playlist playlist = Alkabot.getPlaylist(url);
 
                 if (playlist == null)
@@ -57,7 +58,7 @@ public class PlayerCommands {
         if (url.startsWith("https://open.spotify.com/playlist")) {
             MusicLoader.loadSpotifyPlaylist(event, url, true);
         } else {
-            if (!Alkabot.isURL(url)) {
+            if (!StringUtils.isURL(url)) {
                 Playlist playlist = Alkabot.getPlaylist(url);
 
                 if (playlist == null)

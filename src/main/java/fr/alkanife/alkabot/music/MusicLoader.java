@@ -5,7 +5,8 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.Colors;
+import fr.alkanife.alkabot.utils.Colors;
+import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.apache.hc.core5.http.ParseException;
@@ -47,7 +48,7 @@ public class MusicLoader {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setTitle(Alkabot.t("jukebox-command-play-added-title") + " " + (priority ? Alkabot.t("jukebox-command-priority") : ""));
                 embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ") " + Alkabot.t("jukebox-by")
-                        + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ") " + Alkabot.musicDuration(alkabotTrack.getDuration()) +
+                        + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ") " + StringUtils.durationToString(alkabotTrack.getDuration(), true, false) +
                         (priority ? "" : ("\n\n" + (Alkabot.t("jukebox-command-play-added-position") + " `" + (Alkabot.getTrackScheduler().getQueue().size() + 1) + "`"))));
                 embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
@@ -77,7 +78,7 @@ public class MusicLoader {
                     EmbedBuilder embedBuilder = new EmbedBuilder();
                     embedBuilder.setTitle(Alkabot.t("jukebox-command-play-added-title") + " " + (priority ? Alkabot.t("jukebox-command-priority") : ""));
                     embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ") " + Alkabot.t("jukebox-by")
-                            + " [" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ") " + Alkabot.musicDuration(alkabotTrack.getDuration()) +
+                            + " [" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ") " + StringUtils.durationToString(alkabotTrack.getDuration(), true, false) +
                             (priority ? "" : ("\n\n" + (Alkabot.t("jukebox-command-play-added-position") + " `" + (Alkabot.getTrackScheduler().getQueue().size() + 1) + "`"))));
                     embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
@@ -100,7 +101,7 @@ public class MusicLoader {
                     embedBuilder.setTitle(Alkabot.t("jukebox-command-play-playlist-added") + " " + (priority ? Alkabot.t("jukebox-command-priority") : ""));
                     embedBuilder.setDescription("[" + playlist.getName() + "](" + url + ")\n\n" +
                             Alkabot.t("jukebox-command-play-playlist-entries") + " `" + playlist.getTracks().size() + "`\n" +
-                            Alkabot.t("jukebox-command-play-playlist-newtime") + " `" + Alkabot.playlistDuration(Alkabot.getTrackScheduler().getQueueDuration()) + "`");
+                            Alkabot.t("jukebox-command-play-playlist-newtime") + " `" + StringUtils.durationToString(Alkabot.getTrackScheduler().getQueueDuration(), true, true) + "`");
 
                     embedBuilder.setThumbnail(firstAlkabotTrack.getThumbUrl());
 
@@ -191,7 +192,7 @@ public class MusicLoader {
             embedBuilder.setTitle(Alkabot.t("jukebox-command-play-playlist-added") + " " + (priority ? Alkabot.t("jukebox-command-priority") : ""));
             embedBuilder.setDescription("[" + Alkabot.t("jukebox-command-spotify-playlist") + "](" + url + ")\n\n" +
                     Alkabot.t("jukebox-command-play-playlist-entries") + " `" + alkabotTrackList.size() + "`\n" +
-                    Alkabot.t("jukebox-command-play-playlist-newtime") + " `" + Alkabot.playlistDuration(Alkabot.getTrackScheduler().getQueueDuration()) + "`");
+                    Alkabot.t("jukebox-command-play-playlist-newtime") + " `" + StringUtils.durationToString(Alkabot.getTrackScheduler().getQueueDuration(), false, true) + "`");
 
             embedBuilder.setThumbnail(alkabotTrackList.get(0).getThumbUrl());
 

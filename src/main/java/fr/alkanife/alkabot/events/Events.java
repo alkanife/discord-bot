@@ -1,7 +1,7 @@
 package fr.alkanife.alkabot.events;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.Colors;
+import fr.alkanife.alkabot.utils.Colors;
 import fr.alkanife.alkabot.music.Music;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;

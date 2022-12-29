@@ -1,8 +1,9 @@
 package fr.alkanife.alkabot.events;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.Colors;
+import fr.alkanife.alkabot.utils.Colors;
 import fr.alkanife.alkabot.LoggedMessage;
+import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
@@ -22,7 +23,6 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -65,7 +65,7 @@ public class LogEvents extends ListenerAdapter {
 
         for (LoggedMessage sentMessage : sentMessages)
             if (sentMessage.getId() == messageUpdateEvent.getMessageIdLong())
-                beforeMessage = Alkabot.limitString(sentMessage.getContent(), 1000);
+                beforeMessage = StringUtils.limitString(sentMessage.getContent(), 1000);
 
         if (beforeMessage == null)
             beforeMessage = Alkabot.t("logs-unknown");
@@ -81,7 +81,7 @@ public class LogEvents extends ListenerAdapter {
         embedBuilder.addField(Alkabot.t("logs-channel"), messageChannelUnion.getName() +  " (" + messageChannelUnion.getAsMention() + ")", true);
         embedBuilder.addField(Alkabot.t("logs-message-edited-before"), beforeMessage, false);
 
-        String after = Alkabot.limitString(messageUpdateEvent.getMessage().getContentDisplay(), 1000);
+        String after = StringUtils.limitString(messageUpdateEvent.getMessage().getContentDisplay(), 1000);
 
         if (after.equals(""))
             after = Alkabot.t("logs-message-edited-after-nomessage");
@@ -129,7 +129,7 @@ public class LogEvents extends ListenerAdapter {
             embedBuilder.setColor(Colors.RED);
             embedBuilder.addField(Alkabot.t("logs-message-deleted-author"), author, true);
             embedBuilder.addField(Alkabot.t("logs-channel"), messageChannelUnion.getName() +  " (" + messageChannelUnion.getAsMention() + ")", true);
-            embedBuilder.addField(Alkabot.t("logs-message"), Alkabot.limitString(loggedMessage.getContent().equals("") ? Alkabot.t("logs-message-edited-after-nomessage") : loggedMessage.getContent(), 1000), false);
+            embedBuilder.addField(Alkabot.t("logs-message"), StringUtils.limitString(loggedMessage.getContent().equals("") ? Alkabot.t("logs-message-edited-after-nomessage") : loggedMessage.getContent(), 1000), false);
             Alkabot.discordLog(embedBuilder.build());
         }
     }

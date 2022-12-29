@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.commands;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.commands.utils.Command;
+import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -16,7 +17,7 @@ public class UtilitiesCommands {
 
             String copyURL = copyOption.getAsString();
 
-            if (!Alkabot.isURL(copyURL)) {
+            if (!StringUtils.isURL(copyURL)) {
                 slashCommandEvent.reply(Alkabot.t("copy-command-error-noturl")).setEphemeral(true).queue();
                 return;
             } // 6

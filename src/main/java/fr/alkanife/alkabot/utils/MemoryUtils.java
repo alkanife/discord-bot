@@ -1,4 +1,4 @@
-package fr.alkanife.alkabot;
+package fr.alkanife.alkabot.utils;
 
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;

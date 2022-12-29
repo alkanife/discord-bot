@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.commands.utils.Command;
 import fr.alkanife.alkabot.music.AlkabotTrack;
+import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -48,25 +49,25 @@ public class QueueCommand {
         if (tracks.size() == 0) {
             embedBuilder.setTitle(Alkabot.t("jukebox-command-queue-now-playing"));
             embedBuilder.setThumbnail("https://img.youtube.com/vi/" + current.getIdentifier() + "/0.jpg");
-            desc += "**[" + current.getInfo().title + "](" + current.getInfo().uri + ")** " + Alkabot.musicDuration(current.getDuration());
+            desc += "**[" + current.getInfo().title + "](" + current.getInfo().uri + ")** " + StringUtils.durationToString(current.getDuration(), true, false);
         } else {                                                                           // '~' because String.valueOf don't work?
             embedBuilder.setTitle(Alkabot.t("jukebox-command-queue-queued-title", "~" + Alkabot.getTrackScheduler().getQueue().size()));
             embedBuilder.setThumbnail(Alkabot.t("jukebox-command-plgif"));
             desc = "__" + Alkabot.t("jukebox-command-queue-queued-now-playing") + "__\n" +
-                    "**[" + current.getInfo().title + "](" + current.getInfo().uri + ")** " + Alkabot.musicDuration(current.getDuration()) + "\n" +
+                    "**[" + current.getInfo().title + "](" + current.getInfo().uri + ")** " + StringUtils.durationToString(current.getDuration(), true, false) + "\n" +
                     "\n" +
                     "__" + Alkabot.t("jukebox-command-queue-queued-incoming") + "__\n";
 
             for (int i = (page * 10); i < ((page * 10) + 10); i++) {
                 try {
                     AlkabotTrack audioTrack = tracks.get(i);
-                    desc += "`" + (i + 1) + ".` [" + audioTrack.getTitle() + "](" + audioTrack.getUrl()+ ") " + Alkabot.musicDuration(audioTrack.getDuration()) + "\n";
+                    desc += "`" + (i + 1) + ".` [" + audioTrack.getTitle() + "](" + audioTrack.getUrl()+ ") " + StringUtils.durationToString(audioTrack.getDuration(), true, false) + "\n";
                 } catch (Exception e) {
                     break;
                 }
             }
 
-            desc += "\n__" + Alkabot.t("jukebox-command-queue-queued-time") + "__ `" + Alkabot.playlistDuration(Alkabot.getTrackScheduler().getQueueDuration()) + "`\n\n" +
+            desc += "\n__" + Alkabot.t("jukebox-command-queue-queued-time") + "__ `" + StringUtils.durationToString(Alkabot.getTrackScheduler().getQueueDuration(), false, true) + "`\n\n" +
                     "**PAGE " + (page + 1) + " / " + pages + "**\n\n";
         }
         embedBuilder.setDescription(desc);

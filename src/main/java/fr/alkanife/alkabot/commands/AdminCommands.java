@@ -1,31 +1,27 @@
 package fr.alkanife.alkabot.commands;
 
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.Colors;
-import fr.alkanife.alkabot.MemoryUtils;
+import fr.alkanife.alkabot.utils.AlkabotUtils;
+import fr.alkanife.alkabot.utils.Colors;
+import fr.alkanife.alkabot.utils.MemoryUtils;
 import fr.alkanife.alkabot.commands.utils.Command;
 import fr.alkanife.alkabot.configuration.Configuration;
 import fr.alkanife.alkabot.configuration.ConfigurationLoader;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
 import fr.alkanife.alkabot.music.Music;
-import fr.alkanife.alkabot.playlists.Playlist;
-import fr.alkanife.alkabot.playlists.PlaylistsManager;
+import fr.alkanife.alkabot.music.playlists.Playlist;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
-import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.SelfUser;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.Presence;
 
-import java.awt.*;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.time.Duration;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 public class AdminCommands {
 
@@ -130,7 +126,7 @@ public class AdminCommands {
 
                         presence.setStatus(OnlineStatus.valueOf(Alkabot.getConfig().getPresence().getStatus()));
                         if (Alkabot.getConfig().getPresence().getActivity().isShow())
-                            presence.setActivity(Alkabot.buildActivity());
+                            presence.setActivity(AlkabotUtils.buildActivity());
 
                         message.reply("The configuration was successfully reloaded").queue();
                     } catch (IOException e) {

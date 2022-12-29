@@ -6,7 +6,9 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.Colors;
+import fr.alkanife.alkabot.utils.AlkabotUtils;
+import fr.alkanife.alkabot.utils.Colors;
+import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
@@ -125,7 +127,7 @@ public class TrackScheduler extends AudioEventAdapter {
         } else {
             embedBuilder.setTitle(Alkabot.t("jukebox-command-play-added-title") + " " + Alkabot.t("jukebox-command-priority"));
             embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ") " + Alkabot.t("jukebox-by")
-                    + " [" + track.getInfo().author + "](" + track.getInfo().uri + ") " + Alkabot.musicDuration(track.getDuration()) +
+                    + " [" + track.getInfo().author + "](" + track.getInfo().uri + ") " + StringUtils.durationToString(track.getDuration(), true, false) +
                     "\n\n" + Alkabot.t("jukebox-playing-retrying"));
             embedBuilder.setColor(Colors.CYAN);
             embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");

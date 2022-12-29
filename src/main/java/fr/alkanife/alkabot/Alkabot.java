@@ -11,6 +11,8 @@ import fr.alkanife.alkabot.commands.music.QueueCommand;
 import fr.alkanife.alkabot.commands.utils.CommandHandler;
 import fr.alkanife.alkabot.configuration.Configuration;
 import fr.alkanife.alkabot.configuration.ConfigurationLoader;
+import fr.alkanife.alkabot.configuration.tokens.Tokens;
+import fr.alkanife.alkabot.configuration.tokens.TokensLoader;
 import fr.alkanife.alkabot.events.Events;
 import fr.alkanife.alkabot.events.LogEvents;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
@@ -36,7 +38,6 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class Alkabot {
 
@@ -44,10 +45,11 @@ public class Alkabot {
     private static String WEBSITE = "https://github.com/alkanife/alkabot";
 
     private static boolean DEBUG = false;
-    private static String TOKENS_FILE_PATH = "tokens.json";
-    private static String CONFIGURATION_FILE_PATH = "configuration.json";
+    private static String TOKENS_FILE_PATH;
+    private static String CONFIGURATION_FILE_PATH;
     private static String ABSOLUTE_PATH;
     private static Logger LOGGER;
+    private static Tokens TOKENS;
     private static Configuration CONFIGURATION;
     private static CommandHandler COMMAND_HANDLER;
     private static HashMap<String, Object> TRANSLATIONS = new HashMap<>();
@@ -104,6 +106,8 @@ public class Alkabot {
 
             // Setting default path (this is the path where the .jar is located)
             ABSOLUTE_PATH = Paths.get("").toAbsolutePath().toString();
+            TOKENS_FILE_PATH = ABSOLUTE_PATH + "/tokens.json";
+            CONFIGURATION_FILE_PATH = ABSOLUTE_PATH = "configuration.json";
 
             // Output for debug
             debug("Debug override");
@@ -144,6 +148,16 @@ public class Alkabot {
             debug("Creating logger");
             LOGGER = LoggerFactory.getLogger(Alkabot.class);
 
+            // Initializing tokens
+            TokensLoader tokensLoader = new TokensLoader();
+            TOKENS = tokensLoader.getTokens();
+
+            if (tokensLoader.getTokens() == null)
+                return;
+
+            if (tokensLoader.getTokens().getDiscord_token() == null)
+                return;
+
             // Initializing configuration
             ConfigurationLoader configurationLoader = new ConfigurationLoader(false);
 
@@ -183,7 +197,7 @@ public class Alkabot {
             // Building JDA
             getLogger().info("Building JDA...");
 
-            JDABuilder jdaBuilder = JDABuilder.createDefault(getConfig().getToken());
+            JDABuilder jdaBuilder = JDABuilder.createDefault(getTokens().getDiscord_token());
             jdaBuilder.setRawEventsEnabled(true);
             jdaBuilder.setStatus(OnlineStatus.valueOf(getConfig().getPresence().getStatus()));
             if (getConfig().getPresence().getActivity().isShow())
@@ -228,6 +242,14 @@ public class Alkabot {
 
     public static Logger getLogger() {
         return LOGGER;
+    }
+
+    public static Tokens getTokens() {
+        return TOKENS;
+    }
+
+    public static void setTokens(Tokens tokens) {
+        Alkabot.TOKENS = tokens;
     }
 
     public static Configuration getConfig() {

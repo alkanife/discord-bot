@@ -4,8 +4,6 @@ import java.util.List;
 
 public class Configuration {
 
-    private String token;
-    private Spotify spotify;
     private List<String> administrators_id;
     private String guild_id;
     private boolean admin_only;
@@ -18,9 +16,7 @@ public class Configuration {
 
     public Configuration() {}
 
-    public Configuration(String token, Spotify spotify, List<String> administrators_id, String guild_id, boolean admin_only, boolean debug, Presence presence, WelcomeMessage welcome_message, AutoRole auto_role, Logs logs, Commands commands) {
-        this.token = token;
-        this.spotify = spotify;
+    public Configuration(List<String> administrators_id, String guild_id, boolean admin_only, boolean debug, Presence presence, WelcomeMessage welcome_message, AutoRole auto_role, Logs logs, Commands commands) {
         this.administrators_id = administrators_id;
         this.guild_id = guild_id;
         this.admin_only = admin_only;
@@ -30,14 +26,6 @@ public class Configuration {
         this.auto_role = auto_role;
         this.logs = logs;
         this.commands = commands;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public Spotify getSpotify() {
-        return spotify;
     }
 
     public List<String> getAdministrators_id() {
@@ -74,26 +62,6 @@ public class Configuration {
 
     public Commands getCommands() {
         return commands;
-    }
-
-    public static class Spotify {
-        private String client_id;
-        private String client_secret;
-
-        public Spotify() {}
-
-        public Spotify(String client_id, String client_secret) {
-            this.client_id = client_id;
-            this.client_secret = client_secret;
-        }
-
-        public String getClient_id() {
-            return client_id;
-        }
-
-        public String getClient_secret() {
-            return client_secret;
-        }
     }
 
     public static class Presence {

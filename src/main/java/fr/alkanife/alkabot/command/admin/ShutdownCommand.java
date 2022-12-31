@@ -28,10 +28,10 @@ public class ShutdownCommand extends AbstractAdminCommand {
         event.getMessage().reply("Stopping (may take a moment!)").queue(message -> {
             // Log
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(Alkabot.t("logs-power-off-title"));
+            embedBuilder.setTitle(Alkabot.t("notification.self.power_off.title"));
             embedBuilder.setThumbnail(message.getJDA().getSelfUser().getAvatarUrl());
             embedBuilder.setColor(Colors.ORANGE);
-            embedBuilder.setDescription(event.getAuthor().getAsMention() + " " + Alkabot.t("logs-power-off-description"));
+            embedBuilder.setDescription(event.getAuthor().getAsMention() + " " + Alkabot.t("notification.self.power_off.description"));
             Alkabot.getNotificationManager().getSelfNotification().notifyAdmin(embedBuilder.build());
 
             // Shutdown

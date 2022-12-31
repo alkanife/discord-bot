@@ -49,7 +49,6 @@ public class ConfigurationLoader {
             configuration = gson.fromJson(configurationFileContent, JSONConfiguration.class);
         } catch (Exception exception) {
             Alkabot.getLogger().error("Failed to read the JSON of the configuration file");
-            Alkabot.getLogger().error("File content: " + configurationFileContent);
             exception.printStackTrace();
         }
     }

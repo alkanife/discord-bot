@@ -26,7 +26,7 @@ public class CopyCommand extends AbstractCommand {
 
     @Override
     public SlashCommandData getCommandData() {
-        return Commands.slash("copy", Alkabot.t("copy-command-description"))
+        return Commands.slash(getName(), getDescription())
                 .addOption(OptionType.STRING, "input", Alkabot.t("command.copy.input_description"), true);
     }
 

@@ -41,12 +41,10 @@ public class ReadyListener extends ListenerAdapter {
             // LOG SUCCESSFUL CONNECTION
             //
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(Alkabot.t("logs-power-on-title"));
+            embedBuilder.setTitle(Alkabot.t("notification.self.power_on.title"));
             embedBuilder.setColor(Colors.BIG_GREEN);
 
-            String[] okMemes = Alkabot.t("ok-memes").split("\n");
-            int random = new Random().nextInt(okMemes.length);
-            embedBuilder.setThumbnail(okMemes[random]);
+            embedBuilder.setThumbnail(Alkabot.tr("ok_memes"));
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Alkabot v")
@@ -54,13 +52,13 @@ public class ReadyListener extends ListenerAdapter {
                     .append("\n\n");
 
             if (Alkabot.getConfig().getAdmin().getAdministrators_id().size() > 0) {
-                stringBuilder.append(Alkabot.t("logs-power-on-admin"));
+                stringBuilder.append(Alkabot.t("notification.self.power_on.admins"));
                 for (String admin : Alkabot.getConfig().getAdmin().getAdministrators_id())
                     stringBuilder.append(" <@").append(admin).append(">");
                 stringBuilder.append("\n\n");
             }
 
-            stringBuilder.append(Alkabot.t("logs-power-on-help"));
+            stringBuilder.append(Alkabot.t("notification.self.power_on.help"));
             embedBuilder.setDescription(stringBuilder.toString());
 
             Alkabot.getNotificationManager().getSelfNotification().notifyAdmin(embedBuilder.build());

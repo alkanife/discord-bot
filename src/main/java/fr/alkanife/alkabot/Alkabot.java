@@ -46,7 +46,8 @@ public class Alkabot {
     private static TextChannel welcomeMessageChannel;
     private static Role autoRole;
     private static CommandManager commandManager;
-    private static HashMap<String, Object> translations = new HashMap<>();
+    private static HashMap<String, String> translations = new HashMap<>();
+    private static HashMap<String, List<String>> randomTranslations = new HashMap<>();
     private static JDA jda;
     private static Guild guild;
     private static MusicManager musicManager;
@@ -95,6 +96,8 @@ public class Alkabot {
                 System.out.println("***                                                                                ***\n" +
                         "*** THIS VERSION IS A DEV BUILD AND SHOULD NOT BE USED IN A PRODUCTION ENVIRONMENT ***\n" +
                         "***                                                                                ***");
+
+            Thread.sleep(2000);
 
             // Setting default path (this is the path where the .jar is located)
             absolutePath = Paths.get("").toAbsolutePath().toString();
@@ -190,6 +193,7 @@ public class Alkabot {
                 return;
 
             translations = translationsLoader.getTranslations();
+            randomTranslations = translationsLoader.getRandomTranslations();
 
             // Initializing music manager
             musicManager = new MusicManager();
@@ -319,12 +323,20 @@ public class Alkabot {
         Alkabot.commandManager = commandManager;
     }
 
-    public static HashMap<String, Object> getTranslations() {
+    public static HashMap<String, String> getTranslations() {
         return translations;
     }
 
-    public static void setTranslations(HashMap<String, Object> translations) {
+    public static void setTranslations(HashMap<String, String> translations) {
         Alkabot.translations = translations;
+    }
+
+    public HashMap<String, List<String>> getRandomTranslations() {
+        return randomTranslations;
+    }
+
+    public void setRandomTranslations(HashMap<String, List<String>> randomTranslations) {
+        this.randomTranslations = randomTranslations;
     }
 
     public static JDA getJda() {
@@ -385,8 +397,48 @@ public class Alkabot {
 
     public static String t(String key, String... values) {
         if (translations.containsKey(key)) {
-            MessageFormat messageFormat = new MessageFormat(String.valueOf(translations.get(key)));
-            return messageFormat.format(values);
-        } else return "{" + key + "}";
+            String translation = translations.get(key);
+
+            if (values != null) {
+                if (values.length > 0) {
+                    int i = 1;
+                    for (String value : values) {
+                        String query = "[value" + i + "]";
+                        translation = translation.replace(query, value);
+                        i++;
+                    }
+                }
+            }
+
+            return translation;
+        } else {
+            Alkabot.getLogger().warn("Missing translation at " + key);
+            return "{" + key + "}";
+        }
+    }
+
+    public static String tr(String key, String... values) {
+        if (randomTranslations.containsKey(key)) {
+            List<String> randomTl = randomTranslations.get(key);
+            int random = new Random().nextInt(randomTl.size() + 1);
+
+            String randomTranslation = randomTl.get(random);
+
+            if (values != null) {
+                if (values.length > 0) {
+                    int i = 1;
+                    for (String value : values) {
+                        String query = "[value" + i + "]";
+                        randomTranslation = randomTranslation.replace(query, value);
+                        i++;
+                    }
+                }
+            }
+
+            return randomTranslation;
+        } else {
+            Alkabot.getLogger().warn("Missing translation at " + key);
+            return "{" + key + "}";
+        }
     }
 }

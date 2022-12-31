@@ -14,9 +14,9 @@ public class TranslationsLoader {
     private HashMap<String, Object> translations = new HashMap<>();
 
     public TranslationsLoader(boolean reload) throws FileNotFoundException {
-        Alkabot.getLogger().info((reload ? "(RELOAD) " : "") + "Reading " + Alkabot.absolutePath() + "/lang.yml");
+        Alkabot.getLogger().info((reload ? "(RELOAD) " : "") + "Reading " + Alkabot.getAbsolutePath() + "/lang.yml");
 
-        File langFile = new File(Alkabot.absolutePath() + "/lang.yml");
+        File langFile = new File(Alkabot.getAbsolutePath() + "/lang.yml");
 
         if (!langFile.exists()) {
             Alkabot.getLogger().warn("Translation file not found");

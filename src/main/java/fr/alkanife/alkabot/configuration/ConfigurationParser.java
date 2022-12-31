@@ -12,18 +12,13 @@ import net.dv8tion.jda.api.OnlineStatus;
 import org.slf4j.event.Level;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class ConfigurationParser {
-
-    private boolean reload;
-    private Status status;
-    private List<String> logs;
+public class ConfigurationParser extends AbstractWorker {
 
     public ConfigurationParser(boolean reload) {
-        this.reload = reload;
-        status = Status.PERFECT;
-        logs = new ArrayList<>();
+        super(reload);
+
+        Alkabot.debug("Parsing configuration");
 
         JSONConfiguration conf = Alkabot.getConfig();
 
@@ -32,19 +27,19 @@ public class ConfigurationParser {
         //
         if (StringUtils.isNull(conf.getLang_file())) {
             log(Level.ERROR, "Can't continue because the 'lang_file' field is empty");
-            status = Status.FAIL;
+            setStatus(Status.FAIL);
             return;
         }
 
         if (conf.getGuild() == null) {
             log(Level.ERROR, "Can't continue because the 'guild' field is empty");
-            status = Status.FAIL;
+            setStatus(Status.FAIL);
             return;
         }
 
         if (StringUtils.isNull(conf.getGuild().getGuild_id())) {
             log(Level.ERROR, "Can't continue because the 'guild.guild_id' field is empty");
-            status = Status.FAIL;
+            setStatus(Status.FAIL);
             return;
         }
 
@@ -201,45 +196,13 @@ public class ConfigurationParser {
         }
     }
 
-    private void log(Level level, String s) {
-        if (reload)
-            s = "(reload) " + s;
-
-        switch (level) {
-            case ERROR -> Alkabot.getLogger().error(s);
-            case WARN -> Alkabot.getLogger().warn(s);
-            default -> Alkabot.getLogger().info(s);
-        }
-
-        if (reload)
-            logs.add(level.name() + " " + s);
-    }
-
     private void changingBecauseNoValue(String field, String newValue, String noValueField) {
         log(Level.WARN, "Changing '" + field + "' to '" + newValue + "', there is no value in '" + noValueField + "'");
-        status = Status.NOT_PERFECT;
+        setStatus(Status.NOT_PERFECT);
     }
 
     private void changeNull(String field, String newValue) {
         log(Level.WARN, "'" + field + "' is null, changing it to '" + newValue + "'");
-        status = Status.NOT_PERFECT;
-    }
-
-    public enum Status {
-        PERFECT,
-        NOT_PERFECT,
-        FAIL;
-    }
-
-    public boolean reload() {
-        return reload;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public List<String> getLogs() {
-        return logs;
+        setStatus(Status.NOT_PERFECT);
     }
 }

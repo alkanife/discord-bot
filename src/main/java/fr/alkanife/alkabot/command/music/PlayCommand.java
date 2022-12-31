@@ -1,35 +1,33 @@
-package fr.alkanife.alkabot.commands;
+package fr.alkanife.alkabot.command.music;
 
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.command.AbstractCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
-public class AboutCommand extends AbstractCommand {
+public class PlayCommand extends AbstractCommand {
 
     @Override
     public String getName() {
-        return "about";
+        return "play";
     }
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.about.description");
-    }
-
-    @Override
-    public String exampleUsage() {
-        return "about";
+        return Alkabot.t("command.music.play.description");
     }
 
     @Override
     public boolean isEnabled() {
-        return Alkabot.getConfig().getCommands().isAbout();
+        return Alkabot.getConfig().getCommands().getMusic().isPlay();
     }
 
     @Override
     public SlashCommandData getCommandData() {
-        return Commands.slash(getName(), getDescription());
+        return Commands.slash(getName(), getDescription())
+                .addOption(OptionType.STRING, "input", Alkabot.t("command.music.play.input_description"), true);
     }
 
     @Override

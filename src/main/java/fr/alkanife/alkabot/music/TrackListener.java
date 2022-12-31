@@ -73,7 +73,7 @@ public class TrackListener extends AudioEventAdapter {
 
             retriedTracks.add(track.getInfo().title);
 
-            musicManager.getTrackScheduler().queue(new AlkabotTrack(track, Alkabot.getJDA().getSelfUser().getName(), Alkabot.getJDA().getSelfUser().getId(), true));
+            musicManager.getTrackScheduler().queue(new AlkabotTrack(track, Alkabot.getJda().getSelfUser().getName(), Alkabot.getJda().getSelfUser().getId(), true));
         }
 
         if (musicManager != null)

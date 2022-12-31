@@ -1,18 +1,13 @@
 package fr.alkanife.alkabot;
 
-import fr.alkanife.alkabot.commands.InfoCommands;
-import fr.alkanife.alkabot.commands.UtilitiesCommands;
-import fr.alkanife.alkabot.commands.music.PlayerCommands;
-import fr.alkanife.alkabot.commands.music.PlaylistCommand;
-import fr.alkanife.alkabot.commands.music.QueueCommand;
-import fr.alkanife.alkabot.commands.utils.CommandHandler;
+import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.configuration.ConfigurationParser;
 import fr.alkanife.alkabot.configuration.json.JSONConfiguration;
 import fr.alkanife.alkabot.configuration.ConfigurationLoader;
 import fr.alkanife.alkabot.configuration.tokens.Tokens;
 import fr.alkanife.alkabot.configuration.tokens.TokensLoader;
-import fr.alkanife.alkabot.events.Events;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
+import fr.alkanife.alkabot.listener.ListenerManager;
 import fr.alkanife.alkabot.music.MusicManager;
 import fr.alkanife.alkabot.music.playlist.PlaylistManager;
 import fr.alkanife.alkabot.notification.NotificationManager;
@@ -37,7 +32,7 @@ import java.util.*;
 
 public class Alkabot {
 
-    public static final String VERSION = "1.3.beta2";
+    public static final String VERSION = "2.0.0-dev1";
     public static final String WEBSITE = "https://github.com/alkanife/alkabot";
 
     private static boolean debug = false;
@@ -50,13 +45,14 @@ public class Alkabot {
     private static JSONConfiguration configuration;
     private static TextChannel welcomeMessageChannel;
     private static Role autoRole;
-    private static CommandHandler commandHandler;
+    private static CommandManager commandManager;
     private static HashMap<String, Object> translations = new HashMap<>();
     private static JDA jda;
     private static Guild guild;
     private static MusicManager musicManager;
     private static PlaylistManager playlistManager;
     private static NotificationManager notificationManager;
+    private static ListenerManager listenerManager;
 
     public static void main(String[] args) {
         try {
@@ -180,17 +176,10 @@ public class Alkabot {
 
             // Initializing commands
             // Always initialize command AFTER parsing the configuration
-            debug("Setting up commands");
+            commandManager = new CommandManager();
+            commandManager.initialize();
 
-            commandHandler = new CommandHandler();
-            commandHandler.registerCommands(new AdminCommands(),
-                    new PlayerCommands(),
-                    new PlaylistCommand(),
-                    new QueueCommand(),
-                    new InfoCommands(),
-                    new UtilitiesCommands());
-
-            logger.info(commandHandler.getCommands().size() + " commands ready");
+            logger.info(commandManager.getCommands().size() + " commands ready");
 
             // Initializing translations
             debug("Reading translations");
@@ -213,6 +202,9 @@ public class Alkabot {
             playlistManager = new PlaylistManager();
             playlistManager.read();
 
+            // Initializing Listener Manager
+            listenerManager = new ListenerManager();
+
             // Building JDA
             logger.info("Building JDA...");
 
@@ -229,7 +221,8 @@ public class Alkabot {
                     GatewayIntent.DIRECT_MESSAGES,
                     GatewayIntent.MESSAGE_CONTENT);
             jdaBuilder.setMemberCachePolicy(MemberCachePolicy.ALL);
-            jdaBuilder.addEventListeners(new Events());
+
+            listenerManager.initialize(jdaBuilder);
 
             logger.info("Starting JDA");
             jda = jdaBuilder.build();
@@ -318,12 +311,12 @@ public class Alkabot {
         Alkabot.autoRole = autoRole;
     }
 
-    public static CommandHandler getCommandHandler() {
-        return commandHandler;
+    public static CommandManager getCommandManager() {
+        return commandManager;
     }
 
-    public static void setCommandHandler(CommandHandler commandHandler) {
-        Alkabot.commandHandler = commandHandler;
+    public static void setCommandManager(CommandManager commandManager) {
+        Alkabot.commandManager = commandManager;
     }
 
     public static HashMap<String, Object> getTranslations() {
@@ -372,6 +365,14 @@ public class Alkabot {
 
     public static void setNotificationManager(NotificationManager notificationManager) {
         Alkabot.notificationManager = notificationManager;
+    }
+
+    public static ListenerManager getListenerManager() {
+        return listenerManager;
+    }
+
+    public static void setListenerManager(ListenerManager listenerManager) {
+        Alkabot.listenerManager = listenerManager;
     }
 
     public static void debug(String s) {

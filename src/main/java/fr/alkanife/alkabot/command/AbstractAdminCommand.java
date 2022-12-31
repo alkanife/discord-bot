@@ -1,4 +1,4 @@
-package fr.alkanife.alkabot.commands;
+package fr.alkanife.alkabot.command;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 

@@ -1,7 +1,7 @@
-package fr.alkanife.alkabot.commands.admin;
+package fr.alkanife.alkabot.command.admin;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.commands.AbstractAdminCommand;
+import fr.alkanife.alkabot.command.AbstractAdminCommand;
 import fr.alkanife.alkabot.utils.Colors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;

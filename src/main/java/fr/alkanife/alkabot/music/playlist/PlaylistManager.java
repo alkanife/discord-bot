@@ -22,7 +22,7 @@ public class PlaylistManager {
         Type typeDate = new TypeToken<List<Playlist>>(){}.getType();
         String json = gson.toJson(playlists, typeDate);
 
-        Files.writeString(Paths.get(Alkabot.absolutePath() + "/playlists.json"), json);
+        Files.writeString(Paths.get(Alkabot.getAbsolutePath() + "/playlists.json"), json);
         Alkabot.getLogger().info(playlists.size() + " playlists were written");
     }
 
@@ -32,7 +32,7 @@ public class PlaylistManager {
 
     public void read(boolean reload) throws IOException {
         Alkabot.getLogger().info((reload ? "(RELOAD) " : "") +"Reading playlists");
-        File plFile = new File(Alkabot.absolutePath() + "/playlists.json");
+        File plFile = new File(Alkabot.getConfigurationFilePath() + "/playlists.json");
 
         if (!plFile.exists()) {
             return;

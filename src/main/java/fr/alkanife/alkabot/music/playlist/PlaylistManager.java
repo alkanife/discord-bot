@@ -1,4 +1,4 @@
-package fr.alkanife.alkabot.music.playlists;
+package fr.alkanife.alkabot.music.playlist;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -9,18 +9,21 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
-public class PlaylistsManager {
+public class PlaylistManager {
+
+    private List<Playlist> playlists = new ArrayList<>();
 
     public void write() throws IOException {
         Alkabot.getLogger().info("Writing playlists");
         Gson gson = new Gson();
         Type typeDate = new TypeToken<List<Playlist>>(){}.getType();
-        String json = gson.toJson(Alkabot.getPlaylists(), typeDate);
+        String json = gson.toJson(playlists, typeDate);
 
         Files.writeString(Paths.get(Alkabot.absolutePath() + "/playlists.json"), json);
-        Alkabot.getLogger().info(Alkabot.getPlaylists().size() + " playlists were written");
+        Alkabot.getLogger().info(playlists.size() + " playlists were written");
     }
 
     public void read() throws IOException {
@@ -39,8 +42,26 @@ public class PlaylistsManager {
 
         Gson gson = new Gson();
         Type typeDate = new TypeToken<List<Playlist>>(){}.getType();
-        Alkabot.setPlaylists(gson.fromJson(plRaw, typeDate));
+        playlists = gson.fromJson(plRaw, typeDate);
 
-        Alkabot.getLogger().info(Alkabot.getPlaylists().size() + " playlists available");
+        Alkabot.getLogger().info(playlists.size() + " playlists available");
+    }
+
+    public Playlist getPlaylist(String name) {
+        Playlist pl = null;
+
+        for (Playlist p : playlists)
+            if (p.getName().equalsIgnoreCase(name))
+                pl = p;
+
+        return pl;
+    }
+
+    public List<Playlist> getPlaylists() {
+        return playlists;
+    }
+
+    public void setPlaylists(List<Playlist> playlists) {
+        this.playlists = playlists;
     }
 }

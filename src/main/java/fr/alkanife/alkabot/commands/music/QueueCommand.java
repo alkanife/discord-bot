@@ -2,7 +2,6 @@ package fr.alkanife.alkabot.commands.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.commands.utils.Command;
 import fr.alkanife.alkabot.music.AlkabotTrack;
 import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -14,7 +13,6 @@ import java.util.List;
 
 public class QueueCommand {
 
-    @Command(name = "queue")
     public void queue(SlashCommandInteractionEvent event) {
         AudioTrack current = Alkabot.getAudioPlayer().getPlayingTrack();
         if (current == null) {

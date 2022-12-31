@@ -1,31 +1,28 @@
 package fr.alkanife.alkabot;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import fr.alkanife.alkabot.commands.AdminCommands;
 import fr.alkanife.alkabot.commands.InfoCommands;
 import fr.alkanife.alkabot.commands.UtilitiesCommands;
 import fr.alkanife.alkabot.commands.music.PlayerCommands;
 import fr.alkanife.alkabot.commands.music.PlaylistCommand;
 import fr.alkanife.alkabot.commands.music.QueueCommand;
 import fr.alkanife.alkabot.commands.utils.CommandHandler;
-import fr.alkanife.alkabot.configuration.Configuration;
+import fr.alkanife.alkabot.configuration.ConfigurationParser;
+import fr.alkanife.alkabot.configuration.json.JSONConfiguration;
 import fr.alkanife.alkabot.configuration.ConfigurationLoader;
 import fr.alkanife.alkabot.configuration.tokens.Tokens;
 import fr.alkanife.alkabot.configuration.tokens.TokensLoader;
 import fr.alkanife.alkabot.events.Events;
-import fr.alkanife.alkabot.events.LogEvents;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
-import fr.alkanife.alkabot.music.TrackScheduler;
-import fr.alkanife.alkabot.music.playlists.Playlist;
-import fr.alkanife.alkabot.music.playlists.PlaylistsManager;
+import fr.alkanife.alkabot.music.MusicManager;
+import fr.alkanife.alkabot.music.playlist.PlaylistManager;
+import fr.alkanife.alkabot.notification.NotificationManager;
 import fr.alkanife.alkabot.utils.AlkabotUtils;
+import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
@@ -37,30 +34,29 @@ import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 
 public class Alkabot {
 
-    private static String VERSION = "1.3.beta2";
-    private static String WEBSITE = "https://github.com/alkanife/alkabot";
+    public static final String VERSION = "1.3.beta2";
+    public static final String WEBSITE = "https://github.com/alkanife/alkabot";
 
-    private static boolean DEBUG = false;
-    private static String TOKENS_FILE_PATH;
-    private static String CONFIGURATION_FILE_PATH;
-    private static String ABSOLUTE_PATH;
-    private static Logger LOGGER;
-    private static Tokens TOKENS;
-    private static Configuration CONFIGURATION;
-    private static CommandHandler COMMAND_HANDLER;
-    private static HashMap<String, Object> TRANSLATIONS = new HashMap<>();
-    private static JDA JDA;
-    private static Guild GUILD;
-    private static MessageChannelUnion LAST_SLASH_PLAY_CHANNEL;
-    private static AudioPlayerManager AUDIO_PLAYER_MANAGER;
-    private static AudioPlayer AUDIO_PLAYER;
-    private static TrackScheduler TRACK_SCHEDULER;
-    private static List<Playlist> PLAYLISTS = new ArrayList<>();
-    private static PlaylistsManager PLAYLIST_MANAGER;
+    private static boolean debug = false;
+    private static String tokensFilePath;
+    private static String configurationFilePath;
+    private static String absolutePath;
+    private static Logger logger;
+    private static Tokens tokens;
+    private static boolean spotifySupport = true;
+    private static JSONConfiguration configuration;
+    private static TextChannel welcomeMessageChannel;
+    private static Role autoRole;
+    private static CommandHandler commandHandler;
+    private static HashMap<String, Object> translations = new HashMap<>();
+    private static JDA jda;
+    private static Guild guild;
+    private static MusicManager musicManager;
+    private static PlaylistManager playlistManager;
+    private static NotificationManager notificationManager;
 
     public static void main(String[] args) {
         try {
@@ -77,13 +73,13 @@ public class Alkabot {
                 }
 
                 if (args[0].equalsIgnoreCase("debug"))
-                    DEBUG = true;
+                    debug = true;
 
                 if (args.length >= 2) {
-                    TOKENS_FILE_PATH = args[1];
+                    tokensFilePath = args[1];
 
                     if (args.length >= 3)
-                        CONFIGURATION_FILE_PATH = args[2];
+                        configurationFilePath = args[2];
                 }
             }
 
@@ -105,30 +101,30 @@ public class Alkabot {
                         "***                                                                                ***");
 
             // Setting default path (this is the path where the .jar is located)
-            ABSOLUTE_PATH = Paths.get("").toAbsolutePath().toString();
-            TOKENS_FILE_PATH = ABSOLUTE_PATH + "/tokens.json";
-            CONFIGURATION_FILE_PATH = ABSOLUTE_PATH = "configuration.json";
+            absolutePath = Paths.get("").toAbsolutePath().toString();
+            tokensFilePath = absolutePath + "/tokens.json";
+            configurationFilePath = absolutePath + "/configuration.json";
 
             // Output for debug
             debug("Debug override");
-            debug("Absolute path: " + ABSOLUTE_PATH);
-            debug("Tokens path: " + TOKENS_FILE_PATH);
-            debug("Configuration path: " + CONFIGURATION_FILE_PATH);
+            debug("Absolute path: " + absolutePath);
+            debug("Tokens path: " + tokensFilePath);
+            debug("Configuration path: " + configurationFilePath);
 
             // Moving old latest.log file
             debug("Moving old 'latest.log' file to the logs/ folder");
-            File latestLogs = new File(ABSOLUTE_PATH + "/latest.log");
+            File latestLogs = new File(absolutePath + "/latest.log");
 
             if (latestLogs.exists()) {
                 debug("latest.log file existing");
                 System.out.println("Cleaning logs...");
 
-                File logsFolder = new File(ABSOLUTE_PATH + "/logs");
+                File logsFolder = new File(absolutePath + "/logs");
 
                 if (logsFolder.exists()) {
                     debug("logs/ folder already existing");
                     if (!logsFolder.isDirectory()) {
-                        System.out.println(ABSOLUTE_PATH + "/logs is not a directory");
+                        System.out.println(absolutePath + "/logs is not a directory");
                         return;
                     }
                 } else {
@@ -137,7 +133,7 @@ public class Alkabot {
                 }
 
                 String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-                String newPath = ABSOLUTE_PATH + "/logs/before-" + date + ".log";
+                String newPath = absolutePath + "/logs/before-" + date + ".log";
 
                 debug("Moving latest.log file to " + newPath);
                 Files.move(latestLogs.toPath(), Paths.get(newPath));
@@ -146,11 +142,11 @@ public class Alkabot {
             }
 
             debug("Creating logger");
-            LOGGER = LoggerFactory.getLogger(Alkabot.class);
+            logger = LoggerFactory.getLogger(Alkabot.class);
 
             // Initializing tokens
             TokensLoader tokensLoader = new TokensLoader();
-            TOKENS = tokensLoader.getTokens();
+            tokens = tokensLoader.getTokens();
 
             if (tokensLoader.getTokens() == null)
                 return;
@@ -158,26 +154,43 @@ public class Alkabot {
             if (tokensLoader.getTokens().getDiscord_token() == null)
                 return;
 
+            if (tokensLoader.getTokens().getSpotify() == null) {
+                logger.info("Disabling spotify support");
+                spotifySupport = false;
+            }
+
+            if (StringUtils.isNull(tokensLoader.getTokens().getSpotify().getClient_id())
+                    || StringUtils.isNull(tokensLoader.getTokens().getSpotify().getClient_secret())) {
+                logger.info("Disabling spotify support because there is no client_id or client_secret");
+                spotifySupport = false;
+            }
+
             // Initializing configuration
             ConfigurationLoader configurationLoader = new ConfigurationLoader(false);
 
             if (configurationLoader.getConfiguration() == null)
                 return;
 
-            CONFIGURATION = configurationLoader.getConfiguration();
+            configuration = configurationLoader.getConfiguration();
+
+            ConfigurationParser configurationParser = new ConfigurationParser(false);
+
+            if (configurationParser.getStatus() == ConfigurationParser.Status.FAIL)
+                return;
 
             // Initializing commands
+            // Always initialize command AFTER parsing the configuration
             debug("Setting up commands");
 
-            COMMAND_HANDLER = new CommandHandler();
-            getCommandHandler().registerCommands(new AdminCommands(),
+            commandHandler = new CommandHandler();
+            commandHandler.registerCommands(new AdminCommands(),
                     new PlayerCommands(),
                     new PlaylistCommand(),
                     new QueueCommand(),
                     new InfoCommands(),
                     new UtilitiesCommands());
 
-            getLogger().info(COMMAND_HANDLER.getCommands().size() + " commands ready");
+            logger.info(commandHandler.getCommands().size() + " commands ready");
 
             // Initializing translations
             debug("Reading translations");
@@ -187,20 +200,26 @@ public class Alkabot {
             if (translationsLoader.getTranslations() == null)
                 return;
 
-            TRANSLATIONS = translationsLoader.getTranslations();
+            translations = translationsLoader.getTranslations();
+
+            // Initializing music manager
+            musicManager = new MusicManager();
+
+            // Initializing Notification manager
+            notificationManager = new NotificationManager();
 
             // Initializing playlists
             debug("Reading playlists");
-            PLAYLIST_MANAGER = new PlaylistsManager();
-            getPlaylistManager().read();
+            playlistManager = new PlaylistManager();
+            playlistManager.read();
 
             // Building JDA
-            getLogger().info("Building JDA...");
+            logger.info("Building JDA...");
 
-            JDABuilder jdaBuilder = JDABuilder.createDefault(getTokens().getDiscord_token());
+            JDABuilder jdaBuilder = JDABuilder.createDefault(tokens.getDiscord_token());
             jdaBuilder.setRawEventsEnabled(true);
-            jdaBuilder.setStatus(OnlineStatus.valueOf(getConfig().getPresence().getStatus()));
-            if (getConfig().getPresence().getActivity().isShow())
+            jdaBuilder.setStatus(OnlineStatus.valueOf(configuration.getGuild().getPresence().getStatus()));
+            if (configuration.getGuild().getPresence().getActivity().isShow())
                 jdaBuilder.setActivity(AlkabotUtils.buildActivity());
 
             jdaBuilder.enableIntents(GatewayIntent.GUILD_MEMBERS,
@@ -211,169 +230,162 @@ public class Alkabot {
                     GatewayIntent.MESSAGE_CONTENT);
             jdaBuilder.setMemberCachePolicy(MemberCachePolicy.ALL);
             jdaBuilder.addEventListeners(new Events());
-            jdaBuilder.addEventListeners(new LogEvents());
 
-            getLogger().info("Starting JDA");
-            JDA = jdaBuilder.build();
+            logger.info("Starting JDA");
+            jda = jdaBuilder.build();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
     }
 
     public static boolean isDebugging() {
-        return DEBUG;
+        return debug;
     }
 
-    public static void setDebugging(boolean debug) {
-        DEBUG = debug;
-    }
-
-    public static String absolutePath() {
-        return ABSOLUTE_PATH;
+    public static void setDebug(boolean debug) {
+        Alkabot.debug = debug;
     }
 
     public static String getTokensFilePath() {
-        return TOKENS_FILE_PATH;
+        return tokensFilePath;
+    }
+
+    public static void setTokensFilePath(String tokensFilePath) {
+        Alkabot.tokensFilePath = tokensFilePath;
     }
 
     public static String getConfigurationFilePath() {
-        return CONFIGURATION_FILE_PATH;
+        return configurationFilePath;
+    }
+
+    public static void setConfigurationFilePath(String configurationFilePath) {
+        Alkabot.configurationFilePath = configurationFilePath;
+    }
+
+    public static String getAbsolutePath() {
+        return absolutePath;
+    }
+
+    public static void setAbsolutePath(String absolutePath) {
+        Alkabot.absolutePath = absolutePath;
     }
 
     public static Logger getLogger() {
-        return LOGGER;
+        return logger;
+    }
+
+    public static void setLogger(Logger logger) {
+        Alkabot.logger = logger;
     }
 
     public static Tokens getTokens() {
-        return TOKENS;
+        return tokens;
     }
 
     public static void setTokens(Tokens tokens) {
-        Alkabot.TOKENS = tokens;
+        Alkabot.tokens = tokens;
     }
 
-    public static Configuration getConfig() {
-        return CONFIGURATION;
+    public static boolean supportSpotify() {
+        return spotifySupport;
     }
 
-    public static void setConfig(Configuration CONFIGURATION) {
-        Alkabot.CONFIGURATION = CONFIGURATION;
+    public static void setSpotifySupport(boolean spotifySupport) {
+        Alkabot.spotifySupport = spotifySupport;
+    }
+
+    public static JSONConfiguration getConfig() {
+        return configuration;
+    }
+
+    public static void setConfiguration(JSONConfiguration configuration) {
+        Alkabot.configuration = configuration;
+    }
+
+    public static TextChannel getWelcomeMessageChannel() {
+        return welcomeMessageChannel;
+    }
+
+    public static void setWelcomeMessageChannel(TextChannel welcomeMessageChannel) {
+        Alkabot.welcomeMessageChannel = welcomeMessageChannel;
+    }
+
+    public static Role getAutoRole() {
+        return autoRole;
+    }
+
+    public static void setAutoRole(Role autoRole) {
+        Alkabot.autoRole = autoRole;
     }
 
     public static CommandHandler getCommandHandler() {
-        return COMMAND_HANDLER;
+        return commandHandler;
+    }
+
+    public static void setCommandHandler(CommandHandler commandHandler) {
+        Alkabot.commandHandler = commandHandler;
     }
 
     public static HashMap<String, Object> getTranslations() {
-        return TRANSLATIONS;
+        return translations;
     }
 
-    public static void setTranslations(HashMap<String, Object> TRANSLATIONS) {
-        Alkabot.TRANSLATIONS = TRANSLATIONS;
+    public static void setTranslations(HashMap<String, Object> translations) {
+        Alkabot.translations = translations;
     }
 
-    public static JDA getJDA() {
-        return JDA;
+    public static JDA getJda() {
+        return jda;
     }
 
-    public static void setGuild(Guild guild) {
-        GUILD = guild;
+    public static void setJda(JDA jda) {
+        Alkabot.jda = jda;
     }
 
     public static Guild getGuild() {
-        return GUILD;
+        return guild;
     }
 
-    public static String getVersion() {
-        return VERSION;
+    public static void setGuild(Guild guild) {
+        Alkabot.guild = guild;
     }
 
-    public static MessageChannelUnion getLastSlashPlayChannel() {
-        return LAST_SLASH_PLAY_CHANNEL;
+    public static MusicManager getMusicManager() {
+        return musicManager;
     }
 
-    public static void setLastSlashPlayChannel(MessageChannelUnion lastSlashPlayChannel) {
-        LAST_SLASH_PLAY_CHANNEL = lastSlashPlayChannel;
+    public static void setMusicManager(MusicManager musicManager) {
+        Alkabot.musicManager = musicManager;
     }
 
-    public static AudioPlayerManager getAudioPlayerManager() {
-        return AUDIO_PLAYER_MANAGER;
+    public static PlaylistManager getPlaylistManager() {
+        return playlistManager;
     }
 
-    public static void setAudioPlayerManager(AudioPlayerManager audioPlayerManager) {
-        AUDIO_PLAYER_MANAGER = audioPlayerManager;
+    public static void setPlaylistManager(PlaylistManager playlistManager) {
+        Alkabot.playlistManager = playlistManager;
     }
 
-    public static AudioPlayer getAudioPlayer() {
-        return AUDIO_PLAYER;
+    public static NotificationManager getNotificationManager() {
+        return notificationManager;
     }
 
-    public static void setAudioPlayer(AudioPlayer audioPlayer) {
-        AUDIO_PLAYER = audioPlayer;
-    }
-
-    public static TrackScheduler getTrackScheduler() {
-        return TRACK_SCHEDULER;
-    }
-
-    public static void setTrackScheduler(TrackScheduler trackScheduler) {
-        TRACK_SCHEDULER = trackScheduler;
-    }
-
-    public static List<Playlist> getPlaylists() {
-        return PLAYLISTS;
-    }
-
-    public static Playlist getPlaylist(String name) {
-        Playlist pl = null;
-
-        for (Playlist p : PLAYLISTS)
-            if (p.getName().equalsIgnoreCase(name))
-                pl = p;
-
-        return pl;
-    }
-
-    public static void setPlaylists(List<Playlist> PLAYLISTS) {
-        Alkabot.PLAYLISTS = PLAYLISTS;
-    }
-
-    public static PlaylistsManager getPlaylistManager() {
-        return PLAYLIST_MANAGER;
+    public static void setNotificationManager(NotificationManager notificationManager) {
+        Alkabot.notificationManager = notificationManager;
     }
 
     public static void debug(String s) {
-        if (DEBUG)
-            if (getLogger() == null)
+        if (debug)
+            if (logger == null)
                 System.out.println("[Debug] " + s);
             else
-                getLogger().info("* " + s);
+                logger.info("* " + s);
     }
 
     public static String t(String key, String... values) {
-        if (TRANSLATIONS.containsKey(key)) {
-            MessageFormat messageFormat = new MessageFormat(String.valueOf(TRANSLATIONS.get(key)));
+        if (translations.containsKey(key)) {
+            MessageFormat messageFormat = new MessageFormat(String.valueOf(translations.get(key)));
             return messageFormat.format(values);
-        } else return "{MISSING TRANSLATION @ " + key + "}";
-    }
-
-    public static void discordLog(MessageEmbed embed) {
-        try {
-            TextChannel textChannel = getGuild().getTextChannelById(getConfig().getLogs().getChannel_id());
-
-            if (textChannel == null) {
-                getLogger().warn("No log channel provided / failed to log embed title = " + embed.getTitle());
-                getLogger().warn("Description: " + embed.getDescription());
-                getLogger().warn("Disable logging or provide a valid channel id");
-                return;
-            }
-
-            textChannel.sendMessageEmbeds(embed).queue();
-        } catch (Exception exception) {
-            getLogger().error("Failed to log embed");
-            getLogger().error("Title " + embed.getTitle());
-            getLogger().error("Description: " + embed.getDescription());
-            exception.printStackTrace();
-        }
+        } else return "{" + key + "}";
     }
 }

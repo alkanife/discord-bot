@@ -1,7 +1,6 @@
 package fr.alkanife.alkabot.commands;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.commands.utils.Command;
 import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -10,7 +9,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 public class UtilitiesCommands {
 
-    @Command(name = "copy")
     public void copy(SlashCommandInteractionEvent slashCommandEvent) {
         try {
             OptionMapping copyOption = slashCommandEvent.getOption("input");

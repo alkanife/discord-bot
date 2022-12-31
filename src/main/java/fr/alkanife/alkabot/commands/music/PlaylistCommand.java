@@ -1,8 +1,7 @@
 package fr.alkanife.alkabot.commands.music;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.commands.utils.Command;
-import fr.alkanife.alkabot.music.playlists.Playlist;
+import fr.alkanife.alkabot.music.playlist.Playlist;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -10,7 +9,6 @@ import java.io.IOException;
 
 public class PlaylistCommand {
 
-    @Command(name = "playlist")
     public void playlist(SlashCommandInteractionEvent slashCommandInteractionEvent) {
         String subCommand = slashCommandInteractionEvent.getSubcommandName();
 

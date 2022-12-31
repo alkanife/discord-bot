@@ -1,11 +1,10 @@
 package fr.alkanife.alkabot.commands.music;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.commands.utils.Command;
 import fr.alkanife.alkabot.music.AlkabotTrack;
-import fr.alkanife.alkabot.music.Music;
-import fr.alkanife.alkabot.music.MusicLoader;
-import fr.alkanife.alkabot.music.playlists.Playlist;
+import fr.alkanife.alkabot.music.MusicManager;
+import fr.alkanife.alkabot.music.loader.LavaplayerLoader;
+import fr.alkanife.alkabot.music.playlist.Playlist;
 import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -19,18 +18,17 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class PlayerCommands {
 
-    @Command(name = "play")
     public void play(SlashCommandInteractionEvent event) {
         Alkabot.setLastSlashPlayChannel(event.getChannel());
 
         event.deferReply().queue();
 
-        Music.connect(event.getMember());
+        MusicManager.connect(event.getMember());
 
         String url = event.getOption("input").getAsString();
 
         if (url.startsWith("https://open.spotify.com/playlist")) {
-            MusicLoader.loadSpotifyPlaylist(event, url, false);
+            LavaplayerLoader.loadSpotifyPlaylist(event, url, false);
         } else {
             if (!StringUtils.isURL(url)) {
                 Playlist playlist = Alkabot.getPlaylist(url);
@@ -41,22 +39,21 @@ public class PlayerCommands {
                     url = playlist.getUrl();
             }
 
-            MusicLoader.load(event, url, false);
+            LavaplayerLoader.load(event, url, false);
         }
     }
 
-    @Command(name = "forceplay")
     public void forceplay(SlashCommandInteractionEvent event) {
         Alkabot.setLastSlashPlayChannel(event.getChannel());
 
         event.deferReply().queue();
 
-        Music.connect(event.getMember());
+        MusicManager.connect(event.getMember());
 
         String url = event.getOption("input").getAsString();
 
         if (url.startsWith("https://open.spotify.com/playlist")) {
-            MusicLoader.loadSpotifyPlaylist(event, url, true);
+            LavaplayerLoader.loadSpotifyPlaylist(event, url, true);
         } else {
             if (!StringUtils.isURL(url)) {
                 Playlist playlist = Alkabot.getPlaylist(url);
@@ -67,11 +64,10 @@ public class PlayerCommands {
                     url = playlist.getUrl();
             }
 
-            MusicLoader.load(event, url, true);
+            LavaplayerLoader.load(event, url, true);
         }
     }
 
-    @Command(name = "remove")
     public void remove(SlashCommandInteractionEvent event) {
 
         if (Alkabot.getAudioPlayer().getPlayingTrack() == null) {
@@ -113,7 +109,6 @@ public class PlayerCommands {
         }
     }
 
-    @Command(name = "skip")
     public void skip(SlashCommandInteractionEvent event) {
         Alkabot.setLastSlashPlayChannel(event.getChannel());
 
@@ -135,7 +130,7 @@ public class PlayerCommands {
                 Alkabot.getTrackScheduler().getQueue().remove();
         }
 
-        MusicLoader.play(Alkabot.getTrackScheduler().getQueue().poll());
+        LavaplayerLoader.play(Alkabot.getTrackScheduler().getQueue().poll());
 
         if (skipSize == null)
             event.reply(Alkabot.t("jukebox-command-skip-one")).queue();
@@ -143,14 +138,12 @@ public class PlayerCommands {
             event.reply(Alkabot.t("jukebox-command-skip-mult", String.valueOf(skip))).queue();
     }
 
-    @Command(name = "stop")
     public void stop(SlashCommandInteractionEvent event) {
         event.reply(Alkabot.t("jukebox-command-stop")).queue();
         Alkabot.getGuild().getAudioManager().closeAudioConnection();
         //Music.reset(); Disabled, it's not a bug it's a F E A T U R E
     }
 
-    @Command(name = "shuffle")
     public void shuffle(SlashCommandInteractionEvent event) {
         List<AlkabotTrack> audioTracks = new ArrayList<>(Alkabot.getTrackScheduler().getQueue());
         Collections.shuffle(audioTracks);
@@ -161,7 +154,6 @@ public class PlayerCommands {
         event.reply(Alkabot.t("jukebox-command-shuffle")).queue();
     }
 
-    @Command(name = "clear")
     public void clear(SlashCommandInteractionEvent event) {
         Alkabot.getTrackScheduler().setQueue(new LinkedBlockingQueue<>());
         event.reply(Alkabot.t("jukebox-command-clear")).queue();

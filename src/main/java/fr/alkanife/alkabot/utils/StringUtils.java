@@ -27,6 +27,13 @@ public class StringUtils {
         return buf.toString();
     }
 
+    public static boolean isNull(String s) {
+        if (s == null)
+            return true;
+
+        return s.equalsIgnoreCase("");
+    }
+
     public static boolean isURL(@NotNull String s) {
         return s.toLowerCase(Locale.ROOT).startsWith("http");
     }

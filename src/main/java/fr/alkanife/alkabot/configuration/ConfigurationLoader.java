@@ -1,7 +1,9 @@
 package fr.alkanife.alkabot.configuration;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.configuration.json.JSONConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,34 +11,50 @@ import java.nio.file.Files;
 
 public class ConfigurationLoader {
 
-    private Configuration configuration = null;
+    private JSONConfiguration configuration = null;
 
     public ConfigurationLoader(boolean reload) throws IOException {
-        Alkabot.getLogger().info((reload ? "(RELOAD) " : "") + "Reading " + Alkabot.absolutePath() + "/configuration.json");
+        Alkabot.getLogger().info("Reading configuration..." + (reload ? " (reload)" : ""));
 
-        File configurationFile = new File(Alkabot.absolutePath() + "/configuration.json");
+        File configurationFile;
+        try {
+            configurationFile = new File(Alkabot.getConfigurationFilePath());
 
-        if (!configurationFile.exists()) {
-            Alkabot.getLogger().error("Configuration file not found");
+            Alkabot.debug("Full configuration file path: " + configurationFile.getPath());
+
+            if (!configurationFile.exists()) {
+                Alkabot.getLogger().error("The configuration file was not found");
+                return;
+            }
+        } catch (Exception exception) {
+            Alkabot.getLogger().error("Invalid configuration file path");
+            exception.printStackTrace();
             return;
         }
 
-        // Reading configuration file
-        String configurationRaw = Files.readString(configurationFile.toPath());
-        if (Alkabot.isDebugging())
-            Alkabot.getLogger().info(configurationRaw);
+        String configurationFileContent;
+        try {
+            configurationFileContent = Files.readString(configurationFile.toPath());
+        } catch (IOException exception) {
+            Alkabot.getLogger().error("Failed to read the configuration file content!");
+            exception.printStackTrace();
+            return;
+        }
 
-        Gson gson = new Gson();
-        configuration = gson.fromJson(configurationRaw, Configuration.class);
+        try {
+            Gson gson = new GsonBuilder()
+                    .serializeNulls()
+                    .create();
 
-        // If advanced debugging is on, ignore the configuration. Otherwise, follow the configuration
-        if (!Alkabot.isDebugging())
-            Alkabot.setDebugging(configuration.isDebug());
-
-        Alkabot.debug("Debugging set to true");
+            configuration = gson.fromJson(configurationFileContent, JSONConfiguration.class);
+        } catch (Exception exception) {
+            Alkabot.getLogger().error("Failed to read the JSON of the configuration file");
+            Alkabot.getLogger().error("File content: " + configurationFileContent);
+            exception.printStackTrace();
+        }
     }
 
-    public Configuration getConfiguration() {
+    public JSONConfiguration getConfiguration() {
         return configuration;
     }
 }

@@ -1,4 +1,4 @@
-package fr.alkanife.alkabot.music.playlists;
+package fr.alkanife.alkabot.music.playlist;
 
 public class Playlist {
 

@@ -1,8 +1,6 @@
 package fr.alkanife.alkabot.commands.utils;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.commands.AdminCommands;
-import fr.alkanife.alkabot.commands.BotCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;

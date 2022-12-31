@@ -1,21 +1,22 @@
 {
-  "token": "",
-  "spotify": {
-    "client_id": "",
-    "client_secret": ""
+  "lang_file": "lang-en.json",
+  "debug": false,
+  "admin": {
+    "metrics_for_nerds": false,
+    "admin_only": false,
+    "administrators_id": [
+      ""
+    ]
   },
-  "administrators_id": [
-    ""
-  ],
-  "guild_id": "",
-  "admin_only": false,
-  "debug": true,
-  "presence": {
-    "status": "ONLINE",
-    "activity": {
-      "show": false,
-      "type": "WATCHING",
-      "text": "you"
+  "guild": {
+    "guild_id": "",
+    "presence": {
+      "status": "ONLINE",
+      "activity": {
+        "show": false,
+        "type": "LISTENING",
+        "text": "logs"
+      }
     }
   },
   "welcome_message": {
@@ -26,28 +27,96 @@
     "enable": false,
     "role_id": ""
   },
-  "logs": {
-    "channel_id": "",
-    "message_cache": 20,
-    "admin": true,
-    "join": true,
-    "left": true,
-    "join_voice": true,
-    "left_voice": true,
-    "move_voice": true,
-    "voice_deafen": true,
-    "voice_undeafen": true,
-    "voice_mute": true,
-    "voice_unmute": true,
-    "ban": true,
-    "unban": true,
-    "kick": true,
-    "edit": true,
-    "delete": true
-  },
   "commands": {
-    "music": true,
-    "info": true,
-    "utilities": true
+    "about": true,
+    "music": {
+      "play": true,
+      "playnext": true,
+      "forceplay": true,
+      "remove": true,
+      "skip": true,
+      "stop": true,
+      "destroy": true,
+      "shuffle": true,
+      "clear": true,
+      "queue": true,
+      "playlist": {
+        "add": true,
+        "remove": true,
+        "list": true,
+        "info": true
+      }
+    },
+    "utilities": {
+      "info": {
+        "server": true,
+        "member": true,
+        "emote": true
+      },
+      "copy": true
+    }
+  },
+  "notifications": {
+    "self": {
+      "channel_id": null,
+      "admin": true,
+      "commands": true
+    },
+    "message": {
+      "channel_id": null,
+      "cache": 20,
+      "edit": true,
+      "delete": true
+    },
+    "member": {
+      "channel_id": null,
+      "join": true,
+      "leave": true
+    },
+    "moderator": {
+      "channel_id": null,
+      "ban": false,
+      "unban": false,
+      "kick": false,
+      "timeout": false,
+      "deafen_member": false,
+      "undeafen_member": false,
+      "mute_member": false,
+      "unmute_member": false,
+      "change_member_nickname": false
+    },
+    "voice": {
+      "channel_id": null,
+      "join": false,
+      "leave": false,
+      "move": false
+    },
+    "guild": {
+      "channel_id": null,
+      "channel_create": false,
+      "channel_delete": false,
+      "channel_update": false,
+      "permission_override_create": false,
+      "permission_override_delete": false,
+      "permission_override_update": false,
+      "emoji_added": false,
+      "emoji_delete": false,
+      "emoji_update": false,
+      "sticker_added": false,
+      "sticker_delete": false,
+      "sticker_update": false,
+      "invite_create": false,
+      "invite_delete": false,
+      "guild_update": false,
+      "name_update": false,
+      "icon_update": false,
+      "owner_update": false,
+      "role": {
+        "role_create": false,
+        "role_delete": false,
+        "role_update": false,
+        "member_role_update": false
+      }
+    }
   }
 }

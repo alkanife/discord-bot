@@ -1,7 +1,6 @@
 package fr.alkanife.alkabot.commands;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.commands.utils.Command;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -16,12 +15,10 @@ import java.util.Date;
 
 public class InfoCommands {
 
-    @Command(name = "info")
     public void info(SlashCommandInteractionEvent slashCommandInteractionEvent) {
         slashCommandInteractionEvent.reply(Alkabot.t("info-command")).setEphemeral(true).queue();
     }
 
-    @Command(name = "serverinfo")
     public void serverinfo(SlashCommandInteractionEvent slashCommandEvent) {
         Guild guild = slashCommandEvent.getGuild();
         EmbedBuilder embedBuilder = new EmbedBuilder();
@@ -61,7 +58,6 @@ public class InfoCommands {
         slashCommandEvent.replyEmbeds(embedBuilder.build()).setEphemeral(true).queue();
     }
 
-    @Command(name = "emoteinfo")
     public void emoteinfo(SlashCommandInteractionEvent slashCommandEvent) {
         OptionMapping optionMapping = slashCommandEvent.getOption("input");
         String input = optionMapping.getAsString();
@@ -98,7 +94,6 @@ public class InfoCommands {
         slashCommandEvent.replyEmbeds(embedBuilder.build()).setEphemeral(true).queue();
     }
 
-    @Command(name = "memberinfo")
     public void memberinfo(SlashCommandInteractionEvent slashCommandEvent) {
         OptionMapping optionMapping = slashCommandEvent.getOption("input");
         Member member = optionMapping.getAsMember();

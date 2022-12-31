@@ -2,10 +2,11 @@ package fr.alkanife.alkabot.events;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.utils.Colors;
-import fr.alkanife.alkabot.music.Music;
+import fr.alkanife.alkabot.music.MusicManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -23,30 +24,55 @@ public class Events extends ListenerAdapter {
 
     @Override
     public void onReady(@NotNull ReadyEvent readyEvent) {
-        Alkabot.getLogger().info("Checking for Discord environment");
+        Alkabot.getLogger().info("Checking for Discord environment...");
 
         try {
             // Check for guild
-            Guild guild = readyEvent.getJDA().getGuildById(Alkabot.getConfig().getGuild_id());
+            Guild guild = readyEvent.getJDA().getGuildById(Alkabot.getConfig().getGuild().getGuild_id());
             if (guild == null) {
-                Alkabot.getLogger().error("The Discord guild '" + Alkabot.getConfig().getGuild_id() + "' was not found");
+                Alkabot.getLogger().error("The Discord guild '" + Alkabot.getConfig().getGuild().getGuild_id() + "' was not found");
                 readyEvent.getJDA().shutdownNow();
                 System.exit(0);
             }
+            Alkabot.debug("Guild: " + guild.getName());
             Alkabot.setGuild(guild);
 
-            Alkabot.getLogger().info("Updating commands");
+            // Check for welcome message channel
+            if (Alkabot.getConfig().getWelcome_message().isEnable()) {
+                TextChannel textChannel = readyEvent.getJDA().getTextChannelById(Alkabot.getConfig().getWelcome_message().getChannel_id());
+                if (textChannel == null) {
+                    Alkabot.getLogger().warn("Disabling welcome messages because the channel '" + Alkabot.getConfig().getWelcome_message().getChannel_id() + "' was not found");
+                    Alkabot.getConfig().getWelcome_message().setEnable(false);
+                } else {
+                    Alkabot.debug("Welcome message channel: " + textChannel.getName());
+                    Alkabot.setWelcomeMessageChannel(textChannel);
+                }
+            }
+
+            // Check for welcome message channel
+            if (Alkabot.getConfig().getAuto_role().isEnable()) {
+                Role role = guild.getRoleById(Alkabot.getConfig().getAuto_role().getRole_id());
+                if (role == null) {
+                    Alkabot.getLogger().warn("Disabling auto-role because the role '" + Alkabot.getConfig().getAuto_role().getRole_id() + "' was not found");
+                    Alkabot.getConfig().getAuto_role().setEnable(false);
+                } else {
+                    Alkabot.debug("Auto-role: " + role.getName());
+                    Alkabot.setAutoRole(role);
+                }
+            }
+
+            Alkabot.getLogger().info("Updating commands...");
             updateCommands();
 
-            Alkabot.getLogger().info("Initializing music");
-            Music.initialize();
+            Alkabot.getLogger().info("Initializing music...");
+            Alkabot.getMusicManager().initialize();
 
             Alkabot.getLogger().info("Ready!");
 
             //
             // LOG SUCCESSFUL CONNECTION
             //
-            if (Alkabot.getConfig().getLogs().isAdmin()) {
+            if (Alkabot.getConfig().getNotifications().getSelf().isAdmin()) {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setTitle(Alkabot.t("logs-power-on-title"));
                 embedBuilder.setColor(Colors.BIG_GREEN);
@@ -57,12 +83,12 @@ public class Events extends ListenerAdapter {
 
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append("Alkabot v")
-                        .append(Alkabot.getVersion())
+                        .append(Alkabot.VERSION)
                         .append("\n\n");
 
-                if (Alkabot.getConfig().getAdministrators_id().size() > 0) {
+                if (Alkabot.getConfig().getAdmin().getAdministrators_id().size() > 0) {
                     stringBuilder.append(Alkabot.t("logs-power-on-admin"));
-                    for (String admin : Alkabot.getConfig().getAdministrators_id())
+                    for (String admin : Alkabot.getConfig().getAdmin().getAdministrators_id())
                         stringBuilder.append(" <@").append(admin).append(">");
                     stringBuilder.append("\n\n");
                 }
@@ -81,11 +107,11 @@ public class Events extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent slashCommandInteractionEvent) {
-        if (Alkabot.getConfig().isAdmin_only()) {
+        if (Alkabot.getConfig().getAdmin().isAdmin_only()) {
             Member member = slashCommandInteractionEvent.getMember();
 
             if (member != null)
-                if (!Alkabot.getConfig().getAdministrators_id().contains(member.getId()))
+                if (!Alkabot.getConfig().getAdmin().getAdministrators_id().contains(member.getId()))
                     return;
         }
 
@@ -99,7 +125,7 @@ public class Events extends ListenerAdapter {
             return;
 
         // Deny if not administrator
-        if (!Alkabot.getConfig().getAdministrators_id().contains(messageReceivedEvent.getAuthor().getId()))
+        if (!Alkabot.getConfig().getAdmin().getAdministrators_id().contains(messageReceivedEvent.getAuthor().getId()))
             return;
 
         Alkabot.getCommandHandler().handleAdmin(messageReceivedEvent);

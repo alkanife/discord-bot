@@ -30,6 +30,6 @@ public class AboutCommand extends AbstractCommand {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         //Todo
-        event.reply("TODO").queue();
+        event.reply(Alkabot.WEBSITE).queue();
     }
 }

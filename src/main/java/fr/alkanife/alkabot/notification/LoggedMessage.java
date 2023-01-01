@@ -1,4 +1,4 @@
-package fr.alkanife.alkabot;
+package fr.alkanife.alkabot.notification;
 
 public class LoggedMessage {
 

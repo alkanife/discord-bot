@@ -3,16 +3,9 @@ package fr.alkanife.alkabot.lang;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.configuration.json.JSONConfiguration;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;

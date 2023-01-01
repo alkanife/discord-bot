@@ -2,6 +2,9 @@ package fr.alkanife.alkabot.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -32,6 +35,10 @@ public class StringUtils {
             return true;
 
         return s.equalsIgnoreCase("");
+    }
+
+    public static String offsetToString(OffsetDateTime offsetDateTime) {
+        return new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(new Date(offsetDateTime.toInstant().toEpochMilli()));
     }
 
     public static boolean isURL(@NotNull String s) {

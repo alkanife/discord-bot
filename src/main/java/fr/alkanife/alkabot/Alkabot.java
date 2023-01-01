@@ -1,6 +1,7 @@
 package fr.alkanife.alkabot;
 
 import fr.alkanife.alkabot.command.CommandManager;
+import fr.alkanife.alkabot.command.TerminalCommandHandler;
 import fr.alkanife.alkabot.configuration.ConfigurationParser;
 import fr.alkanife.alkabot.configuration.json.JSONConfiguration;
 import fr.alkanife.alkabot.configuration.ConfigurationLoader;
@@ -395,9 +396,21 @@ public class Alkabot {
                 logger.info("* " + s);
     }
 
+    public static void shutdown() {
+        Alkabot.getCommandManager().getTerminalCommandHandler().setRunning(false);
+        Alkabot.getCommandManager().getTerminalCommandHandlerThread().interrupt();
+        jda.shutdown();
+        System.exit(0);
+    }
+
     public static String t(String key, String... values) {
         if (translations.containsKey(key)) {
             String translation = translations.get(key);
+
+            if (translation == null) {
+                Alkabot.getLogger().warn("Null translation at " + key);
+                return "{" + key + "}";
+            }
 
             if (values != null) {
                 if (values.length > 0) {
@@ -420,6 +433,12 @@ public class Alkabot {
     public static String tr(String key, String... values) {
         if (randomTranslations.containsKey(key)) {
             List<String> randomTl = randomTranslations.get(key);
+
+            if (randomTl == null) {
+                Alkabot.getLogger().warn("Null translation at " + key);
+                return "{" + key + "}";
+            }
+
             int random = new Random().nextInt(randomTl.size() + 1);
 
             String randomTranslation = randomTl.get(random);

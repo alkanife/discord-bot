@@ -27,7 +27,7 @@ public class SpotifyLoader extends AbstractMusic {
         super(musicManager);
     }
 
-    public void load(SlashCommandInteractionEvent slashCommandInteractionEvent, final String url, boolean priority) {
+    public void load(SlashCommandInteractionEvent slashCommandInteractionEvent, final String url, boolean priority, boolean force) {
         if (!Alkabot.supportSpotify())
             return;
 
@@ -52,7 +52,7 @@ public class SpotifyLoader extends AbstractMusic {
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             Alkabot.getLogger().error("Failed to get spotify client credentials:");
             e.printStackTrace();
-            slashCommandInteractionEvent.getHook().sendMessage(Alkabot.t("jukebox-command-play-spotify-error")).queue();
+            slashCommandInteractionEvent.getHook().sendMessage(Alkabot.t("command.music.play.error.spotify")).queue();
         }
         spotifyApi.setAccessToken(access);
 
@@ -71,7 +71,7 @@ public class SpotifyLoader extends AbstractMusic {
             if (slashCommandInteractionEvent.getMember() != null)
                 memberID = slashCommandInteractionEvent.getMember().getId();
 
-            String source = Alkabot.t("jukebox-command-play-source-spotify-playlist") + " / \"" + url + "\"";
+            String source = Alkabot.t("command.music.play.source.spotify") + " / \"" + url + "\"";
 
             List<AlkabotTrack> alkabotTrackList = new ArrayList<>();
 
@@ -81,13 +81,13 @@ public class SpotifyLoader extends AbstractMusic {
                     alkabotTrackList.add(new AlkabotTrack(track, source, memberID, priority));
             }
 
-            getMusicManager().getTrackScheduler().queuePlaylist(alkabotTrackList.get(0), alkabotTrackList);
+            getMusicManager().getTrackScheduler().queuePlaylist(alkabotTrackList.get(0), alkabotTrackList, force);
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(Alkabot.t("jukebox-command-play-playlist-added") + " " + (priority ? Alkabot.t("jukebox-command-priority") : ""));
-            embedBuilder.setDescription("[" + Alkabot.t("jukebox-command-spotify-playlist") + "](" + url + ")\n\n" +
-                    Alkabot.t("jukebox-command-play-playlist-entries") + " `" + alkabotTrackList.size() + "`\n" +
-                    Alkabot.t("jukebox-command-play-playlist-newtime") + " `" + StringUtils.durationToString(getMusicManager().getTrackScheduler().getQueueDuration(), false, true) + "`");
+            embedBuilder.setTitle(Alkabot.t("command.music.play.title_playlist") + " " + (priority ? Alkabot.t("command.music.play.priority") : ""));
+            embedBuilder.setDescription("[" + Alkabot.t("command.music.generic.spotify_playlist") + "](" + url + ")\n\n" +
+                    Alkabot.t("command.music.play.entries") + " `" + alkabotTrackList.size() + "`\n" +
+                    Alkabot.t("command.music.play.newtime") + " `" + StringUtils.durationToString(getMusicManager().getTrackScheduler().getQueueDuration(), false, true) + "`");
 
             embedBuilder.setThumbnail(alkabotTrackList.get(0).getThumbUrl());
 
@@ -97,7 +97,7 @@ public class SpotifyLoader extends AbstractMusic {
         } catch (Exception e) {
             Alkabot.getLogger().error("Failed to get spotify playlist:");
             e.printStackTrace();
-            slashCommandInteractionEvent.getHook().sendMessage(Alkabot.t("jukebox-command-play-spotify-error")).queue();
+            slashCommandInteractionEvent.getHook().sendMessage(Alkabot.t("command.music.play.error.spotify")).queue();
         }
     }
 

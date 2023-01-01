@@ -15,7 +15,7 @@ public class DestroyCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.destroy.description");
+        return Alkabot.t("command.music.destroy.description");
     }
 
     @Override
@@ -30,6 +30,8 @@ public class DestroyCommand extends AbstractCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-
+        Alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
+        Alkabot.getMusicManager().reset();
+        event.reply(Alkabot.t("command.music.destroy.done")).queue();
     }
 }

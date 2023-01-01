@@ -1,7 +1,6 @@
 package fr.alkanife.alkabot.command;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.command.admin.ShutdownCommand;
 import fr.alkanife.alkabot.command.admin.StatusCommand;
 import fr.alkanife.alkabot.command.music.*;
 import fr.alkanife.alkabot.command.utilities.CopyCommand;
@@ -17,15 +16,21 @@ public class CommandManager {
     private Map<String, AbstractCommand> commands = new HashMap<>();
     private Map<String, AbstractAdminCommand> adminCommands = new HashMap<>();
 
+    private TerminalCommandHandler terminalCommandHandler;
+    private Thread terminalCommandHandlerThread;
+
     public CommandManager() {}
 
     public void initialize() {
-        registerAdminCommands(new ShutdownCommand(), new StatusCommand());
+        terminalCommandHandler = new TerminalCommandHandler();
+        terminalCommandHandlerThread = new Thread(terminalCommandHandler, "Alkabot TCH");
+
+        registerAdminCommands(new fr.alkanife.alkabot.command.admin.StopCommand(), new StatusCommand());
 
         registerCommand(new AboutCommand());
 
         registerCommands(new ClearCommand(), new DestroyCommand(), new ForceplayCommand(), new PlayCommand(), new PlaylistCommand(), new PlaynextCommand(),
-                new QueueCommand(), new RemoveCommand(), new ShuffleCommand(), new SkipCommand(), new StopCommand());
+                new QueueCommand(), new RemoveCommand(), new ShuffleCommand(), new SkipCommand(), new fr.alkanife.alkabot.command.music.StopCommand());
 
         registerCommands(new CopyCommand(), new InfoCommand());
     }
@@ -46,14 +51,32 @@ public class CommandManager {
         return adminCommands.get(commandName);
     }
 
+    public TerminalCommandHandler getTerminalCommandHandler() {
+        return terminalCommandHandler;
+    }
+
+    public void setTerminalCommandHandler(TerminalCommandHandler terminalCommandHandler) {
+        this.terminalCommandHandler = terminalCommandHandler;
+    }
+
+    public Thread getTerminalCommandHandlerThread() {
+        return terminalCommandHandlerThread;
+    }
+
+    public void setTerminalCommandHandlerThread(Thread terminalCommandHandlerThread) {
+        this.terminalCommandHandlerThread = terminalCommandHandlerThread;
+    }
+
     public void registerCommands(AbstractCommand... abstractCommands) {
         for (AbstractCommand abstractCommand : abstractCommands)
             registerCommand(abstractCommand);
     }
 
     public void registerCommand(AbstractCommand abstractCommand) {
-        Alkabot.debug("Adding " + abstractCommand.getClass().getName());
-        commands.put(abstractCommand.getName(), abstractCommand);
+        if (abstractCommand.isEnabled()) {
+            Alkabot.debug("Adding " + abstractCommand.getClass().getName());
+            commands.put(abstractCommand.getName(), abstractCommand);
+        }
     }
 
     public void registerAdminCommands(AbstractAdminCommand... abstractAdminCommands) {
@@ -76,38 +99,39 @@ public class CommandManager {
             Alkabot.debug("Invoking command '" + event.getFullCommandName() + "'");
             abstractCommand.execute(event);
         } catch (Exception exception) {
-            event.reply(Alkabot.t("generic.command.error")).queue();
+            event.reply(Alkabot.t("command.generic.error")).queue();
             Alkabot.getLogger().error("Failed to handle a command:\n" + buildTrace(event));
             exception.printStackTrace();
         }
     }
 
-    public void handleAdmin(MessageReceivedEvent event) {
+    public void handleAdmin(AdminCommandExecution execution) {
         try {
-            String[] command = event.getMessage().getContentRaw().toLowerCase(Locale.ROOT).split(" ");
+            String[] command = execution.getCommand().split(" ");
             AbstractAdminCommand abstractAdminCommand = getAdminCommand(command[0]);
 
+            Alkabot.getLogger().info("Invoking command '" + execution.getCommand() + "' (isFromDiscord=" + execution.isFromDiscord() + ")");
+
             if (abstractAdminCommand == null) {
-                CommandManager.adminHelp(event);
+                CommandManager.adminHelp(execution);
                 return;
             }
 
-            Alkabot.debug("Invoking command '" + event.getMessage().getContentRaw() + "'");
-            abstractAdminCommand.execute(event);
+            abstractAdminCommand.execute(execution);
         } catch (Exception exception) {
-            event.getMessage().reply("An error prevented me from processing your command, check logs").queue();
+            execution.reply("An error prevented me from processing your command, check logs");
             Alkabot.getLogger().error("Failed to handle an admin command:");
             exception.printStackTrace();
         }
     }
 
-    public static void adminHelp(MessageReceivedEvent event) {
+    public static void adminHelp(AdminCommandExecution execution) {
         StringBuilder stringBuilder = new StringBuilder("Administrative commands:");
 
         for (AbstractAdminCommand command : Alkabot.getCommandManager().getAdminCommands())
-            stringBuilder.append("- `").append(command.getUsage()).append("`: ").append(command.getDescription()).append("\n");
+            stringBuilder.append("\n- ").append(command.getUsage()).append(": ").append(command.getDescription());
 
-        event.getMessage().reply(stringBuilder.toString()).queue();
+        execution.reply(stringBuilder.toString());
     }
 
     public static String buildTrace(SlashCommandInteractionEvent event) {

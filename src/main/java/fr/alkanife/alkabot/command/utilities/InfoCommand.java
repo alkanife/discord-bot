@@ -20,7 +20,7 @@ public class InfoCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.info.description");
+        return Alkabot.t("command.utilities.info.description");
     }
 
     @Override
@@ -37,15 +37,15 @@ public class InfoCommand extends AbstractCommand {
         List<SubcommandData> subs = new ArrayList<>();
 
         if (Alkabot.getConfig().getCommands().getUtilities().getInfo().isServer())
-            subs.add(new SubcommandData("server", Alkabot.t("command.info.server.description")));
+            subs.add(new SubcommandData("server", Alkabot.t("command.utilities.info.server.description")));
 
         if (Alkabot.getConfig().getCommands().getUtilities().getInfo().isMember())
-            subs.add(new SubcommandData("member", Alkabot.t("command.info.member.description"))
-                    .addOption(OptionType.USER, "input", Alkabot.t("command.info.member.input_description"), true));
+            subs.add(new SubcommandData("member", Alkabot.t("command.utilities.info.member.description"))
+                    .addOption(OptionType.USER, "input", Alkabot.t("command.utilities.info.member.input_description"), true));
 
         if (Alkabot.getConfig().getCommands().getUtilities().getInfo().isEmote())
-            subs.add(new SubcommandData("emote", Alkabot.t("command.info.emote.description"))
-                    .addOption(OptionType.STRING, "input", Alkabot.t("command.info.member.input_description"), true));
+            subs.add(new SubcommandData("emote", Alkabot.t("command.utilities.info.emote.description"))
+                    .addOption(OptionType.STRING, "input", Alkabot.t("command.utilities.info.emote.input_description"), true));
 
         if (subs.size() > 0)
             commandData.addSubcommands(subs);
@@ -55,6 +55,7 @@ public class InfoCommand extends AbstractCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-
+        //Todo
+        event.reply("TODO").queue();
     }
 }

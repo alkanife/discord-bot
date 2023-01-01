@@ -16,7 +16,7 @@ public class CopyCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.copy.description");
+        return Alkabot.t("command.utilities.copy.description");
     }
 
     @Override
@@ -27,11 +27,12 @@ public class CopyCommand extends AbstractCommand {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getName(), getDescription())
-                .addOption(OptionType.STRING, "input", Alkabot.t("command.copy.input_description"), true);
+                .addOption(OptionType.STRING, "input", Alkabot.t("command.utilities.copy.input_description"), true);
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-
+        //Todo
+        event.reply("TODO").queue();
     }
 }

@@ -1,9 +1,10 @@
 package fr.alkanife.alkabot.command.admin;
 
+import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractAdminCommand;
+import fr.alkanife.alkabot.command.AdminCommandExecution;
 import fr.alkanife.alkabot.utils.MemoryUtils;
 import net.dv8tion.jda.api.entities.SelfUser;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.lang.management.ManagementFactory;
 import java.time.Duration;
@@ -26,11 +27,11 @@ public class StatusCommand extends AbstractAdminCommand {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event) {
+    public void execute(AdminCommandExecution execution) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("```yaml\n[STATUS]\n\n");
+        stringBuilder.append("[STATUS]\n\n");
 
-        SelfUser selfUser = event.getJDA().getSelfUser();
+        SelfUser selfUser = Alkabot.getJda().getSelfUser();
         stringBuilder.append("Client: ").append(selfUser.getAsTag()).append(" [").append(selfUser.getId()).append("]\n");
 
         Duration duration = Duration.ofMillis(ManagementFactory.getRuntimeMXBean().getUptime());
@@ -44,8 +45,6 @@ public class StatusCommand extends AbstractAdminCommand {
                 .append(" - Total: ").append(MemoryUtils.humanReadableByteCountBin(MemoryUtils.getTotalMemory())).append("\n")
                 .append(" - Free: ").append(MemoryUtils.humanReadableByteCountBin(MemoryUtils.getFreeMemory()));
 
-        stringBuilder.append("\n```");
-
-        event.getMessage().reply(stringBuilder.toString()).queue();
+        execution.reply(stringBuilder.toString());
     }
 }

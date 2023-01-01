@@ -1,5 +1,7 @@
 package fr.alkanife.alkabot.music;
 
+import fr.alkanife.alkabot.Alkabot;
+
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -17,13 +19,13 @@ public class TrackScheduler extends AbstractMusic {
         long duration = 0;
 
         for (AlkabotTrack alkabotTrack : queue)
-            if (alkabotTrack.getDuration() < 72000000)
+            if (alkabotTrack.getDuration() < 72000000) // check if stream
                 duration += alkabotTrack.getDuration();
 
         return duration;
     }
 
-    public void queue(AlkabotTrack track) {
+    public void queue(AlkabotTrack track, boolean force) {
         if (getMusicManager().getPlayer().getPlayingTrack() == null) {
             getMusicManager().getAlkabotTrackPlayer().play(track);
             return;
@@ -37,9 +39,12 @@ public class TrackScheduler extends AbstractMusic {
         } else {
             queue.offer(track);
         }
+
+        if (force)
+            Alkabot.getMusicManager().goNext();
     }
 
-    public void queuePlaylist(AlkabotTrack firstTrack, List<AlkabotTrack> alkabotTrackList) {
+    public void queuePlaylist(AlkabotTrack firstTrack, List<AlkabotTrack> alkabotTrackList, boolean force) {
         BlockingQueue<AlkabotTrack> newQueue = new LinkedBlockingQueue<>();
 
         if (!firstTrack.isPriority())
@@ -59,6 +64,9 @@ public class TrackScheduler extends AbstractMusic {
             newQueue.addAll(queue);
 
         queue = newQueue;
+
+        if (force)
+            Alkabot.getMusicManager().goNext();
     }
 
     public BlockingQueue<AlkabotTrack> getQueue() {

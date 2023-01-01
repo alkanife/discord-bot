@@ -38,9 +38,9 @@ public class TrackListener extends AudioEventAdapter {
 
                 if (Alkabot.getMusicManager().getLastMusicCommandChannel() != null) {
                     EmbedBuilder embedBuilder = new EmbedBuilder();
-                    embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-nomembers-title"));
+                    embedBuilder.setTitle(Alkabot.t("command.music.alone.title"));
                     embedBuilder.setColor(Colors.BIG_RED);
-                    embedBuilder.setDescription(Alkabot.t("jukebox-playing-error-nomembers-desc"));
+                    embedBuilder.setDescription(Alkabot.t("command.music.alone.description"));
 
                     Alkabot.getMusicManager().getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
                 }
@@ -57,23 +57,23 @@ public class TrackListener extends AudioEventAdapter {
         EmbedBuilder embedBuilder = new EmbedBuilder();
 
         if (retriedTracks.contains(track.getInfo().title)) {
-            embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-title"));
+            embedBuilder.setTitle(Alkabot.t("command.music.play.error.fail.title"));
             embedBuilder.setColor(Colors.BIG_RED);
             embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")"
-                    + " " + Alkabot.t("jukebox-by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
-                    Alkabot.t("jukebox-playing-error-message"));
+                    + " " + Alkabot.t("command.music.generic.by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
+                    Alkabot.t("command.music.play.error.fail.message"));
             embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
         } else {
-            embedBuilder.setTitle(Alkabot.t("jukebox-command-play-added-title") + " " + Alkabot.t("jukebox-command-priority"));
-            embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ") " + Alkabot.t("jukebox-by")
+            embedBuilder.setTitle(Alkabot.t("command.music.play.title") + " " + Alkabot.t("command.music.play.priority"));
+            embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ") " + Alkabot.t("command.music.generic.by")
                     + " [" + track.getInfo().author + "](" + track.getInfo().uri + ") " + StringUtils.durationToString(track.getDuration(), true, false) +
-                    "\n\n" + Alkabot.t("jukebox-playing-retrying"));
+                    "\n\n" + Alkabot.t("command.music.generic.retrying"));
             embedBuilder.setColor(Colors.CYAN);
             embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
 
             retriedTracks.add(track.getInfo().title);
 
-            musicManager.getTrackScheduler().queue(new AlkabotTrack(track, Alkabot.getJda().getSelfUser().getName(), Alkabot.getJda().getSelfUser().getId(), true));
+            musicManager.getTrackScheduler().queue(new AlkabotTrack(track, Alkabot.getJda().getSelfUser().getName(), Alkabot.getJda().getSelfUser().getId(), true), false);
         }
 
         if (musicManager != null)

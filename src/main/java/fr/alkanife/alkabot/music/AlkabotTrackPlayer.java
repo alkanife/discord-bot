@@ -54,13 +54,13 @@ public class AlkabotTrackPlayer {
 
                 if (musicManager.getLastMusicCommandChannel() != null) {
                     EmbedBuilder embedBuilder = new EmbedBuilder();
-                    embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-notfound-title"));
+                    embedBuilder.setTitle(Alkabot.t("command.music.play.error.not_found.title"));
                     embedBuilder.setColor(Colors.BIG_RED);
                     embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ")"
-                            + " " + Alkabot.t("jukebox-by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
-                            Alkabot.t("jukebox-playing-error-added-by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
-                            Alkabot.t("jukebox-playing-error-origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
-                            Alkabot.t("jukebox-playing-error-notfound-description"));
+                            + " " + Alkabot.t("command.music.generic.by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
+                            Alkabot.t("command.music.generic.added_by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
+                            Alkabot.t("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
+                            Alkabot.t("command.music.play.error.not_found.description"));
                     embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
                     musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
@@ -74,13 +74,13 @@ public class AlkabotTrackPlayer {
                 if (retrying) {
                     if (musicManager.getLastMusicCommandChannel() != null) {
                         EmbedBuilder embedBuilder = new EmbedBuilder();
-                        embedBuilder.setTitle(Alkabot.t("jukebox-playing-error-title"));
+                        embedBuilder.setTitle(Alkabot.t("command.music.play.error.fail.title"));
                         embedBuilder.setColor(Colors.BIG_RED);
                         embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ")"
-                                + " " + Alkabot.t("jukebox-by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
-                                Alkabot.t("jukebox-playing-error-added-by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
-                                Alkabot.t("jukebox-playing-error-origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
-                                Alkabot.t("jukebox-playing-error-message"));
+                                + " " + Alkabot.t("command.music.generic.by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
+                                Alkabot.t("command.music.generic.added_by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
+                                Alkabot.t("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
+                                Alkabot.t("command.music.play.error.fail.message"));
                         embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
                         musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();

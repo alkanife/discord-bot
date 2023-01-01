@@ -1,12 +1,15 @@
 package fr.alkanife.alkabot.listener;
 
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.command.AdminCommandExecution;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
 
 public class CommandListener extends ListenerAdapter {
 
@@ -33,7 +36,7 @@ public class CommandListener extends ListenerAdapter {
         if (!Alkabot.getConfig().getAdmin().getAdministrators_id().contains(event.getAuthor().getId()))
             return;
 
-        Alkabot.getCommandManager().handleAdmin(event);
+        Alkabot.getCommandManager().handleAdmin(new AdminCommandExecution(event.getMessage().getContentRaw().toLowerCase(Locale.ROOT), event));
     }
 
 }

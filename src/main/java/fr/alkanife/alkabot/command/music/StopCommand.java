@@ -15,7 +15,7 @@ public class StopCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.stop.description");
+        return Alkabot.t("command.music.stop.description");
     }
 
     @Override
@@ -30,6 +30,8 @@ public class StopCommand extends AbstractCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-
+        event.reply(Alkabot.t("command.music.stop.done")).queue();
+        Alkabot.getGuild().getAudioManager().closeAudioConnection();
+        //Music.reset(); Disabled, it's not a bug it's a F E A T U R E
     }
 }

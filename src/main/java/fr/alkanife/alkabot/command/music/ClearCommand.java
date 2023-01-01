@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class ClearCommand extends AbstractCommand {
 
     @Override
@@ -15,7 +17,7 @@ public class ClearCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.clear.description");
+        return Alkabot.t("command.music.clear.description");
     }
 
     @Override
@@ -30,6 +32,8 @@ public class ClearCommand extends AbstractCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-
+        Alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
+        Alkabot.getMusicManager().getTrackScheduler().setQueue(new LinkedBlockingQueue<>());
+        event.reply(Alkabot.t("command.music.clear.done")).queue();
     }
 }

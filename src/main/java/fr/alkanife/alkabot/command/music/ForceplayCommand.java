@@ -32,6 +32,6 @@ public class ForceplayCommand extends AbstractCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-
+        PlayCommand.play(event, true, true);
     }
 }

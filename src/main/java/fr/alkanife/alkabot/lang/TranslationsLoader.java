@@ -87,10 +87,8 @@ public class TranslationsLoader {
                 listTreeMap(previous + "." + entry.getKey(), (LinkedTreeMap<?, ?>) entry.getValue());
             } else if (entry.getValue() instanceof String) {
                 translations.put(previous + "." + entry.getKey(), (String) entry.getValue());
-                //Alkabot.getLogger().warn(previous + "." + entry.getKey() + " --> " + entry.getValue());
             } else if (entry.getValue() instanceof List) {
                 randomTranslations.put(previous + "." + entry.getKey(), (List<String>) entry.getValue());
-                //Alkabot.getLogger().warn(previous + "." + entry.getKey() + " --> (ARRAY) " + entry.getValue());
             }
         }
     }

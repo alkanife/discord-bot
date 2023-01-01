@@ -6,9 +6,6 @@ import fr.alkanife.alkabot.configuration.AbstractWorker;
 import fr.alkanife.alkabot.configuration.ConfigurationInitializer;
 import fr.alkanife.alkabot.utils.Colors;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -16,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class ReadyListener extends ListenerAdapter {
 

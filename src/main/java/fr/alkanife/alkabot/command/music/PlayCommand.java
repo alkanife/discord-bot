@@ -47,7 +47,10 @@ public class PlayCommand extends AbstractCommand {
         String url = event.getOption("input").getAsString();
 
         if (url.startsWith("https://open.spotify.com/playlist")) {
-            Alkabot.getMusicManager().getSpotifyLoader().load(event, url, priority, force);
+            if (Alkabot.supportSpotify())
+                Alkabot.getMusicManager().getSpotifyLoader().load(event, url, priority, force);
+            else
+                event.reply("command.music.play.error.no_spotify_support").queue();
         } else {
             if (!StringUtils.isURL(url)) {
                 Playlist playlist = Alkabot.getPlaylistManager().getPlaylist(url);

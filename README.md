@@ -7,6 +7,3 @@ A highly configurable Discord bot.
 - [gson](https://github.com/google/gson)
 - [logback](https://github.com/qos-ch/logback)
 - [snakeyaml](https://bitbucket.org/snakeyaml/snakeyaml/src/master/)
-
-## License
-[MIT](https://opensource.org/licenses/MIT)

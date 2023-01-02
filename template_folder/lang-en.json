@@ -1,0 +1,282 @@
+{
+  "welcome": {
+    "messages": ["Welcome [value1]!"]
+  },
+  "notification": {
+    "generic": {
+      "member": "Member",
+      "user": "User",
+      "channel": "Channel",
+      "unknown": "Unknown",
+      "none": "None",
+      "attachment": "<attachment>",
+      "moderator": "Moderator",
+      "reason": "Reason",
+      "new_value": "New value",
+      "old_value": "Old value"
+    },
+    "self": {
+      "power_on": {
+        "title": "Successfully connected",
+        "ok_memes": [
+          "https://share.alkanife.fr/ok-memes/1.png",
+          "https://share.alkanife.fr/ok-memes/2.png",
+          "https://share.alkanife.fr/ok-memes/3.png",
+          "https://share.alkanife.fr/ok-memes/4.png",
+          "https://share.alkanife.fr/ok-memes/5.png",
+          "https://share.alkanife.fr/ok-memes/6.png"
+        ],
+        "admins": "\uD83D\uDD27 Administrators :",
+        "help": "For more details on the current configuration of the bot, go to my DMs."
+      },
+      "power_off": {
+        "title": "Stopping",
+        "description": "[value1] requested my shutdown."
+      },
+      "command": {
+        "title": "A command has been executed",
+        "command": "Command",
+        "fail_suffix": "(failed)"
+      }
+    },
+    "message": {
+      "generic": {
+        "author": "Message author",
+        "message": "Message"
+      },
+      "edit": {
+        "title": "A message has been edited",
+        "before": "Message before modification",
+        "after": "Message after modification"
+      },
+      "delete": {
+        "title": "A message has been deleted",
+        "not_a_member": "is not present on the server"
+      }
+    },
+    "member": {
+      "join": {
+        "title": "Someone has joined the server!",
+        "fail": {
+          "welcome": "⚠️ I failed to send the welcome message",
+          "autorole": "⚠️ I failed to set the default role"
+        }
+      },
+      "leave": {
+        "title": "A member left the server"
+      }
+    },
+    "moderator": {
+      "kick": {
+        "title": "A member has been kicked"
+      },
+      "ban": {
+        "title": "A user has been banned"
+      },
+      "unban": {
+        "title": "A user has been unbanned"
+      },
+      "timeout": {
+        "title": "A member's timeout has changed"
+      },
+      "deafen": {
+        "title": "A user has been deafened"
+      },
+      "undeafen": {
+        "title": "A user has been un-deafened"
+      },
+      "mute": {
+        "title": "A user has been muted"
+      },
+      "unmute": {
+        "title": "A user has been un-muted"
+      },
+      "nickname": {
+        "title": "A moderator changed a member's nickname"
+      }
+    },
+    "voice": {
+      "join": {
+        "title": "A member has joined a voice channel"
+      },
+      "left": {
+        "title": "A member has left a voice channel"
+      },
+      "move": {
+        "title": "A member moved from a voice channel to another",
+        "new_channel": "New channel",
+        "old_channel": "Old channel"
+      }
+    }
+  },
+  "command": {
+    "generic": {
+      "no_perms": "I can't let you use this command.",
+      "error": "Sorry, an error occurred while executing your command."
+    },
+    "about": {
+      "description": "Who am I?"
+    },
+    "utilities": {
+      "copy": {
+        "description": "Copy a message while preserving the syntax",
+        "input_description": "Message URL",
+        "error": {
+          "generic": "I can't copy this message. Maybe your URL is invalid or I don't have access to the message, or the copied message is too long.",
+          "not_url": "Your entry is not a valid URL.",
+          "guild": "I do not have access to the server of this message.",
+          "channel": "I do not have access to the channel of this message.",
+          "message": "Sorry, I can not read this message."
+        }
+      },
+      "info": {
+        "description": "Information commands",
+        "generic": {
+          "creation_date": "Creation date:"
+        },
+        "server": {
+          "description": "Give information about the server",
+          "members": "Members:",
+          "channels": "Channels:",
+          "emotes": "Emotes:",
+          "roles": "Roles:",
+          "boosters": "Boosters:",
+          "boosts": "Boosts:",
+          "owner": "Owner:"
+        },
+        "member": {
+          "description": "Give information about a member",
+          "input_description": "Member",
+          "joined": {
+            "discord": "Joined Discord:",
+            "server": "Join this server:"
+          }
+        },
+        "emote": {
+          "description": "Give information about an emote",
+          "input_description": "The emote",
+          "error": "Sorry, I can't find this emote.",
+          "guild": "Original server:"
+        }
+      }
+    },
+    "music": {
+      "generic": {
+        "images": ["https://c.tenor.com/_OA-44hy1-4AAAAC/anime-music.gif"],
+        "not_playing": "No music is playing.",
+        "not_enough": "There are not enough songs in the queue.",
+        "spotify_playlist": "Spotify Playlist",
+        "by": "by",
+        "added_by": "Added by:",
+        "origin": "Origin:",
+        "retrying": "I allowed myself to re-add this title to the queue, because the first attempt had failed.",
+        "alone": {
+          "title": "Someone there?",
+          "description": "I disconnected because there was no one in my voice channel."
+        }
+      },
+      "clear": {
+        "description": "🎶 Clear the queue",
+        "done": "The queue has been reset."
+      },
+      "destroy": {
+        "description": "🎶 Disconnects the bot from the channel and resets the queue",
+        "done": "Bye! \uD83D\uDC4B\uD83C\uDFFB"
+      },
+      "play": {
+        "description": "🎶 Join a voice channel and start the jukebox",
+        "input_description": "A YouTube link, title, or playlist name",
+        "title": "Title added to queue",
+        "title_playlist": "Playlist added to queue",
+        "priority": "(priority)",
+        "position": "Position in queue:",
+        "newtime": "New queue duration:",
+        "entries": "Entries:",
+        "source": {
+          "url": "Command (direct link)",
+          "search": "Command (YouTube search - video)",
+          "search_playlist": "Command (YouTube search - playlist\n)",
+          "spotify": "Command (Spotify playlist)"
+        },
+        "error": {
+          "generic": "Sorry, I can't play this track! (and yet I tried...)",
+          "no_matches": "Sorry, I couldn't find anything that matches your search.",
+          "spotify": "Sorry, I had a problem trying to play this Spotify playlist.",
+          "no_spotify_support": "Sorry, but my current setup does not allow me to play Spotify playlists.",
+          "not_found": {
+            "title": "I couldn't find the following title",
+            "description": "Unfortunately, I couldn't find a video on YouTube that bore the title of the song present in the Spotify playlist.."
+          },
+          "fail": {
+            "title": "I couldn't play this track",
+            "message": "The link may not working, or its format is not readable for me. For YouTube please note that I cannot play restricted videos (YT Premium, YT Kids, sensitive content etc)."
+          }
+        }
+      },
+      "forceplay": {
+        "description": "🎶 Replace the current music with the desired one"
+      },
+      "playnext": {
+        "description": "🎶 Adds the entry to the very first position in the queue"
+      },
+      "queue": {
+        "description": "🎶 View queue",
+        "input_description": "Page",
+        "out_of_range": "There is no music on this page.",
+        "one_now_playing": "Now playing",
+        "title": "Queue ([value1] tracks)",
+        "now_playing": "Now playing:",
+        "incoming": "Following:",
+        "time_left": "Time left:"
+      },
+      "remove": {
+        "description": "🎶 Remove track from queue",
+        "input_description": "Track position (/queue)",
+        "title": "Title removed from queue.",
+        "error": "I was unable to remove this track from the queue."
+      },
+      "shuffle": {
+        "description": "🎶 Shuffle queue",
+        "done": "The queue was shuffled."
+      },
+      "skip": {
+        "description": "🎶 Skip one or more music",
+        "input_description": "Number of tracks to skip",
+        "one": "⏭👍🏻",
+        "mult": "Skipping `[value1]` tracks."
+      },
+      "stop": {
+        "description": "🎶 Stop the jukebox",
+        "done": "Bye! 👋🏻"
+      },
+      "playlist": {
+        "description": "Playlist management",
+        "add": {
+          "description": "Add a playlist",
+          "name_description": "Playlist name",
+          "input_description": "Playlist query",
+          "nope": "This playlist already exists in my database!",
+          "success": "Playlist `[value1]` was successfully added to my database.",
+          "fail": "I failed to add this playlist to my database. It will disappear on my next restart."
+        },
+        "remove": {
+          "description": "Delete a playlist",
+          "name_description": "Name of playlist to delete",
+          "nope": "This playlist does not exist in my database!",
+          "success": "Playlist `[value1]` was successfully deleted from my database.",
+          "fail": "I was unable to delete this playlist from my database. This will still be present on my next restart."
+        },
+        "list": {
+          "description": "List existing playlists",
+          "no_entries": "No playlists present in my database! Do '/playlist add' to add one.",
+          "title": "playlists",
+          "added_by": "added by"
+        },
+        "info": {
+          "description": "Gives all information of a playlist",
+          "name_description": "Playlist name"
+        }
+      }
+    }
+  }
+}

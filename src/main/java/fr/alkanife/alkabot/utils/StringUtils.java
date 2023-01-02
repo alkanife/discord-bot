@@ -38,6 +38,9 @@ public class StringUtils {
     }
 
     public static String offsetToString(OffsetDateTime offsetDateTime) {
+        if (offsetDateTime == null)
+            return null;
+
         return new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(new Date(offsetDateTime.toInstant().toEpochMilli()));
     }
 

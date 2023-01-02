@@ -64,6 +64,20 @@ public class TranslationsLoader {
     }
 
     public void readJSON(String content) {
+        /*
+        * Known problem: throw an error when an entry is not in an object
+        * Example:
+        *
+        * ERROR
+        * -> "welcome_messages": ["", ""]
+        *
+        * NO ERROR
+        * -> "welcome" {
+        *   "messages": ["", ""]
+        * }
+        *
+        * */
+
         Gson gson = new GsonBuilder()
                 .serializeNulls()
                 .create();

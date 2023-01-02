@@ -34,17 +34,19 @@ public class TrackListener extends AudioEventAdapter {
 
         if (voiceChannel != null) {
             if (voiceChannel.getMembers().size() == 1) {
-                Alkabot.getMusicManager().reset();
+                if (!endReason.equals(AudioTrackEndReason.STOPPED)) {
+                    Alkabot.getMusicManager().reset();
 
-                if (Alkabot.getMusicManager().getLastMusicCommandChannel() != null) {
-                    EmbedBuilder embedBuilder = new EmbedBuilder();
-                    embedBuilder.setTitle(Alkabot.t("command.music.alone.title"));
-                    embedBuilder.setColor(Colors.BIG_RED);
-                    embedBuilder.setDescription(Alkabot.t("command.music.alone.description"));
+                    if (Alkabot.getMusicManager().getLastMusicCommandChannel() != null) {
+                        EmbedBuilder embedBuilder = new EmbedBuilder();
+                        embedBuilder.setTitle(Alkabot.t("command.music.generic.alone.title"));
+                        embedBuilder.setColor(Colors.BIG_RED);
+                        embedBuilder.setDescription(Alkabot.t("command.music.generic.alone.description"));
 
-                    Alkabot.getMusicManager().getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                        Alkabot.getMusicManager().getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                    }
+                    return;
                 }
-                return;
             }
         }
 

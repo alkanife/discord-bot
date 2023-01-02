@@ -57,6 +57,7 @@ public class NotificationManager {
 
         try {
             textChannel.sendMessageEmbeds(messageEmbed).queue();
+            Alkabot.debug("Successfully sent '" + notificationChannel.name() + "' notification titled '" + messageEmbed.getTitle() + "'");
         } catch (Exception exception) {
             Alkabot.getLogger().error("Failed to send a notification titled '" + messageEmbed.getTitle() + "':");
             exception.printStackTrace();

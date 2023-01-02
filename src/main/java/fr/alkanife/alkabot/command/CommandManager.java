@@ -90,6 +90,7 @@ public class CommandManager {
     }
 
     public void handleSlash(SlashCommandInteractionEvent event) {
+        boolean success = true;
         try {
             AbstractCommand abstractCommand = getCommand(event.getName().toLowerCase(Locale.ROOT));
 
@@ -102,7 +103,9 @@ public class CommandManager {
             event.reply(Alkabot.t("command.generic.error")).queue();
             Alkabot.getLogger().error("Failed to handle a command:\n" + buildTrace(event));
             exception.printStackTrace();
+            success = false;
         }
+        Alkabot.getNotificationManager().getSelfNotification().notifyCommand(event, success);
     }
 
     public void handleAdmin(AdminCommandExecution execution) {

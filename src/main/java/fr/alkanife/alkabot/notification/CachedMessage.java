@@ -1,12 +1,12 @@
 package fr.alkanife.alkabot.notification;
 
-public class LoggedMessage {
+public class CachedMessage {
 
     private long id;
     private String content;
     private long author;
 
-    public LoggedMessage(long id, String content, long author) {
+    public CachedMessage(long id, String content, long author) {
         this.id = id;
         this.content = content;
         this.author = author;

@@ -439,9 +439,7 @@ public class Alkabot {
                 return "{" + key + "}";
             }
 
-            int random = new Random().nextInt(randomTl.size() + 1);
-
-            String randomTranslation = randomTl.get(random);
+            String randomTranslation = randomTl.get(new Random().nextInt(randomTl.size()));
 
             if (values != null) {
                 if (values.length > 0) {
@@ -459,5 +457,14 @@ public class Alkabot {
             Alkabot.getLogger().warn("Missing translation at " + key);
             return "{" + key + "}";
         }
+    }
+
+    public static String tri(String key, String... values) {
+        String s = tr(key, values);
+
+        if (!StringUtils.isURL(s))
+            return "https://share.alkanife.fr/alkabot.png";
+
+        return s;
     }
 }

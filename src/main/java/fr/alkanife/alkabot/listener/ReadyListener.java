@@ -42,7 +42,7 @@ public class ReadyListener extends ListenerAdapter {
             embedBuilder.setTitle(Alkabot.t("notification.self.power_on.title"));
             embedBuilder.setColor(Colors.BIG_GREEN);
 
-            embedBuilder.setThumbnail(Alkabot.tr("notification.self.power_on.ok_memes"));
+            embedBuilder.setThumbnail(Alkabot.tri("notification.self.power_on.ok_memes"));
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Alkabot v")

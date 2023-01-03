@@ -31,6 +31,7 @@
 | Name | Can be null? | Description |
 | -- | -- | -- |
 | `lang_file` | No | Path to the lang.json file. |
+| `shortcut_file` | Yes | Path to the shortcuts.json file. Will use "shortcuts.json" if null. |
 | `debug` | Boolean | Debug mode activation. If Alkabot is started with the "debug" argument, this parameter is ignored. |
 
 ### Admin

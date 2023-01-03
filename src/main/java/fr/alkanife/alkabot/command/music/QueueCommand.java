@@ -57,9 +57,9 @@ public class QueueCommand extends AbstractCommand {
         List<AlkabotTrack> tracks = new ArrayList<>(musicManager.getTrackScheduler().getQueue());
         int tracksSize = tracks.size();
         int pages = 0;
-        if (!endsWithZero(tracksSize)) {
+        if (!StringUtils.endsWithZero(tracksSize)) {
             for (int i = 0; i < 11; i++) {
-                if (endsWithZero(tracksSize))
+                if (StringUtils.endsWithZero(tracksSize))
                     break;
 
                 tracksSize++;
@@ -105,9 +105,5 @@ public class QueueCommand extends AbstractCommand {
         }
         embedBuilder.setDescription(desc);
         event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
-    }
-
-    private boolean endsWithZero(int i) { //what an ugly way
-        return Integer.toString(i).endsWith("0");
     }
 }

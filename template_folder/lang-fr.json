@@ -194,9 +194,10 @@
         "entries": "Entrées :",
         "source": {
           "url": "Commande (lien direct)",
+          "url_playlist": "Commande (lien direct - playlist)",
           "search": "Commande (recherche YouTube - vidéo)",
-          "search_playlist": "Commande (recherche YouTube - playlist)",
-          "spotify": "Commande (playlist Spotify)"
+          "search_shortcut": "Commande (recherche YouTube - raccourci)",
+          "spotify": "Commande (lien direct - playlist Spotify)"
         },
         "error": {
           "generic": "Désolé, je ne peux pas jouer ce titre ! (et pourtant j'ai bien essayé...)",
@@ -249,32 +250,37 @@
         "description": "🎶 Arrêter le jukebox",
         "done": "Bye ! 👋🏻"
       },
-      "playlist": {
-        "description": "Gestion des playlists",
-        "add": {
-          "description": "Ajouter une playlist",
-          "name_description": "Nom de la playlist",
-          "input_description": "Query de la playlist",
-          "nope": "Cette playlist existe déjà dans ma base de données !",
-          "success": "La playlist `[value1]` a été ajoutée avec succès à ma base de données.",
-          "fail": "Je n'ai pas réussi à ajouter cette playlist à ma base de données. Celle-ci disparaîtra à mon prochain redémarrage."
+      "shortcut": {
+        "description": "Gestion des raccourcis",
+        "bind": {
+          "description": "Ajouter un raccourci",
+          "name_description": "Nom du raccourci",
+          "query_description": "Query du raccourci",
+          "nope": "Ce raccourci existe déjà dans ma base de données !",
+          "success": "Le raccourci `[value1]` a été ajouté avec succès à ma base de données.",
+          "fail": "Je n'ai pas réussi à ajouter ce raccourci à ma base de données. Celui-ci disparaîtra à mon prochain redémarrage."
         },
-        "remove": {
-          "description": "Supprimer une playlist",
-          "name_description": "Nom de la playlist à supprimer",
-          "nope": "Cette playlist n'existe pas dans ma base de données !",
-          "success": "La playlist `[value1]` a été supprimée avec succès de ma base de données.",
-          "fail": "Je n'ai pas réussi à supprimer cette playlist de ma base de données. Celle-ci sera toujours présente à mon prochain redémarrage."
+        "unbind": {
+          "description": "Supprimer un raccourci",
+          "name_description": "Nom du raccourci à supprimer",
+          "nope": "Ce raccourci n'existe pas dans ma base de données !",
+          "success": "Le raccourci `[value1]` a été supprimé avec succès de ma base de données.",
+          "fail": "Je n'ai pas réussi à supprimer ce raccourci de ma base de données. Celui-ci sera toujours présente à mon prochain redémarrage."
         },
         "list": {
-          "description": "Lister les playlists existantes",
-          "no_entries": "Aucune playlist n'ai présente dans ma base de données ! Faites '/playlist add' pour en ajouter une.",
-          "title": "playlists",
-          "added_by": "ajoutée par"
+          "description": "Lister les raccourcis existants",
+          "page_description": "Page",
+          "no_entries": "Aucun raccourci n'ai présent dans ma base de données ! Faites '/shortcut bind' pour en ajouter un.",
+          "out_of_range": "Il n'y a aucun raccourci à cette page.",
+          "title": "[value1] raccourcis"
         },
         "info": {
-          "description": "Donne toutes les informations d'une playlist",
-          "name_description": "Nom de la playlist"
+          "description": "Donne toutes les informations d'un raccourci",
+          "name_description": "Nom de lu raccourci",
+          "nope": "Ce raccourci n'existe pas.",
+          "creation_date": "Créé le :",
+          "by": "Par :",
+          "query": "Query :"
         }
       }
     }

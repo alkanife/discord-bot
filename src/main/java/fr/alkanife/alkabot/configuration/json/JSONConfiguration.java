@@ -6,7 +6,7 @@ import fr.alkanife.alkabot.configuration.json.notifications.JSONNotifications;
 
 public class JSONConfiguration {
 
-    private String lang_file;
+    private String lang_file, shortcut_file;
     private boolean debug;
     private JSONAdmin admin;
     private JSONGuild guild;
@@ -17,8 +17,9 @@ public class JSONConfiguration {
 
     public JSONConfiguration() {}
 
-    public JSONConfiguration(String lang_file, boolean debug, JSONAdmin admin, JSONGuild guild, JSONWelcomeMessage welcome_message, JSONAutoRole auto_role, JSONCommands commands, JSONNotifications notifications) {
+    public JSONConfiguration(String lang_file, String shortcut_file, boolean debug, JSONAdmin admin, JSONGuild guild, JSONWelcomeMessage welcome_message, JSONAutoRole auto_role, JSONCommands commands, JSONNotifications notifications) {
         this.lang_file = lang_file;
+        this.shortcut_file = shortcut_file;
         this.debug = debug;
         this.admin = admin;
         this.guild = guild;
@@ -34,6 +35,14 @@ public class JSONConfiguration {
 
     public void setLang_file(String lang_file) {
         this.lang_file = lang_file;
+    }
+
+    public String getShortcut_file() {
+        return shortcut_file;
+    }
+
+    public void setShortcut_file(String shortcut_file) {
+        this.shortcut_file = shortcut_file;
     }
 
     public boolean isDebug() {

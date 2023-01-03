@@ -3,11 +3,11 @@ package fr.alkanife.alkabot.configuration.json.commands;
 public class JSONCommandsMusic {
 
     private boolean play, playnext, forceplay, remove, skip, stop, destroy, shuffle, clear, queue;
-    private JSONCommandsMusicPlaylist playlist;
+    private JSONCommandsMusicShortcut shortcut;
 
     public JSONCommandsMusic() {}
 
-    public JSONCommandsMusic(boolean play, boolean playnext, boolean forceplay, boolean remove, boolean skip, boolean stop, boolean destroy, boolean shuffle, boolean clear, boolean queue, JSONCommandsMusicPlaylist playlist) {
+    public JSONCommandsMusic(boolean play, boolean playnext, boolean forceplay, boolean remove, boolean skip, boolean stop, boolean destroy, boolean shuffle, boolean clear, boolean queue, JSONCommandsMusicShortcut shortcut) {
         this.play = play;
         this.playnext = playnext;
         this.forceplay = forceplay;
@@ -18,7 +18,7 @@ public class JSONCommandsMusic {
         this.shuffle = shuffle;
         this.clear = clear;
         this.queue = queue;
-        this.playlist = playlist;
+        this.shortcut = shortcut;
     }
 
     public boolean isPlay() {
@@ -101,11 +101,11 @@ public class JSONCommandsMusic {
         this.queue = queue;
     }
 
-    public JSONCommandsMusicPlaylist getPlaylist() {
-        return playlist;
+    public JSONCommandsMusicShortcut getShortcut() {
+        return shortcut;
     }
 
-    public void setPlaylist(JSONCommandsMusicPlaylist playlist) {
-        this.playlist = playlist;
+    public void setShortcut(JSONCommandsMusicShortcut shortcut) {
+        this.shortcut = shortcut;
     }
 }

@@ -1,5 +1,6 @@
 {
   "lang_file": "lang-en.json",
+  "shortcut_file": "shortcuts.json",
   "debug": false,
   "admin": {
     "metrics_for_nerds": false,
@@ -40,9 +41,9 @@
       "shuffle": true,
       "clear": true,
       "queue": true,
-      "playlist": {
-        "add": true,
-        "remove": true,
+      "shortcut": {
+        "bind": true,
+        "unbind": true,
         "list": true,
         "info": true
       }

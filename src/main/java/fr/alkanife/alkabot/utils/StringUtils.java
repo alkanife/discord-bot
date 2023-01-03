@@ -37,11 +37,18 @@ public class StringUtils {
         return s.equalsIgnoreCase("");
     }
 
+    public static String dateToString(Date date) {
+        if (date == null)
+            return null;
+
+        return new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(date);
+    }
+
     public static String offsetToString(OffsetDateTime offsetDateTime) {
         if (offsetDateTime == null)
             return null;
 
-        return new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(new Date(offsetDateTime.toInstant().toEpochMilli()));
+        return dateToString(new Date(offsetDateTime.toInstant().toEpochMilli()));
     }
 
     public static boolean isURL(@NotNull String s) {
@@ -78,5 +85,9 @@ public class StringUtils {
             stringBuilder.append("]");
 
         return stringBuilder.toString();
+    }
+
+    public static boolean endsWithZero(int i) { //what an ugly way
+        return Integer.toString(i).endsWith("0");
     }
 }

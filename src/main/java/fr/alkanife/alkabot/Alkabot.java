@@ -1,7 +1,6 @@
 package fr.alkanife.alkabot;
 
 import fr.alkanife.alkabot.command.CommandManager;
-import fr.alkanife.alkabot.command.TerminalCommandHandler;
 import fr.alkanife.alkabot.configuration.ConfigurationParser;
 import fr.alkanife.alkabot.configuration.json.JSONConfiguration;
 import fr.alkanife.alkabot.configuration.ConfigurationLoader;
@@ -10,7 +9,7 @@ import fr.alkanife.alkabot.configuration.tokens.TokensLoader;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
 import fr.alkanife.alkabot.listener.ListenerManager;
 import fr.alkanife.alkabot.music.MusicManager;
-import fr.alkanife.alkabot.music.playlist.PlaylistManager;
+import fr.alkanife.alkabot.music.shortcut.ShortcutManager;
 import fr.alkanife.alkabot.notification.NotificationManager;
 import fr.alkanife.alkabot.utils.AlkabotUtils;
 import fr.alkanife.alkabot.utils.StringUtils;
@@ -27,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -52,7 +50,7 @@ public class Alkabot {
     private static JDA jda;
     private static Guild guild;
     private static MusicManager musicManager;
-    private static PlaylistManager playlistManager;
+    private static ShortcutManager shortcutManager;
     private static NotificationManager notificationManager;
     private static ListenerManager listenerManager;
 
@@ -202,10 +200,10 @@ public class Alkabot {
             // Initializing Notification manager
             notificationManager = new NotificationManager();
 
-            // Initializing playlists
-            debug("Reading playlists");
-            playlistManager = new PlaylistManager();
-            playlistManager.read();
+            // Initializing shortcuts
+            debug("Reading shortcuts");
+            shortcutManager = new ShortcutManager();
+            shortcutManager.read();
 
             // Initializing Listener Manager
             listenerManager = new ListenerManager();
@@ -364,12 +362,12 @@ public class Alkabot {
         Alkabot.musicManager = musicManager;
     }
 
-    public static PlaylistManager getPlaylistManager() {
-        return playlistManager;
+    public static ShortcutManager getShortcutManager() {
+        return shortcutManager;
     }
 
-    public static void setPlaylistManager(PlaylistManager playlistManager) {
-        Alkabot.playlistManager = playlistManager;
+    public static void setShortcutManager(ShortcutManager shortcutManager) {
+        Alkabot.shortcutManager = shortcutManager;
     }
 
     public static NotificationManager getNotificationManager() {

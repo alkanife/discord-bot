@@ -2,7 +2,7 @@ package fr.alkanife.alkabot.command.music;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractCommand;
-import fr.alkanife.alkabot.music.playlist.Playlist;
+import fr.alkanife.alkabot.music.shortcut.Shortcut;
 import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -44,24 +44,25 @@ public class PlayCommand extends AbstractCommand {
 
         Alkabot.getMusicManager().connect(event.getMember());
 
-        String url = event.getOption("input").getAsString();
+        String input = event.getOption("input").getAsString();
 
-        if (url.startsWith("https://open.spotify.com/playlist")) {
+        if (input.startsWith("https://open.spotify.com/playlist")) {
             if (Alkabot.supportSpotify())
-                Alkabot.getMusicManager().getSpotifyLoader().load(event, url, priority, force);
+                Alkabot.getMusicManager().getSpotifyLoader().load(event, input, priority, force);
             else
                 event.reply("command.music.play.error.no_spotify_support").queue();
         } else {
-            if (!StringUtils.isURL(url)) {
-                Playlist playlist = Alkabot.getPlaylistManager().getPlaylist(url);
+            if (!StringUtils.isURL(input)) {
+                Shortcut shortcut = Alkabot.getShortcutManager().getShortcut(input);
 
-                if (playlist == null)
-                    url = "ytsearch: " + url;
-                else
-                    url = playlist.getUrl();
+                if (shortcut != null)
+                    if (StringUtils.isURL(shortcut.getQuery()))
+                        input = shortcut.getQuery();
+                    else
+                        input = "ytsearch: " + shortcut.getQuery();
             }
 
-            Alkabot.getMusicManager().getLavaplayerLoader().load(event, url, priority, force);
+            Alkabot.getMusicManager().getLavaplayerLoader().load(event, input, priority, force);
         }
     }
 }

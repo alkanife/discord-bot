@@ -194,9 +194,10 @@
         "entries": "Entries:",
         "source": {
           "url": "Command (direct link)",
+          "url_playlist": "Command (direct link - playlist)",
           "search": "Command (YouTube search - video)",
-          "search_playlist": "Command (YouTube search - playlist\n)",
-          "spotify": "Command (Spotify playlist)"
+          "search_shortcut": "Command (YouTube search - shortcut)",
+          "spotify": "Command (direct link - Spotify playlist)"
         },
         "error": {
           "generic": "Sorry, I can't play this track! (and yet I tried...)",
@@ -249,32 +250,37 @@
         "description": "🎶 Stop the jukebox",
         "done": "Bye! 👋🏻"
       },
-      "playlist": {
-        "description": "Playlist management",
-        "add": {
-          "description": "Add a playlist",
-          "name_description": "Playlist name",
-          "input_description": "Playlist query",
-          "nope": "This playlist already exists in my database!",
-          "success": "Playlist `[value1]` was successfully added to my database.",
-          "fail": "I failed to add this playlist to my database. It will disappear on my next restart."
+      "shortcut": {
+        "description": "Shortcut management",
+        "bind": {
+          "description": "Add a shortcut",
+          "name_description": "Shortcut name",
+          "query_description": "Shortcut query",
+          "nope": "This shortcut already exists in my database!",
+          "success": "The shortcut `[value1]` was successfully added to my database.",
+          "fail": "I failed to add this shortcut to my database. It will disappear on my next restart."
         },
-        "remove": {
-          "description": "Delete a playlist",
-          "name_description": "Name of playlist to delete",
-          "nope": "This playlist does not exist in my database!",
-          "success": "Playlist `[value1]` was successfully deleted from my database.",
-          "fail": "I was unable to delete this playlist from my database. This will still be present on my next restart."
+        "unbind": {
+          "description": "Delete a shortcut",
+          "name_description": "Name of shortcut to delete",
+          "nope": "This shortcut does not exist in my database!",
+          "success": "The shortcut `[value1]` was successfully deleted from my database.",
+          "fail": "I was unable to delete this shortcut from my database. This will still be present on my next restart."
         },
         "list": {
-          "description": "List existing playlists",
-          "no_entries": "No playlists present in my database! Do '/playlist add' to add one.",
-          "title": "playlists",
-          "added_by": "added by"
+          "description": "List existing shortcuts",
+          "page_description": "Page",
+          "no_entries": "No shortcuts present in my database! Do '/shortcut add' to add one.",
+          "out_of_range": "There is no shortcuts at this page.",
+          "title": "[value1] shortcuts"
         },
         "info": {
-          "description": "Gives all information of a playlist",
-          "name_description": "Playlist name"
+          "description": "Gives all information about a shortcut",
+          "name_description": "Shortcut name",
+          "nope": "This shortcut does not exist.",
+          "creation_date": "Created the :",
+          "by": "By :",
+          "query": "Query :"
         }
       }
     }

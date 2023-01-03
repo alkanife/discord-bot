@@ -6,7 +6,6 @@ import fr.alkanife.alkabot.command.music.*;
 import fr.alkanife.alkabot.command.utilities.CopyCommand;
 import fr.alkanife.alkabot.command.utilities.InfoCommand;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.*;
@@ -29,7 +28,7 @@ public class CommandManager {
 
         registerCommand(new AboutCommand());
 
-        registerCommands(new ClearCommand(), new DestroyCommand(), new ForceplayCommand(), new PlayCommand(), new PlaylistCommand(), new PlaynextCommand(),
+        registerCommands(new ClearCommand(), new DestroyCommand(), new ForceplayCommand(), new PlayCommand(), new ShortcutCommand(), new PlaynextCommand(),
                 new QueueCommand(), new RemoveCommand(), new ShuffleCommand(), new SkipCommand(), new fr.alkanife.alkabot.command.music.StopCommand());
 
         registerCommands(new CopyCommand(), new InfoCommand());

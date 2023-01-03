@@ -47,6 +47,11 @@ public class ConfigurationParser extends AbstractWorker {
         // SET TO A DEFAULT VALUE IF NULL
         //
 
+        if (conf.getShortcut_file() == null) {
+            conf.setShortcut_file("shortcuts.json");
+            changeNull("shortcut_file", "shortcuts.json");
+        }
+
         // Admin
         if (conf.getAdmin() == null) {
             conf.setAdmin(new JSONAdmin(false, false, null));
@@ -111,14 +116,9 @@ public class ConfigurationParser extends AbstractWorker {
             changingBecauseNoValue("commands.music.*", "true", "commands.music");
         }
 
-        if (conf.getCommands().getMusic().getPlaylist() == null) {
-            conf.getCommands().getMusic().setPlaylist(new JSONCommandsMusicPlaylist(true, true, true, true));
-            changingBecauseNoValue("commands.music.playlist.*", "true", "commands.music.playlist");
-        }
-
-        if (conf.getCommands().getMusic().getPlaylist() == null) {
-            conf.getCommands().getMusic().setPlaylist(new JSONCommandsMusicPlaylist(true, true, true, true));
-            changingBecauseNoValue("commands.music.playlist.*", "true", "commands.music.playlist");
+        if (conf.getCommands().getMusic().getShortcut() == null) {
+            conf.getCommands().getMusic().setShortcut(new JSONCommandsMusicShortcut(true, true, true, true));
+            changingBecauseNoValue("commands.music.shortcut.*", "true", "commands.music.shortcut");
         }
 
         if (conf.getCommands().getUtilities() == null) {

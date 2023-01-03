@@ -63,4 +63,4 @@
 
 `shortcut info <name>`: Display the creation date, author, and query of a shortcut.
 
-`shortcut list`: List shortcuts.
+`shortcut list <page>`: List shortcuts. Display page 1 by default.

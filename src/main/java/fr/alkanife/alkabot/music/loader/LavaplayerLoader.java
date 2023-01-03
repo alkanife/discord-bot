@@ -83,7 +83,7 @@ public class LavaplayerLoader extends AbstractMusic {
                 } else {
                     List<AlkabotTrack> alkabotTrackList = new ArrayList<>();
 
-                    String source = Alkabot.t("jukebox-command-play-source-yt-search-playlist") + " / \"" + playlist.getName() + "\"";
+                    String source = Alkabot.t("command.music.play.source.url_playlist") + " / \"" + playlist.getName() + "\"";
 
                     for (AudioTrack audioTrack : playlist.getTracks())
                         alkabotTrackList.add(new AlkabotTrack(audioTrack, source, id, priority));

@@ -2,7 +2,6 @@ package fr.alkanife.alkabot.command.utilities;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractCommand;
-import fr.alkanife.alkabot.music.playlist.PlaylistManager;
 import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;

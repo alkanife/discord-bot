@@ -32,7 +32,7 @@ public class PlaylistManager {
 
     public void read(boolean reload) throws IOException {
         Alkabot.getLogger().info((reload ? "(RELOAD) " : "") +"Reading playlists");
-        File plFile = new File(Alkabot.getConfigurationFilePath() + "/playlists.json");
+        File plFile = new File(Alkabot.getAbsolutePath() + "/playlists.json");
 
         if (!plFile.exists()) {
             return;

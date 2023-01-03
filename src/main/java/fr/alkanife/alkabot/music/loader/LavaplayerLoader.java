@@ -96,7 +96,7 @@ public class LavaplayerLoader extends AbstractMusic {
                     embedBuilder.setTitle(Alkabot.t("command.music.play.title_playlist") + " " + (priority ? Alkabot.t("command.music.play.priority") : ""));
                     embedBuilder.setDescription("[" + playlist.getName() + "](" + url + ")\n\n" +
                             Alkabot.t("command.music.play.entries") + " `" + playlist.getTracks().size() + "`\n" +
-                            Alkabot.t("command.music.play.newtime") + " `" + StringUtils.durationToString(getMusicManager().getTrackScheduler().getQueueDuration(), true, true) + "`");
+                            Alkabot.t("command.music.play.newtime") + " `" + StringUtils.durationToString(getMusicManager().getTrackScheduler().getQueueDuration(), false, true) + "`");
 
                     embedBuilder.setThumbnail(firstAlkabotTrack.getThumbUrl());
 

@@ -29,7 +29,7 @@ public class SkipCommand extends AbstractCommand {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getName(), getDescription())
-                .addOption(OptionType.INTEGER, "input", Alkabot.t("command.music.skip.input_description"), true);
+                .addOption(OptionType.INTEGER, "input", Alkabot.t("command.music.skip.input_description"), false);
     }
 
     @Override

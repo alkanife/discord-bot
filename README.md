@@ -21,7 +21,7 @@
   •
   <a href="https://github.com/alkanife/alkabot/blob/main/doc/commands.md">Commands</a>
   •
-  <a href="#use-installation">Use/Installation</a>
+  <a href="#useinstallation">Use/Installation</a>
   •
   <a href="https://github.com/alkanife/alkabot/blob/main/doc/config.md">Configuration</a>
   •
@@ -35,7 +35,7 @@ Alkabot is a self-hosted, highly configurable Discord bot made in Java.
 
 This is a bot designed to be unique to a single Discord server, as a private bot.
 
-This project is currently in its development phase for version 2.0.0, see [dev](https://github.com/alkanife/alkabot/tree/dev) branch for the latest changes.
+This project is currently in its development phase for version 2.0.0, some features are in work in progress and subject to change or deletion.
 
 ### Features
 - Welcome messages
@@ -52,7 +52,7 @@ A list of commands is [available here](https://github.com/alkanife/alkabot/blob/
 You need **Java 17** or above to use Alkabot.
 
 ### Installation
-Download the latest version and the `template_folder.zip`, place Alkabot in a new folder with the content of the template folder, [configure it](#configuration), and you are good to go.
+Download the latest release and the `template_folder.zip`, place Alkabot in a new folder with the content of the template folder, [configure it](#configuration), and you are good to go.
 
 Your folder should look like this:
 ```

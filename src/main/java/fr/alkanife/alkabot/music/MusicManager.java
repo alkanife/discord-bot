@@ -52,7 +52,7 @@ public class MusicManager {
 
     public void reset() {
         disable();
-        initialize();
+        initialize(true);
     }
 
     public void disable() {
@@ -66,8 +66,9 @@ public class MusicManager {
         alkabotTrackPlayer.play(trackScheduler.getQueue().poll());
     }
 
-    public void initialize() {
-        Alkabot.getLogger().info("Initializing music...");
+    public void initialize(boolean reload) {
+        if(!reload)
+            Alkabot.getLogger().info("Initializing music...");
 
         lavaplayerLoader = new LavaplayerLoader(this);
         spotifyLoader = new SpotifyLoader(this);

@@ -29,7 +29,7 @@ public class ReadyListener extends ListenerAdapter {
             }
 
             updateCommands(false);
-            Alkabot.getMusicManager().initialize();
+            Alkabot.getMusicManager().initialize(false);
 
             Alkabot.getCommandManager().getTerminalCommandHandlerThread().start();
 

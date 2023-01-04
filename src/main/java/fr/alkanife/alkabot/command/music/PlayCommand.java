@@ -55,7 +55,9 @@ public class PlayCommand extends AbstractCommand {
             if (!StringUtils.isURL(input)) {
                 Shortcut shortcut = Alkabot.getShortcutManager().getShortcut(input);
 
-                if (shortcut != null)
+                if (shortcut == null)
+                    input = "ytsearch: " + input;
+                else
                     if (StringUtils.isURL(shortcut.getQuery()))
                         input = shortcut.getQuery();
                     else

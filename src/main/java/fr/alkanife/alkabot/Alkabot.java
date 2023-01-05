@@ -31,7 +31,7 @@ import java.util.*;
 
 public class Alkabot {
 
-    public static final String VERSION = "2.0.0-dev1";
+    public static final String VERSION = "2.0.0-dev2";
     public static final String WEBSITE = "https://github.com/alkanife/alkabot";
 
     private static boolean debug = false;

@@ -56,30 +56,24 @@ public class TrackListener extends AudioEventAdapter {
 
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-
         if (retriedTracks.contains(track.getInfo().title)) {
+            Alkabot.debug("Failed to play '" + track.getInfo().title + "'");
+
+            EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(Alkabot.t("command.music.play.error.fail.title"));
             embedBuilder.setColor(Colors.BIG_RED);
             embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")"
                     + " " + Alkabot.t("command.music.generic.by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
                     Alkabot.t("command.music.play.error.fail.message"));
             embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
-        } else {
-            embedBuilder.setTitle(Alkabot.t("command.music.play.title") + " " + Alkabot.t("command.music.play.priority"));
-            embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ") " + Alkabot.t("command.music.generic.by")
-                    + " [" + track.getInfo().author + "](" + track.getInfo().uri + ") " + StringUtils.durationToString(track.getDuration(), true, false) +
-                    "\n\n" + Alkabot.t("command.music.generic.retrying"));
-            embedBuilder.setColor(Colors.CYAN);
-            embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
 
+            if (musicManager != null)
+                musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+        } else {
+            Alkabot.debug("Retrying to play '" + track.getInfo().title + "'...");
             retriedTracks.add(track.getInfo().title);
 
             musicManager.getTrackScheduler().queue(new AlkabotTrack(track, Alkabot.getJda().getSelfUser().getName(), Alkabot.getJda().getSelfUser().getId(), true), false);
         }
-
-        if (musicManager != null)
-            musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
     }
-
 }

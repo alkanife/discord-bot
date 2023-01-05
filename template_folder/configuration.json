@@ -28,6 +28,9 @@
     "enable": false,
     "role_id": ""
   },
+  "music": {
+    "stop_when_alone": true
+  },
   "commands": {
     "about": true,
     "music": {

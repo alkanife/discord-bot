@@ -21,6 +21,8 @@
   •
   <a href="#on-join-auto-role">On-join auto-role</a>
   •
+  <a href="#music-settings">Music settings</a>
+  •
   <a href="#commands">Commands</a>
   •
   <a href="#notifications">Notifications</a>
@@ -61,6 +63,11 @@
 | -- | -- | -- |
 | `enable` | Boolean | Auto-role activation. |
 | `role_id` | Yes | The role the bot will give to a new member. Auto-role is disabled if this parameter is null. |
+
+### Music settings
+| Name | Can be null? | Description |
+| -- | -- | -- |
+| `stop_when_alone` | Boolean | Decide whether the bot should leave the voice channel when alone or not |
 
 ### Commands
 Allows you to choose the active commands of the bot. Disabled commands will not show up on Discord.

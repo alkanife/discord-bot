@@ -30,22 +30,25 @@ public class TrackListener extends AudioEventAdapter {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        AudioChannel voiceChannel = Alkabot.getGuild().getAudioManager().getConnectedChannel();
+        if (Alkabot.getConfig().getJsonMusic().isStop_when_alone()) {
+            AudioChannel voiceChannel = Alkabot.getGuild().getAudioManager().getConnectedChannel();
 
-        if (voiceChannel != null) {
-            if (voiceChannel.getMembers().size() == 1) {
-                if (!endReason.equals(AudioTrackEndReason.STOPPED)) {
-                    Alkabot.getMusicManager().reset();
+            if (voiceChannel != null) {
+                if (voiceChannel.getMembers().size() == 1) {
+                    if (!endReason.equals(AudioTrackEndReason.STOPPED)) {
+                        Alkabot.debug("Stopping the music because I'm alone");
+                        Alkabot.getMusicManager().reset();
 
-                    if (Alkabot.getMusicManager().getLastMusicCommandChannel() != null) {
-                        EmbedBuilder embedBuilder = new EmbedBuilder();
-                        embedBuilder.setTitle(Alkabot.t("command.music.generic.alone.title"));
-                        embedBuilder.setColor(Colors.BIG_RED);
-                        embedBuilder.setDescription(Alkabot.t("command.music.generic.alone.description"));
+                        if (Alkabot.getMusicManager().getLastMusicCommandChannel() != null) {
+                            EmbedBuilder embedBuilder = new EmbedBuilder();
+                            embedBuilder.setTitle(Alkabot.t("command.music.generic.alone.title"));
+                            embedBuilder.setColor(Colors.BIG_RED);
+                            embedBuilder.setDescription(Alkabot.t("command.music.generic.alone.description"));
 
-                        Alkabot.getMusicManager().getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                            Alkabot.getMusicManager().getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                        }
+                        return;
                     }
-                    return;
                 }
             }
         }

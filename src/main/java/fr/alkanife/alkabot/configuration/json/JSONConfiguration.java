@@ -12,12 +12,13 @@ public class JSONConfiguration {
     private JSONGuild guild;
     private JSONWelcomeMessage welcome_message;
     private JSONAutoRole auto_role;
+    private JSONMusic jsonMusic;
     private JSONCommands commands;
     private JSONNotifications notifications;
 
     public JSONConfiguration() {}
 
-    public JSONConfiguration(String lang_file, String shortcut_file, boolean debug, JSONAdmin admin, JSONGuild guild, JSONWelcomeMessage welcome_message, JSONAutoRole auto_role, JSONCommands commands, JSONNotifications notifications) {
+    public JSONConfiguration(String lang_file, String shortcut_file, boolean debug, JSONAdmin admin, JSONGuild guild, JSONWelcomeMessage welcome_message, JSONAutoRole auto_role, JSONMusic jsonMusic, JSONCommands commands, JSONNotifications notifications) {
         this.lang_file = lang_file;
         this.shortcut_file = shortcut_file;
         this.debug = debug;
@@ -25,6 +26,7 @@ public class JSONConfiguration {
         this.guild = guild;
         this.welcome_message = welcome_message;
         this.auto_role = auto_role;
+        this.jsonMusic = jsonMusic;
         this.commands = commands;
         this.notifications = notifications;
     }
@@ -83,6 +85,14 @@ public class JSONConfiguration {
 
     public void setAuto_role(JSONAutoRole auto_role) {
         this.auto_role = auto_role;
+    }
+
+    public JSONMusic getJsonMusic() {
+        return jsonMusic;
+    }
+
+    public void setJsonMusic(JSONMusic jsonMusic) {
+        this.jsonMusic = jsonMusic;
     }
 
     public JSONCommands getCommands() {

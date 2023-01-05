@@ -3,6 +3,7 @@ package fr.alkanife.alkabot.configuration;
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.configuration.json.JSONAdmin;
 import fr.alkanife.alkabot.configuration.json.JSONConfiguration;
+import fr.alkanife.alkabot.configuration.json.JSONMusic;
 import fr.alkanife.alkabot.configuration.json.commands.*;
 import fr.alkanife.alkabot.configuration.json.guild.JSONGuildPresence;
 import fr.alkanife.alkabot.configuration.json.guild.JSONGuildPresenceActivity;
@@ -103,6 +104,12 @@ public class ConfigurationParser extends AbstractWorker {
                 conf.getAuto_role().setEnable(false);
                 changingBecauseNoValue("auto_role.enable", "false", "auto_role.role_id");
             }
+        }
+
+        // Music settings
+        if (conf.getJsonMusic() == null) {
+            conf.setJsonMusic(new JSONMusic(true));
+            changeNull("music.stop_when_alone", "true");
         }
 
         // Commands

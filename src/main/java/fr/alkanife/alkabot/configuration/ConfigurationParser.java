@@ -107,8 +107,8 @@ public class ConfigurationParser extends AbstractWorker {
         }
 
         // Music settings
-        if (conf.getJsonMusic() == null) {
-            conf.setJsonMusic(new JSONMusic(true));
+        if (conf.getMusic() == null) {
+            conf.setMusic(new JSONMusic(true));
             changeNull("music.stop_when_alone", "true");
         }
 

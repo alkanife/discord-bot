@@ -23,13 +23,20 @@ public class StatusCommand extends AbstractAdminCommand {
 
     @Override
     public String getDescription() {
-        return "Update & RAM usage";
+        return "Uptime & RAM usage";
+    }
+
+    @Override
+    public boolean isDiscordOnly() {
+        return false;
     }
 
     @Override
     public void execute(AdminCommandExecution execution) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("[STATUS]\n\n");
+
+        stringBuilder.append("Using Alkabot v").append(Alkabot.VERSION).append("\n");
 
         SelfUser selfUser = Alkabot.getJda().getSelfUser();
         stringBuilder.append("Client: ").append(selfUser.getAsTag()).append(" [").append(selfUser.getId()).append("]\n");
@@ -38,6 +45,7 @@ public class StatusCommand extends AbstractAdminCommand {
         String formattedElapsedTime = String.format("%d days, %02d hours, %02d minutes, %02d seconds",
                 duration.toDaysPart(), duration.toHoursPart(), duration.toMinutesPart(), duration.toSecondsPart());
         stringBuilder.append("Uptime: ").append(formattedElapsedTime).append("\n\n");
+        stringBuilder.append("Gateway ping: ").append(Alkabot.getJda().getGatewayPing()).append(" ms\n");
 
         stringBuilder.append("Memory usage:\n")
                 .append(" - Max: ").append(MemoryUtils.humanReadableByteCountBin(MemoryUtils.getMaxMemory())).append("\n")

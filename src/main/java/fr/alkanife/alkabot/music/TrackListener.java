@@ -30,7 +30,7 @@ public class TrackListener extends AudioEventAdapter {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        if (Alkabot.getConfig().getJsonMusic().isStop_when_alone()) {
+        if (Alkabot.getConfig().getMusic().isStop_when_alone()) {
             AudioChannel voiceChannel = Alkabot.getGuild().getAudioManager().getConnectedChannel();
 
             if (voiceChannel != null) {

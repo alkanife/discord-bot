@@ -24,6 +24,11 @@ public class StopCommand extends AbstractAdminCommand {
     }
 
     @Override
+    public boolean isDiscordOnly() {
+        return false;
+    }
+
+    @Override
     public void execute(AdminCommandExecution execution) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(Alkabot.t("notification.self.power_off.title"));

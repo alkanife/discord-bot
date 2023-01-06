@@ -17,6 +17,8 @@
 
 `stop`: Shutdown the bot
 
+`ping`: Pong! Display the rest ping
+
 ## Information
 
 `about`: Give a link to this GitHub repo. (will change in future updates)

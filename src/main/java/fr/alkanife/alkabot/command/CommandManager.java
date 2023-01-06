@@ -1,6 +1,7 @@
 package fr.alkanife.alkabot.command;
 
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.command.admin.PingCommand;
 import fr.alkanife.alkabot.command.admin.StatusCommand;
 import fr.alkanife.alkabot.command.music.*;
 import fr.alkanife.alkabot.command.utilities.CopyCommand;
@@ -24,7 +25,7 @@ public class CommandManager {
         terminalCommandHandler = new TerminalCommandHandler();
         terminalCommandHandlerThread = new Thread(terminalCommandHandler, "Alkabot TCH");
 
-        registerAdminCommands(new fr.alkanife.alkabot.command.admin.StopCommand(), new StatusCommand());
+        registerAdminCommands(new fr.alkanife.alkabot.command.admin.StopCommand(), new StatusCommand(), new PingCommand());
 
         registerCommand(new AboutCommand());
 
@@ -112,10 +113,16 @@ public class CommandManager {
             String[] command = execution.getCommand().split(" ");
             AbstractAdminCommand abstractAdminCommand = getAdminCommand(command[0]);
 
-            Alkabot.getLogger().info("Invoking command '" + execution.getCommand() + "' (isFromDiscord=" + execution.isFromDiscord() + ")");
-
             if (abstractAdminCommand == null) {
                 CommandManager.adminHelp(execution);
+                return;
+            }
+
+            if (execution.isFromDiscord())
+                Alkabot.getLogger().info(execution.getMessageReceivedEvent().getAuthor().getAsTag() + " -> " + execution.getCommand());
+
+            if (abstractAdminCommand.isDiscordOnly() && !execution.isFromDiscord()) {
+                Alkabot.getLogger().error("This command can only be executed from Discord.");
                 return;
             }
 

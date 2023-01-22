@@ -18,13 +18,12 @@ public class ReadyListener extends ListenerAdapter {
 
     @Override
     public void onReady(@NotNull ReadyEvent readyEvent) {
-        Alkabot.getLogger().info("Connected!");
+        Alkabot.getLogger().info("Connected and ready!");
 
         try {
             ConfigurationInitializer configurationInitializer = new ConfigurationInitializer(false);
             if (configurationInitializer.getStatus() == AbstractWorker.Status.FAIL) {
-                readyEvent.getJDA().shutdownNow();
-                System.exit(0);
+                Alkabot.shutdown();
                 return;
             }
 
@@ -36,12 +35,11 @@ public class ReadyListener extends ListenerAdapter {
             Alkabot.getLogger().info("Ready!");
 
             //
-            // LOG SUCCESSFUL CONNECTION
+            // Send notification
             //
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(Alkabot.t("notification.self.power_on.title"));
             embedBuilder.setColor(Colors.BIG_GREEN);
-
             embedBuilder.setThumbnail(Alkabot.tri("notification.self.power_on.ok_memes"));
 
             StringBuilder stringBuilder = new StringBuilder();
@@ -49,10 +47,28 @@ public class ReadyListener extends ListenerAdapter {
                     .append(Alkabot.VERSION)
                     .append("\n\n");
 
-            if (Alkabot.getConfig().getAdmin().getAdministrators_id().size() > 0) {
-                stringBuilder.append(Alkabot.t("notification.self.power_on.admins"));
-                for (String admin : Alkabot.getConfig().getAdmin().getAdministrators_id())
+            // Listing admins (5 maximum)
+            List<String> admins = Alkabot.getConfig().getAdmin().getAdministrators_id();
+
+            if (admins.size() > 0) {
+                stringBuilder.append(Alkabot.t("notification.self.power_on.admins", "" + admins.size()));
+
+                int i = 0;
+
+                for (String admin : admins) {
+                    if (i != 0)
+                        stringBuilder.append(",");
+
                     stringBuilder.append(" <@").append(admin).append(">");
+
+                    if (i == 4) {
+                        stringBuilder.append("...");
+                        break;
+                    }
+
+                    i++;
+                }
+
                 stringBuilder.append("\n\n");
             }
 
@@ -62,8 +78,7 @@ public class ReadyListener extends ListenerAdapter {
             Alkabot.getNotificationManager().getSelfNotification().notifyAdmin(embedBuilder.build());
         } catch (Exception exception) {
             exception.printStackTrace();
-            readyEvent.getJDA().shutdownNow();
-            System.exit(0);
+            Alkabot.shutdown();
         }
     }
 
@@ -78,5 +93,4 @@ public class ReadyListener extends ListenerAdapter {
 
         Alkabot.getGuild().updateCommands().addCommands(commands).queue();
     }
-
 }

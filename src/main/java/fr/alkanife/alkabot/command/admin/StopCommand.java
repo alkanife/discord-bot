@@ -36,8 +36,8 @@ public class StopCommand extends AbstractAdminCommand {
         embedBuilder.setColor(Colors.ORANGE);
 
         if (execution.isFromDiscord()) {
-            execution.getMessageReceivedEvent().getMessage().reply("Stopping (may take a moment!)").queue(message -> {
-                embedBuilder.setDescription(Alkabot.t("notification.self.power_off.description", execution.getMessageReceivedEvent().getAuthor().getAsMention()));
+            execution.messageReceivedEvent().getMessage().reply("Stopping (may take a moment!)").queue(message -> {
+                embedBuilder.setDescription(Alkabot.t("notification.self.power_off.description", execution.messageReceivedEvent().getAuthor().getAsMention()));
                 Alkabot.getNotificationManager().getSelfNotification().notifyShutdown(embedBuilder.build(), true);
             });
         } else {

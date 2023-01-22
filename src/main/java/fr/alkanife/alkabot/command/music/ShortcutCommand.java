@@ -67,6 +67,7 @@ public class ShortcutCommand extends AbstractCommand {
         return commandData;
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         String subCommand = event.getSubcommandName();
@@ -130,7 +131,7 @@ public class ShortcutCommand extends AbstractCommand {
                 }
 
                 int shortcutsSize = shortcuts.size();
-                int pages = 0;
+                int pages;
                 if (!StringUtils.endsWithZero(shortcutsSize)) {
                     for (int i = 0; i < 11; i++) {
                         if (StringUtils.endsWithZero(shortcutsSize))

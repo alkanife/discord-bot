@@ -7,6 +7,7 @@ import fr.alkanife.alkabot.configuration.ConfigurationLoader;
 import fr.alkanife.alkabot.configuration.tokens.Tokens;
 import fr.alkanife.alkabot.configuration.tokens.TokensLoader;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
+import fr.alkanife.alkabot.lang.TranslationsManager;
 import fr.alkanife.alkabot.listener.ListenerManager;
 import fr.alkanife.alkabot.music.MusicManager;
 import fr.alkanife.alkabot.music.shortcut.ShortcutManager;
@@ -23,36 +24,29 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 public class Alkabot {
 
     public static final String VERSION = "2.0.0-dev2";
     public static final String WEBSITE = "https://github.com/alkanife/alkabot";
 
     private static boolean debug = false;
-    private static String tokensFilePath;
-    private static String configurationFilePath;
-    private static String absolutePath;
+    private static String tokensFilePath = "tokens.json";
+    private static String configurationFilePath = "configuration.json";
     private static Logger logger;
     private static Tokens tokens;
     private static boolean spotifySupport = true;
     private static JSONConfiguration configuration;
     private static TextChannel welcomeMessageChannel;
     private static Role autoRole;
-    private static CommandManager commandManager;
-    private static HashMap<String, String> translations = new HashMap<>();
-    private static HashMap<String, List<String>> randomTranslations = new HashMap<>();
     private static JDA jda;
     private static Guild guild;
+
+    private static CommandManager commandManager;
     private static MusicManager musicManager;
     private static ShortcutManager shortcutManager;
     private static NotificationManager notificationManager;
     private static ListenerManager listenerManager;
+    private static TranslationsManager translationsManager;
 
     public static void main(String[] args) {
         try {
@@ -60,9 +54,10 @@ public class Alkabot {
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("help")) {
                     System.out.println("This is Alkabot version " + VERSION);
-                    System.out.println("Usage:\n" +
-                            "  java -jar alkabot.jar [help]\n" +
-                            "  java -jar alkabot.jar [debug/prod] [tokens file path] [configuration file path]");
+                    System.out.println("""
+                            Usage:
+                              java -jar alkabot.jar [help]
+                              java -jar alkabot.jar [debug/prod] [tokens file path] [configuration file path]""");
                     System.out.println("Default args: prod tokens.json configuration.json");
                     System.out.println("For more details go to " + WEBSITE);
                     return;
@@ -92,52 +87,17 @@ public class Alkabot {
             System.out.println();
 
             if (AlkabotUtils.isDevBuild())
-                System.out.println("***                                                                                ***\n" +
-                        "*** THIS VERSION IS A DEV BUILD AND SHOULD NOT BE USED IN A PRODUCTION ENVIRONMENT ***\n" +
-                        "***                                                                                ***");
+                System.out.println("""
+                        ***                                                                                ***
+                        *** THIS VERSION IS A DEV BUILD AND SHOULD NOT BE USED IN A PRODUCTION ENVIRONMENT ***
+                        ***                                                                                ***""");
 
             Thread.sleep(2000);
 
-            // Setting default path (this is the path where the .jar is located)
-            absolutePath = Paths.get("").toAbsolutePath().toString();
-            tokensFilePath = absolutePath + "/tokens.json";
-            configurationFilePath = absolutePath + "/configuration.json";
-
-            // Output for debug
             debug("Debug override");
-            debug("Absolute path: " + absolutePath);
-            debug("Tokens path: " + tokensFilePath);
-            debug("Configuration path: " + configurationFilePath);
 
             // Moving old latest.log file
-            debug("Moving old 'latest.log' file to the logs/ folder");
-            File latestLogs = new File(absolutePath + "/latest.log");
-
-            if (latestLogs.exists()) {
-                debug("latest.log file existing");
-                System.out.println("Cleaning logs...");
-
-                File logsFolder = new File(absolutePath + "/logs");
-
-                if (logsFolder.exists()) {
-                    debug("logs/ folder already existing");
-                    if (!logsFolder.isDirectory()) {
-                        System.out.println(absolutePath + "/logs is not a directory");
-                        return;
-                    }
-                } else {
-                    System.out.println("No logs/ directory found, creating one");
-                    logsFolder.mkdir();
-                }
-
-                String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-                String newPath = absolutePath + "/logs/before-" + date + ".log";
-
-                debug("Moving latest.log file to " + newPath);
-                Files.move(latestLogs.toPath(), Paths.get(newPath));
-            } else {
-                debug("No latest.log file");
-            }
+            AlkabotUtils.cleanLogs();
 
             debug("Creating logger");
             logger = LoggerFactory.getLogger(Alkabot.class);
@@ -176,23 +136,20 @@ public class Alkabot {
             if (configurationParser.getStatus() == ConfigurationParser.Status.FAIL)
                 return;
 
+            // Initializing translations
+            TranslationsLoader translationsLoader = new TranslationsLoader(false);
+
+            if (translationsLoader.getTranslations() == null)
+                return;
+
+            translationsManager = new TranslationsManager(translationsLoader);
+
             // Initializing commands
             // Always initialize command AFTER parsing the configuration
             commandManager = new CommandManager();
             commandManager.initialize();
 
             logger.info(commandManager.getCommands().size() + " commands ready");
-
-            // Initializing translations
-            debug("Reading translations");
-
-            TranslationsLoader translationsLoader = new TranslationsLoader(false);
-
-            if (translationsLoader.getTranslations() == null)
-                return;
-
-            translations = translationsLoader.getTranslations();
-            randomTranslations = translationsLoader.getRandomTranslations();
 
             // Initializing music manager
             musicManager = new MusicManager();
@@ -201,7 +158,6 @@ public class Alkabot {
             notificationManager = new NotificationManager();
 
             // Initializing shortcuts
-            debug("Reading shortcuts");
             shortcutManager = new ShortcutManager();
             shortcutManager.read();
 
@@ -256,14 +212,6 @@ public class Alkabot {
 
     public static void setConfigurationFilePath(String configurationFilePath) {
         Alkabot.configurationFilePath = configurationFilePath;
-    }
-
-    public static String getAbsolutePath() {
-        return absolutePath;
-    }
-
-    public static void setAbsolutePath(String absolutePath) {
-        Alkabot.absolutePath = absolutePath;
     }
 
     public static Logger getLogger() {
@@ -322,20 +270,12 @@ public class Alkabot {
         Alkabot.commandManager = commandManager;
     }
 
-    public static HashMap<String, String> getTranslations() {
-        return translations;
+    public static TranslationsManager getTranslationsManager() {
+        return translationsManager;
     }
 
-    public static void setTranslations(HashMap<String, String> translations) {
-        Alkabot.translations = translations;
-    }
-
-    public HashMap<String, List<String>> getRandomTranslations() {
-        return randomTranslations;
-    }
-
-    public void setRandomTranslations(HashMap<String, List<String>> randomTranslations) {
-        this.randomTranslations = randomTranslations;
+    public static void setTranslationsManager(TranslationsManager translationsManager) {
+        Alkabot.translationsManager = translationsManager;
     }
 
     public static JDA getJda() {
@@ -402,67 +342,14 @@ public class Alkabot {
     }
 
     public static String t(String key, String... values) {
-        if (translations.containsKey(key)) {
-            String translation = translations.get(key);
-
-            if (translation == null) {
-                Alkabot.getLogger().warn("Null translation at " + key);
-                return "{" + key + "}";
-            }
-
-            if (values != null) {
-                if (values.length > 0) {
-                    int i = 1;
-                    for (String value : values) {
-                        String query = "[value" + i + "]";
-                        translation = translation.replace(query, value);
-                        i++;
-                    }
-                }
-            }
-
-            return translation;
-        } else {
-            Alkabot.getLogger().warn("Missing translation at " + key);
-            return "{" + key + "}";
-        }
+        return getTranslationsManager().t(key, values);
     }
 
     public static String tr(String key, String... values) {
-        if (randomTranslations.containsKey(key)) {
-            List<String> randomTl = randomTranslations.get(key);
-
-            if (randomTl == null) {
-                Alkabot.getLogger().warn("Null translation at " + key);
-                return "{" + key + "}";
-            }
-
-            String randomTranslation = randomTl.get(new Random().nextInt(randomTl.size()));
-
-            if (values != null) {
-                if (values.length > 0) {
-                    int i = 1;
-                    for (String value : values) {
-                        String query = "[value" + i + "]";
-                        randomTranslation = randomTranslation.replace(query, value);
-                        i++;
-                    }
-                }
-            }
-
-            return randomTranslation;
-        } else {
-            Alkabot.getLogger().warn("Missing translation at " + key);
-            return "{" + key + "}";
-        }
+        return getTranslationsManager().tr(key, values);
     }
 
     public static String tri(String key, String... values) {
-        String s = tr(key, values);
-
-        if (!StringUtils.isURL(s))
-            return "https://share.alkanife.fr/alkabot.png";
-
-        return s;
+        return getTranslationsManager().tri(key, values);
     }
 }

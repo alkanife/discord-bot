@@ -110,7 +110,7 @@ public class CommandManager {
 
     public void handleAdmin(AdminCommandExecution execution) {
         try {
-            String[] command = execution.getCommand().split(" ");
+            String[] command = execution.command().split(" ");
             AbstractAdminCommand abstractAdminCommand = getAdminCommand(command[0]);
 
             if (abstractAdminCommand == null) {
@@ -119,7 +119,7 @@ public class CommandManager {
             }
 
             if (execution.isFromDiscord())
-                Alkabot.getLogger().info(execution.getMessageReceivedEvent().getAuthor().getAsTag() + " -> " + execution.getCommand());
+                Alkabot.getLogger().info(execution.messageReceivedEvent().getAuthor().getAsTag() + " -> " + execution.command());
 
             if (abstractAdminCommand.isDiscordOnly() && !execution.isFromDiscord()) {
                 Alkabot.getLogger().error("This command can only be executed from Discord.");

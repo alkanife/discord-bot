@@ -56,7 +56,7 @@ public class QueueCommand extends AbstractCommand {
 
         List<AlkabotTrack> tracks = new ArrayList<>(musicManager.getTrackScheduler().getQueue());
         int tracksSize = tracks.size();
-        int pages = 0;
+        int pages;
         if (!StringUtils.endsWithZero(tracksSize)) {
             for (int i = 0; i < 11; i++) {
                 if (StringUtils.endsWithZero(tracksSize))
@@ -94,6 +94,7 @@ public class QueueCommand extends AbstractCommand {
             for (int i = (page * 10); i < ((page * 10) + 10); i++) {
                 try {
                     AlkabotTrack audioTrack = tracks.get(i);
+                    //noinspection StringConcatenationInLoop
                     desc += "`" + (i + 1) + ".` [" + audioTrack.getTitle() + "](" + audioTrack.getUrl()+ ") " + StringUtils.durationToString(audioTrack.getDuration(), true, false) + "\n";
                 } catch (Exception e) {
                     break;

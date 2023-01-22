@@ -28,6 +28,6 @@ public class PingCommand extends AbstractAdminCommand {
 
     @Override
     public void execute(AdminCommandExecution execution) {
-        Alkabot.getJda().getRestPing().queue(aLong -> execution.getMessageReceivedEvent().getMessage().reply("Pong! (" + aLong + " ms)").queue());
+        Alkabot.getJda().getRestPing().queue(aLong -> execution.messageReceivedEvent().getMessage().reply("Pong! (" + aLong + " ms)").queue());
     }
 }

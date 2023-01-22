@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
+@SuppressWarnings("DataFlowIssue")
 public class PlayCommand extends AbstractCommand {
 
     @Override

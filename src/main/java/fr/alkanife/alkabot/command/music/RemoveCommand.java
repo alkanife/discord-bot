@@ -71,6 +71,7 @@ public class RemoveCommand extends AbstractCommand {
             BlockingQueue<AlkabotTrack> newBlockingQueue = new LinkedBlockingQueue<>();
 
             for (AlkabotTrack audioTrack : aTracks)
+                //noinspection ResultOfMethodCallIgnored
                 newBlockingQueue.offer(audioTrack);
 
             musicManager.getTrackScheduler().setQueue(newBlockingQueue);

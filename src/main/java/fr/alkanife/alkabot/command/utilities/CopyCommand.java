@@ -39,6 +39,7 @@ public class CopyCommand extends AbstractCommand {
         try {
             OptionMapping copyOption = event.getOption("input");
 
+            //noinspection DataFlowIssue
             String copyURL = copyOption.getAsString();
 
             if (!StringUtils.isURL(copyURL)) {

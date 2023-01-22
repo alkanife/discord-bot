@@ -78,6 +78,7 @@ public class InfoCommand extends AbstractCommand {
         Guild guild = event.getGuild();
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
+        //noinspection DataFlowIssue
         embedBuilder.setTitle(guild.getName());
 
         StringBuilder description = new StringBuilder();
@@ -114,8 +115,10 @@ public class InfoCommand extends AbstractCommand {
         event.replyEmbeds(embedBuilder.build()).setEphemeral(true).queue();
     }
 
+    @SuppressWarnings("ConstantValue")
     public void emote(SlashCommandInteractionEvent event) {
         OptionMapping optionMapping = event.getOption("input");
+        //noinspection DataFlowIssue
         String input = optionMapping.getAsString();
         String[] args = input.split(":");
 
@@ -152,6 +155,7 @@ public class InfoCommand extends AbstractCommand {
 
     public void member(SlashCommandInteractionEvent event) {
         OptionMapping optionMapping = event.getOption("input");
+        //noinspection DataFlowIssue
         Member member = optionMapping.getAsMember();
         User user = optionMapping.getAsUser();
 

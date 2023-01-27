@@ -52,7 +52,7 @@ A list of commands is [available here](https://github.com/alkanife/alkabot/blob/
 You need **Java 17** or above to use Alkabot.
 
 ### Installation
-Download the [latest release](https://github.com/alkanife/alkabot/releases) and the `template_folder.zip`, place Alkabot in a new folder with the content of the template folder, [configure it](#configuration), and you are good to go.
+Download the [latest release](https://github.com/alkanife/alkabot/releases) and the `template_folder.zip`, place Alkabot in a new folder with the content of the template folder, [configure it](https://github.com/alkanife/alkabot/blob/main/doc/config.md), and you are good to go.
 
 Your folder should look like this:
 ```

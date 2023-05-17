@@ -13,6 +13,7 @@ import fr.alkanife.alkabot.music.MusicManager;
 import fr.alkanife.alkabot.music.shortcut.ShortcutManager;
 import fr.alkanife.alkabot.notification.NotificationManager;
 import fr.alkanife.alkabot.utils.AlkabotUtils;
+import fr.alkanife.alkabot.utils.BuildUtils;
 import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -24,9 +25,13 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
+
 public class Alkabot {
 
-    public static final String VERSION = "2.0.0-dev2";
+    public static String VERSION = "unknown";
+    public static String BUILD = "unknown";
+    public static String FULL_VERSION = "uninitialized";
     public static final String WEBSITE = "https://github.com/alkanife/alkabot";
 
     private static boolean debug = false;
@@ -50,10 +55,16 @@ public class Alkabot {
 
     public static void main(String[] args) {
         try {
+            // Read build
+            Alkabot.debug("Reading build information");
+            VERSION = BuildUtils.read("/version.txt");
+            BUILD = BuildUtils.read("/build.txt");
+            FULL_VERSION = VERSION + " (" + BUILD + ")";
+
             // Reading arguments
             if (args.length > 0) {
                 if (args[0].equalsIgnoreCase("help")) {
-                    System.out.println("This is Alkabot version " + VERSION);
+                    System.out.println("This is Alkabot version " + FULL_VERSION);
                     System.out.println("""
                             Usage:
                               java -jar alkabot.jar [help]
@@ -83,7 +94,7 @@ public class Alkabot {
             System.out.println(" /_/    \\_\\_|_|\\_\\__,_|_.__/ \\___/ \\__|");
             System.out.println();
             System.out.println(" " + WEBSITE);
-            System.out.println(" Version " + VERSION);
+            System.out.println(" Version " + FULL_VERSION);
             System.out.println();
 
             if (AlkabotUtils.isDevBuild())

@@ -36,7 +36,7 @@ public class StatusCommand extends AbstractAdminCommand {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("[STATUS]\n\n");
 
-        stringBuilder.append("Using Alkabot v").append(Alkabot.VERSION).append("\n");
+        stringBuilder.append("Using Alkabot v").append(Alkabot.FULL_VERSION).append("\n");
 
         SelfUser selfUser = Alkabot.getJda().getSelfUser();
         stringBuilder.append("Client: ").append(selfUser.getAsTag()).append(" [").append(selfUser.getId()).append("]\n");

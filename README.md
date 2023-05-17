@@ -11,8 +11,8 @@
   <a href="https://github.com/alkanife/alkabot/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/alkanife/alkabot" alt="LICENSE">
   </a>
-  <a href="https://github.com/alkanife/alkabot/">
-    <img src="https://img.shields.io/badge/version-2.0.0--dev1-blue" alt="version">
+  <a href="https://github.com/alkanife/alkabot/releases/tag/2.0.0-dev2">
+    <img src="https://img.shields.io/badge/version-2.0.0--dev2-blue" alt="version">
   </a>
 </h1>
 

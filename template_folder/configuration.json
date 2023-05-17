@@ -44,6 +44,7 @@
       "shuffle": true,
       "clear": true,
       "queue": true,
+      "join": true,
       "shortcut": {
         "bind": true,
         "unbind": true,

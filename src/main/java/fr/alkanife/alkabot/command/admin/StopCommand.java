@@ -20,7 +20,7 @@ public class StopCommand extends AbstractAdminCommand {
 
     @Override
     public String getDescription() {
-        return "Shutdown the bot";
+        return "Stops the bot";
     }
 
     @Override

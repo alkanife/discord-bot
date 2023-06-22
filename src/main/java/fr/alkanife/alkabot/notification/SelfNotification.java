@@ -29,6 +29,14 @@ public class SelfNotification extends AbstractNotification {
     }
 
     public void notifyShutdown(MessageEmbed messageEmbed, boolean shutdownAfter) {
+        if (!jsonNotificationsSelf.isAdmin() && shutdownAfter) {
+            Alkabot.shutdown();
+            return;
+        }
+
+        if (!jsonNotificationsSelf.isAdmin())
+            return;
+
         TextChannel textChannel = Alkabot.getJda().getTextChannelById(getNotificationChannel().getChannelID());
 
         if (textChannel == null) {
@@ -62,7 +70,8 @@ public class SelfNotification extends AbstractNotification {
         else
             embed.setColor(Colors.RED);
 
-        embed = NotifUtils.addMemberAvatar(embed, event.getMember());
+        if (event.getMember() != null)
+            embed = NotifUtils.addMemberAvatar(embed, event.getMember());
 
         embed.addField(Alkabot.t("notification.generic.channel"), NotifUtils.notifChannel(event.getChannel()), true);
         embed.addField(Alkabot.t("notification.generic.member"), NotifUtils.notifMember(event.getMember()), true);

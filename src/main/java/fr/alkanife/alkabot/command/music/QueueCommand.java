@@ -43,8 +43,6 @@ public class QueueCommand extends AbstractCommand {
     public void execute(SlashCommandInteractionEvent event) {
         Alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
 
-        event.deferReply().queue();
-
         MusicManager musicManager = Alkabot.getMusicManager();
 
         AudioTrack current = musicManager.getPlayer().getPlayingTrack();
@@ -53,6 +51,8 @@ public class QueueCommand extends AbstractCommand {
             event.reply(Alkabot.t("command.music.generic.not_playing")).queue();
             return;
         }
+
+        event.deferReply().queue();
 
         List<AlkabotTrack> tracks = new ArrayList<>(musicManager.getTrackScheduler().getQueue());
         int tracksSize = tracks.size();

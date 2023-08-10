@@ -82,6 +82,7 @@ public class MusicManager {
         trackScheduler = new TrackScheduler(this);
         trackListener = new TrackListener(this);
         player.addListener(trackListener);
+        player.setVolume(70);
     }
 
     public MessageChannelUnion getLastMusicCommandChannel() {

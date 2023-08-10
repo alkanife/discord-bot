@@ -56,7 +56,7 @@ public class TranslationsManager {
 
             String randomTranslation = randomTl.get(new Random().nextInt(randomTl.size()));
 
-            return replaceValues(randomTranslation);
+            return replaceValues(randomTranslation, values);
         } else
             return missingTranslation(key);
     }

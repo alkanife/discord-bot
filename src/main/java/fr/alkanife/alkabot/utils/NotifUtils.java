@@ -26,7 +26,7 @@ public class NotifUtils {
         if (user == null)
             return Alkabot.t("notification.generic.unknown");
 
-        return user.getAsTag() + " (" + user.getAsMention() + ")";
+        return user.getName() + " (" + user.getAsMention() + ")";
     }
 
     public static String notifRole(Role role) {

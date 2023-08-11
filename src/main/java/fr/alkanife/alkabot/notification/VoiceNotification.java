@@ -1,60 +1,58 @@
 package fr.alkanife.alkabot.notification;
 
-import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.configuration.json.notifications.VoiceNotifConfig;
 import fr.alkanife.alkabot.utils.Colors;
-import fr.alkanife.alkabot.utils.NotifUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 
 public class VoiceNotification extends AbstractNotification {
 
-    private final VoiceNotifConfig jsonNotificationsVoice;
+    private final VoiceNotifConfig voiceNotifConfig;
 
     public VoiceNotification(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.VOICE);
-        jsonNotificationsVoice = Alkabot.getConfig().getNotifications().getVoice();
+        voiceNotifConfig = notificationManager.getAlkabot().getConfig().getNotifConfig().getVoiceNotifConfig();
     }
 
     public void notifyJoin(GuildVoiceUpdateEvent event) {
-        if (!jsonNotificationsVoice.isJoin())
+        if (!voiceNotifConfig.isJoin())
             return;
 
-        EmbedBuilder embedBuilder = genericEmbed(Alkabot.t("notification.voice.join.title"), event.getMember());
-        embedBuilder.addField(Alkabot.t("notification.generic.channel"), NotifUtils.notifAudioChannel(event.getChannelJoined()), true);
+        EmbedBuilder embedBuilder = genericEmbed(getNotificationManager().getAlkabot().t("notification.voice.join.title"), event.getMember());
+        embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.generic.channel"), notifAudioChannel(event.getChannelJoined()), true);
 
         getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
     }
 
     public void notifyMove(GuildVoiceUpdateEvent event) {
-        if (!jsonNotificationsVoice.isMove())
+        if (!voiceNotifConfig.isMove())
             return;
 
-        EmbedBuilder embedBuilder = genericEmbed(Alkabot.t("notification.voice.move.title"), event.getMember());
-        embedBuilder.addField(Alkabot.t("notification.voice.move.new_channel"), NotifUtils.notifAudioChannel(event.getChannelJoined()), true);
-        embedBuilder.addField(Alkabot.t("notification.voice.move.old_channel"), NotifUtils.notifAudioChannel(event.getChannelLeft()), true);
+        EmbedBuilder embedBuilder = genericEmbed(getNotificationManager().getAlkabot().t("notification.voice.move.title"), event.getMember());
+        embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.voice.move.new_channel"), notifAudioChannel(event.getChannelJoined()), true);
+        embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.voice.move.old_channel"), notifAudioChannel(event.getChannelLeft()), true);
 
         getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
     }
 
     public void notifyLeave(GuildVoiceUpdateEvent event) {
-        if (!jsonNotificationsVoice.isLeave())
+        if (!voiceNotifConfig.isLeave())
             return;
 
-        EmbedBuilder embedBuilder = genericEmbed(Alkabot.t("notification.voice.left.title"), event.getMember());
-        embedBuilder.addField(Alkabot.t("notification.generic.channel"), NotifUtils.notifAudioChannel(event.getChannelLeft()), true);
+        EmbedBuilder embedBuilder = genericEmbed(getNotificationManager().getAlkabot().t("notification.voice.left.title"), event.getMember());
+        embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.generic.channel"), notifAudioChannel(event.getChannelLeft()), true);
 
         getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
     }
 
     private EmbedBuilder genericEmbed(String title, Member member) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder = NotifUtils.addMemberAvatar(embedBuilder, member);
+        embedBuilder = addMemberAvatar(embedBuilder, member);
         embedBuilder.setColor(Colors.CYAN);
 
         embedBuilder.setTitle(title);
-        embedBuilder.addField(Alkabot.t("notification.generic.member"), NotifUtils.notifMember(member), true);
+        embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.generic.member"), notifMember(member), true);
 
         return embedBuilder;
     }

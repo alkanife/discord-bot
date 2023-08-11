@@ -1,9 +1,7 @@
 package fr.alkanife.alkabot.notification;
 
-import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.configuration.json.notifications.ModNotifConfig;
 import fr.alkanife.alkabot.utils.Colors;
-import fr.alkanife.alkabot.utils.NotifUtils;
 import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.ActionType;
@@ -23,7 +21,7 @@ public class ModeratorNotification extends AbstractNotification {
 
     public ModeratorNotification(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.MODERATOR);
-        jsonNotificationsModerator = Alkabot.getConfig().getNotifications().getModerator();
+        jsonNotificationsModerator = getNotificationManager().getAlkabot().getConfig().getNotifConfig().getModNotifConfig();
     }
 
     public void notifyBan(GuildBanEvent event) {
@@ -32,31 +30,31 @@ public class ModeratorNotification extends AbstractNotification {
 
         try {
             event.getGuild().retrieveAuditLogs().queue(auditLogEntries -> {
-                AuditLogEntry logEntry = NotifUtils.getFirst(auditLogEntries, ActionType.BAN, event.getUser().getId());
+                AuditLogEntry logEntry = getFirst(auditLogEntries, ActionType.BAN, event.getUser().getId());
 
                 User target = event.getUser();
                 EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder = NotifUtils.addUserAvatar(embedBuilder, target);
+                embedBuilder = addUserAvatar(embedBuilder, target);
                 embedBuilder.setColor(Colors.RED);
 
-                embedBuilder.setTitle(Alkabot.t("notification.moderator.ban.title"));
-                embedBuilder.addField(Alkabot.t("notification.generic.user"), NotifUtils.notifUser(target), true);
+                embedBuilder.setTitle(getNotificationManager().getAlkabot().t("notification.moderator.ban.title"));
+                embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.generic.user"), notifUser(target), true);
 
-                String admin = Alkabot.t("notification.generic.unknown");
-                String reason = Alkabot.t("notification.generic.unknown");
+                String admin = getNotificationManager().getAlkabot().t("notification.generic.unknown");
+                String reason = getNotificationManager().getAlkabot().t("notification.generic.unknown");
                 if (logEntry != null) {
-                    admin = NotifUtils.notifUser(logEntry.getUser());
-                    reason = NotifUtils.notifValue(logEntry.getReason());
+                    admin = notifUser(logEntry.getUser());
+                    reason = notifValue(logEntry.getReason());
                 }
 
-                embedBuilder.addField(Alkabot.t("notification.generic.moderator"), admin, true);
-                embedBuilder.addField(Alkabot.t("notification.generic.reason"), reason, false);
+                embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.generic.moderator"), admin, true);
+                embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.generic.reason"), reason, false);
 
                 getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
             });
 
         } catch (Exception exception) {
-            Alkabot.getLogger().error("Failed to notify ban");
+            getNotificationManager().getAlkabot().getLogger().error("Failed to notify ban");
             exception.printStackTrace();
         }
     }
@@ -67,27 +65,27 @@ public class ModeratorNotification extends AbstractNotification {
 
         try {
             event.getGuild().retrieveAuditLogs().queue(auditLogEntries -> {
-                AuditLogEntry logEntry = NotifUtils.getFirst(auditLogEntries, ActionType.UNBAN, event.getUser().getId());
+                AuditLogEntry logEntry = getFirst(auditLogEntries, ActionType.UNBAN, event.getUser().getId());
 
                 User target = event.getUser();
                 EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder = NotifUtils.addUserAvatar(embedBuilder, target);
+                embedBuilder = addUserAvatar(embedBuilder, target);
                 embedBuilder.setColor(Colors.CYAN);
 
-                embedBuilder.setTitle(Alkabot.t("notification.moderator.unban.title"));
-                embedBuilder.addField(Alkabot.t("notification.generic.user"), NotifUtils.notifUser(target), true);
+                embedBuilder.setTitle(getNotificationManager().getAlkabot().t("notification.moderator.unban.title"));
+                embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.generic.user"), notifUser(target), true);
 
-                String admin = Alkabot.t("notification.generic.unknown");
+                String admin = getNotificationManager().getAlkabot().t("notification.generic.unknown");
                 if (logEntry != null)
-                    admin = NotifUtils.notifUser(logEntry.getUser());
+                    admin = notifUser(logEntry.getUser());
 
 
-                embedBuilder.addField(Alkabot.t("notification.generic.moderator"), admin, true);
+                embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.generic.moderator"), admin, true);
 
                 getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
             });
         } catch (Exception exception) {
-            Alkabot.getLogger().error("Failed to notify unban");
+            getNotificationManager().getAlkabot().getLogger().error("Failed to notify unban");
             exception.printStackTrace();
         }
     }
@@ -107,102 +105,102 @@ public class ModeratorNotification extends AbstractNotification {
 
         try {
             event.getGuild().retrieveAuditLogs().queue(auditLogEntries -> {
-                AuditLogEntry logEntry = NotifUtils.getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "communication_disabled_until", event.getUser().getId());
+                AuditLogEntry logEntry = getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "communication_disabled_until", event.getUser().getId());
 
-                EmbedBuilder embedBuilder = NotifUtils.genericValueEmbed(Colors.CYAN,
-                        Alkabot.t("notification.moderator.timeout.title"),
+                EmbedBuilder embedBuilder = genericValueEmbed(Colors.CYAN,
+                        getNotificationManager().getAlkabot().t("notification.moderator.timeout.title"),
                         event.getMember(),
                         logEntry,
-                        NotifUtils.notifValue(StringUtils.offsetToString(event.getOldTimeOutEnd())),
-                        NotifUtils.notifValue(StringUtils.offsetToString(event.getNewTimeOutEnd())));
+                        notifValue(StringUtils.offsetToString(event.getOldTimeOutEnd())),
+                        notifValue(StringUtils.offsetToString(event.getNewTimeOutEnd())));
 
                 getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
             });
         } catch (Exception exception) {
-            Alkabot.getLogger().error("Failed to notify timeout");
+            getNotificationManager().getAlkabot().getLogger().error("Failed to notify timeout");
             exception.printStackTrace();
         }
     }
 
     public void notifyDeafenMember(GuildVoiceGuildDeafenEvent event) { // Experimental
-        if (!jsonNotificationsModerator.isDeafen_member())
+        if (!jsonNotificationsModerator.isDeafenMember())
             return;
 
         try {
             event.getGuild().retrieveAuditLogs().queue(auditLogEntries -> {
-                AuditLogEntry logEntry = NotifUtils.getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "deaf", event.getMember().getId());
+                AuditLogEntry logEntry = getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "deaf", event.getMember().getId());
 
-                EmbedBuilder embedBuilder = NotifUtils.genericVoiceEmbed(Colors.RED, Alkabot.t("notification.moderator.deafen.title"), event.getMember(), logEntry);
+                EmbedBuilder embedBuilder = genericVoiceEmbed(Colors.RED, getNotificationManager().getAlkabot().t("notification.moderator.deafen.title"), event.getMember(), logEntry);
 
                 getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
             });
         } catch (Exception exception) {
-            Alkabot.getLogger().error("Failed to notify deafen");
+            getNotificationManager().getAlkabot().getLogger().error("Failed to notify deafen");
             exception.printStackTrace();
         }
     }
 
     public void notifyUndeafenMember(GuildVoiceGuildDeafenEvent event) { // Experimental
-        if (!jsonNotificationsModerator.isUndeafen_member())
+        if (!jsonNotificationsModerator.isUndeafenMember())
             return;
 
         try {
             event.getGuild().retrieveAuditLogs().queue(auditLogEntries -> {
-                AuditLogEntry logEntry = NotifUtils.getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "deaf", event.getMember().getId());
+                AuditLogEntry logEntry = getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "deaf", event.getMember().getId());
 
-                EmbedBuilder embedBuilder = NotifUtils.genericVoiceEmbed(Colors.CYAN, Alkabot.t("notification.moderator.undeafen.title"), event.getMember(), logEntry);
+                EmbedBuilder embedBuilder = genericVoiceEmbed(Colors.CYAN, getNotificationManager().getAlkabot().t("notification.moderator.undeafen.title"), event.getMember(), logEntry);
 
                 getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
             });
         } catch (Exception exception) {
-            Alkabot.getLogger().error("Failed to notify undeafen");
+            getNotificationManager().getAlkabot().getLogger().error("Failed to notify undeafen");
             exception.printStackTrace();
         }
     }
 
     public void notifyMuteMember(GuildVoiceGuildMuteEvent event) { // Experimental
-        if (!jsonNotificationsModerator.isMute_member())
+        if (!jsonNotificationsModerator.isMuteMember())
             return;
 
         try {
             event.getGuild().retrieveAuditLogs().queue(auditLogEntries -> {
-                AuditLogEntry logEntry = NotifUtils.getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "mute", event.getMember().getId());
+                AuditLogEntry logEntry = getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "mute", event.getMember().getId());
 
-                EmbedBuilder embedBuilder = NotifUtils.genericVoiceEmbed(Colors.RED, Alkabot.t("notification.moderator.mute.title"), event.getMember(), logEntry);
+                EmbedBuilder embedBuilder = genericVoiceEmbed(Colors.RED, getNotificationManager().getAlkabot().t("notification.moderator.mute.title"), event.getMember(), logEntry);
 
                 getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
             });
         } catch (Exception exception) {
-            Alkabot.getLogger().error("Failed to notify mute");
+            getNotificationManager().getAlkabot().getLogger().error("Failed to notify mute");
             exception.printStackTrace();
         }
     }
 
     public void notifyUnmuteMember(GuildVoiceGuildMuteEvent event) { // Experimental
-        if (!jsonNotificationsModerator.isUnmute_member())
+        if (!jsonNotificationsModerator.isUnmuteMember())
             return;
 
         try {
             event.getGuild().retrieveAuditLogs().queue(auditLogEntries -> {
-                AuditLogEntry logEntry = NotifUtils.getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "mute", event.getMember().getId());
+                AuditLogEntry logEntry = getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "mute", event.getMember().getId());
 
-                EmbedBuilder embedBuilder = NotifUtils.genericVoiceEmbed(Colors.CYAN, Alkabot.t("notification.moderator.unmute.title"), event.getMember(), logEntry);
+                EmbedBuilder embedBuilder = genericVoiceEmbed(Colors.CYAN, getNotificationManager().getAlkabot().t("notification.moderator.unmute.title"), event.getMember(), logEntry);
 
                 getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
             });
         } catch (Exception exception) {
-            Alkabot.getLogger().error("Failed to notify unmute");
+            getNotificationManager().getAlkabot().getLogger().error("Failed to notify unmute");
             exception.printStackTrace();
         }
     }
 
     public void notifyChangeMemberNickname(GuildMemberUpdateNicknameEvent event) { // Experimental
-        if (!jsonNotificationsModerator.isChange_member_nickname())
+        if (!jsonNotificationsModerator.isChangeMemberNickname())
             return;
 
         try {
             event.getGuild().retrieveAuditLogs().queue(auditLogEntries -> {
-                AuditLogEntry logEntry = NotifUtils.getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "nick", event.getUser().getId());
+                AuditLogEntry logEntry = getFirst(auditLogEntries, ActionType.MEMBER_UPDATE, "nick", event.getUser().getId());
 
                 if (logEntry == null)
                     return;
@@ -213,17 +211,17 @@ public class ModeratorNotification extends AbstractNotification {
                 if (logEntry.getUser().getId().equals(event.getMember().getId()))
                     return;
 
-                EmbedBuilder embedBuilder = NotifUtils.genericValueEmbed(Colors.CYAN,
-                        Alkabot.t("notification.moderator.nickname.title"),
+                EmbedBuilder embedBuilder = genericValueEmbed(Colors.CYAN,
+                        getNotificationManager().getAlkabot().t("notification.moderator.nickname.title"),
                         event.getMember(),
                         logEntry,
-                        NotifUtils.notifValue(event.getOldNickname()),
-                        NotifUtils.notifValue(event.getNewNickname()));
+                        notifValue(event.getOldNickname()),
+                        notifValue(event.getNewNickname()));
 
                 getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
             });
         } catch (Exception exception) {
-            Alkabot.getLogger().error("Failed to notify timeout");
+            getNotificationManager().getAlkabot().getLogger().error("Failed to notify timeout");
             exception.printStackTrace();
         }
     }

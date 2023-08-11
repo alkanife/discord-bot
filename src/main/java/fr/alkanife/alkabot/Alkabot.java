@@ -2,6 +2,8 @@ package fr.alkanife.alkabot;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.configuration.ConfigLoader;
 import fr.alkanife.alkabot.configuration.json.Configuration;
@@ -15,7 +17,6 @@ import fr.alkanife.alkabot.music.Shortcut;
 import fr.alkanife.alkabot.notification.NotificationManager;
 import fr.alkanife.alkabot.tokens.TokenLoader;
 import fr.alkanife.alkabot.tokens.Tokens;
-import fr.alkanife.alkabot.utils.AlkabotUtils;
 import fr.alkanife.alkabot.utils.tools.BuildReader;
 import fr.alkanife.alkabot.utils.tools.LogsCleaner;
 import lombok.Getter;
@@ -29,7 +30,9 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
+
+import java.io.File;
+import java.nio.file.Files;
 
 public class Alkabot {
 
@@ -167,7 +170,7 @@ public class Alkabot {
             musicManager = new MusicManager(this);
 
             // Initializing Notification manager
-            notificationManager = new NotificationManager();
+            notificationManager = new NotificationManager(this);
 
             // Initializing music data
             try {
@@ -188,7 +191,7 @@ public class Alkabot {
             jdaBuilder.setRawEventsEnabled(true);
             jdaBuilder.setStatus(OnlineStatus.valueOf(config.getGuildConfig().getGuildPresenceConfig().getStatus()));
             if (config.getGuildConfig().getGuildPresenceConfig().getGuildActivityConfig().isShowing())
-                jdaBuilder.setActivity(AlkabotUtils.buildActivity());
+                jdaBuilder.setActivity(buildActivity());
 
             jdaBuilder.enableIntents(GatewayIntent.GUILD_MEMBERS,
                     GatewayIntent.GUILD_VOICE_STATES,
@@ -280,6 +283,18 @@ public class Alkabot {
             }
         }
         return true;
+    }
+
+    public Activity buildActivity() {
+        verbose("Building activity");
+
+        Activity.ActivityType activityType = Activity.ActivityType.valueOf(config.getGuildConfig().getGuildPresenceConfig().getGuildActivityConfig().getType());
+        return Activity.of(activityType, config.getGuildConfig().getGuildPresenceConfig().getGuildActivityConfig().getText());
+    }
+
+    public void updateMusicData() throws Exception {
+        Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
+        Files.writeString(new File(config.getMusicDataPath()).toPath(), gson.toJson(musicData, MusicData.class));
     }
 
     // Shortcuts for translations

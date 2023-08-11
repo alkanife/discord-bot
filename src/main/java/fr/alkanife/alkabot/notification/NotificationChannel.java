@@ -1,20 +1,19 @@
 package fr.alkanife.alkabot.notification;
 
-import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.configuration.json.Configuration;
 
 public enum NotificationChannel {
 
     SELF, MESSAGE, MEMBER, MODERATOR, VOICE, GUILD;
 
-    public String getChannelID() {
+    public String getChannelID(Configuration configuration) {
         String channelID = "";
         switch (this) {
-            case SELF -> channelID = Alkabot.getConfig().getNotifications().getSelf().getChannel_id();
-            case MESSAGE -> channelID = Alkabot.getConfig().getNotifications().getMessage().getChannel_id();
-            case MEMBER -> channelID = Alkabot.getConfig().getNotifications().getMember().getChannel_id();
-            case MODERATOR -> channelID = Alkabot.getConfig().getNotifications().getModerator().getChannel_id();
-            case VOICE -> channelID = Alkabot.getConfig().getNotifications().getVoice().getChannel_id();
-            case GUILD -> channelID = Alkabot.getConfig().getNotifications().getGuild().getChannel_id();
+            case SELF -> channelID = configuration.getNotifConfig().getSelfNotifConfig().getChannelId();
+            case MESSAGE -> channelID = configuration.getNotifConfig().getMessageNotifConfig().getChannelId();
+            case MEMBER -> channelID = configuration.getNotifConfig().getMemberNotifConfig().getChannelId();
+            case MODERATOR -> channelID = configuration.getNotifConfig().getModNotifConfig().getChannelId();
+            case VOICE -> channelID = configuration.getNotifConfig().getVoiceNotifConfig().getChannelId();
         }
         return channelID;
     }

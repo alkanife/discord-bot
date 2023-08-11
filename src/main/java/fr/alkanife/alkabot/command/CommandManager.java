@@ -36,14 +36,14 @@ public class CommandManager {
         terminalCommandHandler = new TerminalCommandHandler(alkabot);
         terminalCommandHandlerThread = new Thread(terminalCommandHandler, "Alkabot TCH");
 
-        registerAdminCommands(new fr.alkanife.alkabot.command.admin.StopCommand(), new StatusCommand(), new PingCommand());
+        registerAdminCommands(new fr.alkanife.alkabot.command.admin.StopCommand(this), new StatusCommand(this), new PingCommand(this));
 
         registerCommand(new AboutCommand(this));
 
-        registerCommands(new ClearCommand(), new DestroyCommand(), new ForceplayCommand(), new PlayCommand(), new ShortcutCommand(), new PlaynextCommand(),
-                new QueueCommand(), new RemoveCommand(), new ShuffleCommand(), new SkipCommand(), new fr.alkanife.alkabot.command.music.StopCommand());
+        registerCommands(new ClearCommand(this), new DestroyCommand(this), new ForceplayCommand(this), new PlayCommand(this), new ShortcutCommand(this), new PlaynextCommand(this),
+                new QueueCommand(this), new RemoveCommand(this), new ShuffleCommand(this), new SkipCommand(this), new fr.alkanife.alkabot.command.music.StopCommand(this));
 
-        registerCommands(new CopyCommand(), new InfoCommand());
+        registerCommands(new CopyCommand(this), new InfoCommand(this));
     }
 
     public void registerCommands(AbstractCommand... abstractCommands) {

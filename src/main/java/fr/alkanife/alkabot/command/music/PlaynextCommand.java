@@ -37,6 +37,6 @@ public class PlaynextCommand extends AbstractCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        PlayCommand.play(event, true, false);
+        alkabot.getMusicManager().play(event, true, false);
     }
 }

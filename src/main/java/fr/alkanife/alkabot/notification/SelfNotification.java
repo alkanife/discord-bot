@@ -1,9 +1,7 @@
 package fr.alkanife.alkabot.notification;
 
-import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.configuration.json.notifications.SelfNotifConfig;
 import fr.alkanife.alkabot.utils.Colors;
-import fr.alkanife.alkabot.utils.NotifUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -13,56 +11,56 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 
 public class SelfNotification extends AbstractNotification {
 
-    private final SelfNotifConfig jsonNotificationsSelf;
+    private final SelfNotifConfig selfNotifConfig;
 
     public SelfNotification(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.SELF);
-        jsonNotificationsSelf = Alkabot.getConfig().getNotifications().getSelf();
+        selfNotifConfig = notificationManager.getAlkabot().getConfig().getNotifConfig().getSelfNotifConfig();
     }
 
     public void notifyAdmin(MessageEmbed messageEmbed) {
-        if (!jsonNotificationsSelf.isAdmin())
+        if (!selfNotifConfig.isAdmin())
             return;
 
         getNotificationManager().sendNotification(getNotificationChannel(), messageEmbed);
     }
 
     public void notifyShutdown(MessageEmbed messageEmbed, boolean shutdownAfter) {
-        if (!jsonNotificationsSelf.isAdmin() && shutdownAfter) {
-            Alkabot.shutdown();
+        if (!selfNotifConfig.isAdmin() && shutdownAfter) {
+            getNotificationManager().getAlkabot().shutdown();
             return;
         }
 
-        if (!jsonNotificationsSelf.isAdmin())
+        if (!selfNotifConfig.isAdmin())
             return;
 
-        TextChannel textChannel = Alkabot.getJda().getTextChannelById(getNotificationChannel().getChannelID());
+        TextChannel textChannel = getNotificationManager().getAlkabot().getJda().getTextChannelById(getNotificationChannel().getChannelID(getNotificationManager().getAlkabot().getConfig()));
 
         if (textChannel == null) {
             if (shutdownAfter)
-                Alkabot.shutdown();
+                getNotificationManager().getAlkabot().shutdown();
             return;
         }
 
         try {
             textChannel.sendMessageEmbeds(messageEmbed).queue(message -> {
                 if (shutdownAfter)
-                    Alkabot.shutdown();
+                    getNotificationManager().getAlkabot().shutdown();
             });
         } catch (Exception exception) {
-            Alkabot.getLogger().error("Failed to send the shutdown notification '" + messageEmbed.getTitle() + "':");
+            getNotificationManager().getAlkabot().getLogger().error("Failed to send the shutdown notification '" + messageEmbed.getTitle() + "':");
             exception.printStackTrace();
             if (shutdownAfter)
-                Alkabot.shutdown();
+                getNotificationManager().getAlkabot().shutdown();
         }
     }
 
     public void notifyCommand(SlashCommandInteractionEvent event, boolean success) {
-        if (!jsonNotificationsSelf.isCommands())
+        if (!selfNotifConfig.isCommands())
             return;
 
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle(Alkabot.t("notification.self.command.title") + (success ? "" : (" " + Alkabot.t("notification.self.command.fail_suffix"))));
+        embed.setTitle(getNotificationManager().getAlkabot().t("notification.self.command.title") + (success ? "" : (" " + getNotificationManager().getAlkabot().t("notification.self.command.fail_suffix"))));
 
         if (success)
             embed.setColor(Colors.CYAN);
@@ -70,10 +68,10 @@ public class SelfNotification extends AbstractNotification {
             embed.setColor(Colors.RED);
 
         if (event.getMember() != null)
-            embed = NotifUtils.addMemberAvatar(embed, event.getMember());
+            embed = addMemberAvatar(embed, event.getMember());
 
-        embed.addField(Alkabot.t("notification.generic.channel"), NotifUtils.notifChannel(event.getChannel()), true);
-        embed.addField(Alkabot.t("notification.generic.member"), NotifUtils.notifMember(event.getMember()), true);
+        embed.addField(getNotificationManager().getAlkabot().t("notification.generic.channel"), notifChannel(event.getChannel()), true);
+        embed.addField(getNotificationManager().getAlkabot().t("notification.generic.member"), notifMember(event.getMember()), true);
 
         StringBuilder command = new StringBuilder();
         command.append(event.getFullCommandName());
@@ -87,16 +85,16 @@ public class SelfNotification extends AbstractNotification {
             OptionType optionType = option.getType();
 
             switch (optionType) {
-                case USER -> command.append(NotifUtils.notifUser(option.getAsUser()));
-                case ROLE -> command.append(NotifUtils.notifRole(option.getAsRole()));
-                case CHANNEL -> command.append(NotifUtils.notifGuildChannel(option.getAsChannel()));
+                case USER -> command.append(notifUser(option.getAsUser()));
+                case ROLE -> command.append(notifRole(option.getAsRole()));
+                case CHANNEL -> command.append(notifGuildChannel(option.getAsChannel()));
                 default -> command.append(option.getAsString());
             }
 
             command.append("\n");
         }
 
-        embed.addField(Alkabot.t("notification.self.command.command"), command.toString(), false);
+        embed.addField(getNotificationManager().getAlkabot().t("notification.self.command.command"), command.toString(), false);
 
         getNotificationManager().sendNotification(getNotificationChannel(), embed.build());
     }

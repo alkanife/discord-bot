@@ -74,8 +74,6 @@ public class ShortcutCommand extends AbstractCommand {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         String subCommand = event.getSubcommandName();
-        ShortcutManager shortcutManager = alkabot.getShortcutManager();
-        List<Shortcut> shortcuts = shortcutManager.getShortcuts();
 
         event.deferReply().queue();
 
@@ -84,7 +82,7 @@ public class ShortcutCommand extends AbstractCommand {
                 String name = event.getOption("name").getAsString();
                 String query = event.getOption("query").getAsString();
 
-                Shortcut shortcut = shortcutManager.getShortcut(name);
+                Shortcut shortcut = alkabot.getShortcut(name);
 
                 if (shortcut != null) {
                     event.reply(alkabot.t("command.music.shortcut.add.nope")).queue();
@@ -94,11 +92,11 @@ public class ShortcutCommand extends AbstractCommand {
                 shortcut = new Shortcut(name, query, event.getUser().getId(), new Date());
 
                 try {
-                    shortcuts.add(shortcut);
-                    shortcutManager.write();
+                    alkabot.getMusicData().getShortcutList().add(shortcut);
+                    alkabot.updateMusicData();
 
                     event.getHook().sendMessage(alkabot.t("command.music.shortcut.bind.success", name)).queue();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     event.getHook().sendMessage(alkabot.t("command.music.shortcut.bind.fail")).queue();
                     alkabot.getLogger().error("Failed to bind a shortcut " + name + " to " + query + ":");
                     e.printStackTrace();
@@ -108,7 +106,7 @@ public class ShortcutCommand extends AbstractCommand {
             case "unbind" -> {
                 String name = event.getOption("name").getAsString();
 
-                Shortcut shortcut = shortcutManager.getShortcut(name);
+                Shortcut shortcut = alkabot.getShortcut(name);
 
                 if (shortcut == null) {
                     event.getHook().sendMessage(alkabot.t("command.music.shortcut.unbind.nope")).queue();
@@ -116,11 +114,11 @@ public class ShortcutCommand extends AbstractCommand {
                 }
 
                 try {
-                    shortcuts.remove(shortcut);
-                    shortcutManager.write();
+                    alkabot.getMusicData().getShortcutList().remove(shortcut);
+                    alkabot.updateMusicData();
 
                     event.getHook().sendMessage(alkabot.t("command.music.shortcut.unbind.success", name)).queue();
-                } catch (IOException e) {
+                } catch (Exception e) {
                     event.getHook().sendMessage(alkabot.t("command.music.shortcut.unbind.fail")).queue();
                     alkabot.getLogger().error("Failed to remove a shortcut " + name + ":");
                     e.printStackTrace();
@@ -128,12 +126,12 @@ public class ShortcutCommand extends AbstractCommand {
             }
 
             case "list" -> {
-                if (shortcuts.size() == 0) {
+                if (alkabot.getMusicData().getShortcutList().size() == 0) {
                     event.getHook().sendMessage(alkabot.t("command.music.shortcut.list.no_entries")).queue();
                     return;
                 }
 
-                int shortcutsSize = shortcuts.size();
+                int shortcutsSize = alkabot.getMusicData().getShortcutList().size();
                 int pages;
                 if (!StringUtils.endsWithZero(shortcutsSize)) {
                     for (int i = 0; i < 11; i++) {
@@ -156,12 +154,12 @@ public class ShortcutCommand extends AbstractCommand {
                 }
 
                 EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder.setTitle(alkabot.t("command.music.shortcut.list.title", "" + shortcuts.size()));
+                embedBuilder.setTitle(alkabot.t("command.music.shortcut.list.title", "" + alkabot.getMusicData().getShortcutList().size()));
                 StringBuilder desc = new StringBuilder();
 
                 for (int i = (page * 10); i < ((page * 10) + 10); i++) {
                     try {
-                        Shortcut shortcut = shortcuts.get(i);
+                        Shortcut shortcut = alkabot.getMusicData().getShortcutList().get(i);
                         desc.append("`").append(i + 1).append(".` ");
 
                         boolean url = StringUtils.isURL(shortcut.getQuery());
@@ -174,7 +172,7 @@ public class ShortcutCommand extends AbstractCommand {
                         if (url)
                             desc.append("](").append(shortcut.getQuery()).append(")");
 
-                        desc.append(" [<@").append(shortcut.getCreator_id()).append(">]\n");
+                        desc.append(" [<@").append(shortcut.getCreatorId()).append(">]\n");
                     } catch (Exception e) {
                         break;
                     }
@@ -189,7 +187,7 @@ public class ShortcutCommand extends AbstractCommand {
             case "info" -> {
                 String name = event.getOption("name").getAsString();
 
-                Shortcut shortcut = shortcutManager.getShortcut(name);
+                Shortcut shortcut = alkabot.getShortcut(name);
 
                 if (shortcut == null) {
                     event.getHook().sendMessage(alkabot.t("command.music.shortcut.info.nope")).queue();
@@ -198,8 +196,8 @@ public class ShortcutCommand extends AbstractCommand {
 
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setTitle(shortcut.getName());
-                embedBuilder.setDescription("**" + alkabot.t("command.music.shortcut.info.creation_date") + "** " + StringUtils.dateToString(shortcut.getCreation_date()) + "\n" +
-                        "**" + alkabot.t("command.music.shortcut.info.by") + "** <@" + shortcut.getCreator_id() + ">\n" +
+                embedBuilder.setDescription("**" + alkabot.t("command.music.shortcut.info.creation_date") + "** " + StringUtils.dateToString(shortcut.getCreationDate()) + "\n" +
+                        "**" + alkabot.t("command.music.shortcut.info.by") + "** <@" + shortcut.getCreatorId() + ">\n" +
                         "**" + alkabot.t("command.music.shortcut.info.query") + "** " + shortcut.getQuery());
 
                 event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();

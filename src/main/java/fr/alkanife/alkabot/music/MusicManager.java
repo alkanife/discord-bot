@@ -118,7 +118,7 @@ public class MusicManager {
                 event.reply("command.music.play.error.no_spotify_support").queue();
         } else {
             if (!StringUtils.isURL(input)) {
-                Shortcut shortcut = alkabot.getShortcutManager().getShortcut(input);
+                Shortcut shortcut = alkabot.getShortcut(input);
 
                 if (shortcut == null)
                     input = "ytsearch: " + input;

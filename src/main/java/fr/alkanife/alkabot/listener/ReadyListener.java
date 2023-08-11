@@ -2,55 +2,64 @@ package fr.alkanife.alkabot.listener;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractCommand;
-import fr.alkanife.alkabot.configuration.ConfigurationInitializer;
 import fr.alkanife.alkabot.utils.Colors;
+import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.event.Level;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 public class ReadyListener extends ListenerAdapter {
+
+    private final Alkabot alkabot;
 
     @Override
     public void onReady(@NotNull ReadyEvent readyEvent) {
-        Alkabot.getLogger().info("Connected and ready!");
+        alkabot.getLogger().info("Connected and ready!");
 
         try {
-            ConfigurationInitializer configurationInitializer = new ConfigurationInitializer(false);
-            if (configurationInitializer.getStatus() == AbstractWorker.Status.FAIL) {
-                Alkabot.shutdown();
+            if (!alkabot.setupGuild()) {
+                alkabot.shutdown();
                 return;
             }
 
+            alkabot.setupAutoRole();
+            alkabot.setupWelComeChannel();
+
             updateCommands(false);
-            Alkabot.getMusicManager().initialize(false);
+            alkabot.getMusicManager().initialize(false);
 
-            Alkabot.getCommandManager().getTerminalCommandHandlerThread().start();
+            alkabot.getCommandManager().getTerminalCommandHandlerThread().start();
 
-            Alkabot.getLogger().info("Ready!");
+            alkabot.getLogger().info("Ready!");
 
             //
             // Send notification
             //
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(Alkabot.t("notification.self.power_on.title"));
+            embedBuilder.setTitle(alkabot.t("notification.self.power_on.title"));
             embedBuilder.setColor(Colors.BIG_GREEN);
-            embedBuilder.setThumbnail(Alkabot.tri("notification.self.power_on.ok_memes"));
+            embedBuilder.setThumbnail(alkabot.tri("notification.self.power_on.ok_memes"));
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("Alkabot v")
-                    .append(Alkabot.VERSION)
+                    .append(alkabot.getVersion())
                     .append("\n\n");
 
             // Listing admins (5 maximum)
-            List<String> admins = Alkabot.getConfig().getAdmin().getAdministrators_id();
+            List<String> admins = alkabot.getConfig().getAdminIds();
 
             if (admins.size() > 0) {
-                stringBuilder.append(Alkabot.t("notification.self.power_on.admins", "" + admins.size()));
+                stringBuilder.append(alkabot.t("notification.self.power_on.admins", "" + admins.size()));
 
                 int i = 0;
 
@@ -71,25 +80,25 @@ public class ReadyListener extends ListenerAdapter {
                 stringBuilder.append("\n\n");
             }
 
-            stringBuilder.append(Alkabot.t("notification.self.power_on.help"));
+            stringBuilder.append(alkabot.t("notification.self.power_on.help"));
             embedBuilder.setDescription(stringBuilder.toString());
 
-            Alkabot.getNotificationManager().getSelfNotification().notifyAdmin(embedBuilder.build());
+            alkabot.getNotificationManager().getSelfNotification().notifyAdmin(embedBuilder.build());
         } catch (Exception exception) {
             exception.printStackTrace();
-            Alkabot.shutdown();
+            alkabot.shutdown();
         }
     }
 
     public void updateCommands(boolean reload) {
-        Alkabot.getLogger().info((reload ? "(reload)" : "") + "Updating commands...");
+        alkabot.getLogger().info((reload ? "(reload)" : "") + "Updating commands...");
 
         List<SlashCommandData> commands = new ArrayList<>();
 
-        for (AbstractCommand abstractCommand : Alkabot.getCommandManager().getCommands())
+        for (AbstractCommand abstractCommand : alkabot.getCommandManager().getCommands().values())
             if (abstractCommand.isEnabled())
                 commands.add(abstractCommand.getCommandData());
 
-        Alkabot.getGuild().updateCommands().addCommands(commands).queue();
+        alkabot.getGuild().updateCommands().addCommands(commands).queue();
     }
 }

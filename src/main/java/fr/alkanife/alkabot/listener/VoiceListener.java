@@ -1,12 +1,16 @@
 package fr.alkanife.alkabot.listener;
 
 import fr.alkanife.alkabot.Alkabot;
+import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+@AllArgsConstructor
 public class VoiceListener extends ListenerAdapter {
+
+    private final Alkabot alkabot;
 
     @Override
     public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent guildVoiceUpdateEvent) {
@@ -20,16 +24,16 @@ public class VoiceListener extends ListenerAdapter {
             return;
 
         if (joinChannelUnion == null) {
-            Alkabot.getNotificationManager().getVoiceNotification().notifyLeave(guildVoiceUpdateEvent);
+            alkabot.getNotificationManager().getVoiceNotification().notifyLeave(guildVoiceUpdateEvent);
             return;
         }
 
         if (leftChannelUnion == null) {
-            Alkabot.getNotificationManager().getVoiceNotification().notifyJoin(guildVoiceUpdateEvent);
+            alkabot.getNotificationManager().getVoiceNotification().notifyJoin(guildVoiceUpdateEvent);
             return;
         }
 
-        Alkabot.getNotificationManager().getVoiceNotification().notifyMove(guildVoiceUpdateEvent);
+        alkabot.getNotificationManager().getVoiceNotification().notifyMove(guildVoiceUpdateEvent);
     }
 
 }

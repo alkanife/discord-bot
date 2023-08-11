@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.command.music;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractCommand;
+import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.music.AlkabotTrack;
 import fr.alkanife.alkabot.music.MusicManager;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -18,6 +19,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class RemoveCommand extends AbstractCommand {
 
+    public RemoveCommand(CommandManager commandManager) {
+        super(commandManager);
+    }
+
     @Override
     public String getName() {
         return "remove";
@@ -25,28 +30,28 @@ public class RemoveCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.music.remove.description");
+        return alkabot.t("command.music.remove.description");
     }
 
     @Override
     public boolean isEnabled() {
-        return Alkabot.getConfig().getCommands().getMusic().isRemove();
+        return alkabot.getConfig().getCommandConfig().getMusicCommandConfig().isRemove();
     }
 
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getName(), getDescription())
-                .addOption(OptionType.INTEGER, "input", Alkabot.t("command.music.remove.input_description"), true);
+                .addOption(OptionType.INTEGER, "input", alkabot.t("command.music.remove.input_description"), true);
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        Alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
+        alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
 
-        MusicManager musicManager = Alkabot.getMusicManager();
+        MusicManager musicManager = alkabot.getMusicManager();
 
         if (musicManager.getPlayer().getPlayingTrack() == null) {
-            event.reply(Alkabot.t("command.music.generic.not_playing")).queue();
+            event.reply(alkabot.t("command.music.generic.not_playing")).queue();
             return;
         }
 
@@ -56,7 +61,7 @@ public class RemoveCommand extends AbstractCommand {
             remove = removeOption.getAsLong();
 
             if (remove > musicManager.getTrackScheduler().getQueue().size()) {
-                event.reply(Alkabot.t("command.music.generic.not_enough")).queue();
+                event.reply(alkabot.t("command.music.generic.not_enough")).queue();
                 return;
             }
         }
@@ -77,16 +82,16 @@ public class RemoveCommand extends AbstractCommand {
             musicManager.getTrackScheduler().setQueue(newBlockingQueue);
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(Alkabot.t("command.music.remove.title"));
+            embedBuilder.setTitle(alkabot.t("command.music.remove.title"));
             embedBuilder.setDescription("[" + t.getTitle() + "](" + t.getUrl() + ")"
-                    + " " + Alkabot.t("command.music.generic.by") + " [" + t.getArtists() + "](" + t.getUrl() + ")");
+                    + " " + alkabot.t("command.music.generic.by") + " [" + t.getArtists() + "](" + t.getUrl() + ")");
             embedBuilder.setThumbnail(t.getThumbUrl());
 
             event.replyEmbeds(embedBuilder.build()).queue();
         } catch (Exception e) {
-            Alkabot.getLogger().error("Failed to remove a music from the queue:");
+            alkabot.getLogger().error("Failed to remove a music from the queue:");
             e.printStackTrace();
-            event.reply(Alkabot.t("command.music.remove.error")).queue();
+            event.reply(alkabot.t("command.music.remove.error")).queue();
         }
     }
 }

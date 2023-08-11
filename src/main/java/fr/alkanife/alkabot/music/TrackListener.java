@@ -30,22 +30,22 @@ public class TrackListener extends AudioEventAdapter {
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        if (Alkabot.getConfig().getMusic().isStop_when_alone()) {
-            AudioChannel voiceChannel = Alkabot.getGuild().getAudioManager().getConnectedChannel();
+        if (musicManager.getAlkabot().getConfig().getMusicConfig().isAutoStop()) {
+            AudioChannel voiceChannel = musicManager.getAlkabot().getGuild().getAudioManager().getConnectedChannel();
 
             if (voiceChannel != null) {
                 if (voiceChannel.getMembers().size() == 1) {
                     if (!endReason.equals(AudioTrackEndReason.STOPPED)) {
-                        Alkabot.debug("Stopping the music because I'm alone");
-                        Alkabot.getMusicManager().reset();
+                        musicManager.getAlkabot().verbose("Stopping the music because I'm alone");
+                        musicManager.getAlkabot().getMusicManager().reset();
 
-                        if (Alkabot.getMusicManager().getLastMusicCommandChannel() != null) {
+                        if (musicManager.getAlkabot().getMusicManager().getLastMusicCommandChannel() != null) {
                             EmbedBuilder embedBuilder = new EmbedBuilder();
-                            embedBuilder.setTitle(Alkabot.t("command.music.generic.alone.title"));
+                            embedBuilder.setTitle(musicManager.getAlkabot().t("command.music.generic.alone.title"));
                             embedBuilder.setColor(Colors.BIG_RED);
-                            embedBuilder.setDescription(Alkabot.t("command.music.generic.alone.description"));
+                            embedBuilder.setDescription(musicManager.getAlkabot().t("command.music.generic.alone.description"));
 
-                            Alkabot.getMusicManager().getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                            musicManager.getAlkabot().getMusicManager().getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
                         }
                         return;
                     }
@@ -60,23 +60,23 @@ public class TrackListener extends AudioEventAdapter {
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         if (retriedTracks.contains(track.getInfo().title)) {
-            Alkabot.debug("Failed to play '" + track.getInfo().title + "'");
+            musicManager.getAlkabot().verbose("Failed to play '" + track.getInfo().title + "'");
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(Alkabot.t("command.music.play.error.fail.title"));
+            embedBuilder.setTitle(musicManager.getAlkabot().t("command.music.play.error.fail.title"));
             embedBuilder.setColor(Colors.BIG_RED);
             embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")"
-                    + " " + Alkabot.t("command.music.generic.by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
-                    Alkabot.t("command.music.play.error.fail.message"));
+                    + " " + musicManager.getAlkabot().t("command.music.generic.by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
+                    musicManager.getAlkabot().t("command.music.play.error.fail.message"));
             embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
 
             if (musicManager != null)
                 musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
         } else {
-            Alkabot.debug("Retrying to play '" + track.getInfo().title + "'...");
+            musicManager.getAlkabot().verbose("Retrying to play '" + track.getInfo().title + "'...");
             retriedTracks.add(track.getInfo().title);
 
-            musicManager.getTrackScheduler().queue(new AlkabotTrack(track, Alkabot.getJda().getSelfUser().getName(), Alkabot.getJda().getSelfUser().getId(), true), false);
+            musicManager.getTrackScheduler().queue(new AlkabotTrack(track, musicManager.getAlkabot().getJda().getSelfUser().getName(), musicManager.getAlkabot().getJda().getSelfUser().getId(), true), false);
         }
     }
 }

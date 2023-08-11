@@ -1,14 +1,9 @@
 package fr.alkanife.alkabot.music;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public abstract class AbstractMusic {
 
-    private final MusicManager musicManager;
-
-    public AbstractMusic(MusicManager musicManager) {
-        this.musicManager = musicManager;
-    }
-
-    public MusicManager getMusicManager() {
-        return musicManager;
-    }
+    public final MusicManager musicManager;
 }

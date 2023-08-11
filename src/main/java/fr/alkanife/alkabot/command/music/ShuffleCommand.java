@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.command.music;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractCommand;
+import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.music.AlkabotTrack;
 import fr.alkanife.alkabot.music.MusicManager;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -16,6 +17,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ShuffleCommand extends AbstractCommand {
 
+    public ShuffleCommand(CommandManager commandManager) {
+        super(commandManager);
+    }
+
     @Override
     public String getName() {
         return "shuffle";
@@ -23,12 +28,12 @@ public class ShuffleCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.music.shuffle.description");
+        return alkabot.t("command.music.shuffle.description");
     }
 
     @Override
     public boolean isEnabled() {
-        return Alkabot.getConfig().getCommands().getMusic().isShuffle();
+        return alkabot.getConfig().getCommandConfig().getMusicCommandConfig().isShuffle();
     }
 
     @Override
@@ -38,9 +43,9 @@ public class ShuffleCommand extends AbstractCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        Alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
+        alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
 
-        MusicManager musicManager = Alkabot.getMusicManager();
+        MusicManager musicManager = alkabot.getMusicManager();
         List<AlkabotTrack> audioTracks = new ArrayList<>(musicManager.getTrackScheduler().getQueue());
 
         Collections.shuffle(audioTracks);
@@ -53,6 +58,6 @@ public class ShuffleCommand extends AbstractCommand {
 
         musicManager.getTrackScheduler().setQueue(blockingQueue);
 
-        event.reply(Alkabot.t("command.music.shuffle.done")).queue();
+        event.reply(alkabot.t("command.music.shuffle.done")).queue();
     }
 }

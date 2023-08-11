@@ -3,8 +3,13 @@ package fr.alkanife.alkabot.command.admin;
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractAdminCommand;
 import fr.alkanife.alkabot.command.AdminCommandExecution;
+import fr.alkanife.alkabot.command.CommandManager;
 
 public class PingCommand extends AbstractAdminCommand {
+
+    public PingCommand(CommandManager commandManager) {
+        super(commandManager);
+    }
 
     @Override
     public String getName() {
@@ -28,6 +33,6 @@ public class PingCommand extends AbstractAdminCommand {
 
     @Override
     public void execute(AdminCommandExecution execution) {
-        Alkabot.getJda().getRestPing().queue(aLong -> execution.messageReceivedEvent().getMessage().reply("Pong! (" + aLong + " ms)").queue());
+        alkabot.getJda().getRestPing().queue(aLong -> execution.messageReceivedEvent().getMessage().reply("Pong! (" + aLong + " ms)").queue());
     }
 }

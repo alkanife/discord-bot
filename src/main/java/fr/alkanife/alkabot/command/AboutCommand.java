@@ -1,11 +1,14 @@
 package fr.alkanife.alkabot.command;
 
-import fr.alkanife.alkabot.Alkabot;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class AboutCommand extends AbstractCommand {
+
+    public AboutCommand(CommandManager commandManager) {
+        super(commandManager);
+    }
 
     @Override
     public String getName() {
@@ -14,12 +17,12 @@ public class AboutCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.about.description");
+        return alkabot.t("command.about.description");
     }
 
     @Override
     public boolean isEnabled() {
-        return Alkabot.getConfig().getCommands().isAbout();
+        return alkabot.getConfig().getCommandConfig().isAbout();
     }
 
     @Override
@@ -30,6 +33,6 @@ public class AboutCommand extends AbstractCommand {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         //Todo
-        event.reply(Alkabot.WEBSITE).queue();
+        event.reply(alkabot.getGithub()).queue();
     }
 }

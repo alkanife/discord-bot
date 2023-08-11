@@ -1,40 +1,39 @@
 package fr.alkanife.alkabot.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import lombok.*;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 
 import java.util.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
 public class AlkabotTrack {
 
+    @Getter @Setter
     private String query;
+    @Getter @Setter
     private String url;
+    @Getter @Setter
     private String trackSource;
+    @Getter @Setter
     private Date dateAdded;
+    @Getter @Setter
     private String addedByID;
+    @Getter @Setter
     private boolean priority;
+    @Getter @Setter
     private String thumbUrl;
+    @Getter @Setter
     private String title;
-    private List<String> artist;
+    @Getter @Setter
+    private List<String> artistList;
+    @Getter @Setter
     private long duration;
 
+    @Getter @Setter
     private boolean retried = false;
-
-    public AlkabotTrack () {}
-
-    public AlkabotTrack(String query, String url, String trackSource, Date dateAdded, String addedByID, boolean priority, String thumbUrl, String title, List<String> artist, long duration) {
-        this.query = query;
-        this.url = url;
-        this.trackSource = trackSource;
-        this.dateAdded = dateAdded;
-        this.addedByID = addedByID;
-        this.priority = priority;
-        this.thumbUrl = thumbUrl;
-        this.title = title;
-        this.artist = artist;
-        this.duration = duration;
-    }
 
     public AlkabotTrack(AudioTrack track, String trackSource, String addedByID, boolean priority) {
         this.url = track.getInfo().uri;
@@ -47,7 +46,7 @@ public class AlkabotTrack {
         this.priority = priority;
         this.thumbUrl = "https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg";
         this.title = track.getInfo().title;
-        this.artist = Collections.singletonList(track.getInfo().author);
+        this.artistList = Collections.singletonList(track.getInfo().author);
         this.duration = track.getDuration();
     }
 
@@ -72,7 +71,7 @@ public class AlkabotTrack {
         if (track.getArtists() != null)
             for (ArtistSimplified artist1 : track.getArtists())
                 artists.add(artist1.getName());
-        this.artist = artists;
+        this.artistList = artists;
 
         this.duration = track.getDurationMs();
 
@@ -83,74 +82,6 @@ public class AlkabotTrack {
                 stringBuilder.append(" ").append(a);
 
         this.query = stringBuilder.toString();
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getTrackSource() {
-        return trackSource;
-    }
-
-    public void setTrackSource(String trackSource) {
-        this.trackSource = trackSource;
-    }
-
-    public Date getDateAdded() {
-        return dateAdded;
-    }
-
-    public void setDateAdded(Date dateAdded) {
-        this.dateAdded = dateAdded;
-    }
-
-    public String getAddedByID() {
-        return addedByID;
-    }
-
-    public void setAddedByID(String addedByID) {
-        this.addedByID = addedByID;
-    }
-
-    public boolean isPriority() {
-        return priority;
-    }
-
-    public void setPriority(boolean priority) {
-        this.priority = priority;
-    }
-
-    public String getThumbUrl() {
-        return thumbUrl;
-    }
-
-    public void setThumbUrl(String thumbUrl) {
-        this.thumbUrl = thumbUrl;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public List<String> getArtistList() {
-        return artist;
     }
 
     public String getArtists() {
@@ -164,25 +95,5 @@ public class AlkabotTrack {
             first = false;
         }
         return stringBuilder.toString();
-    }
-
-    public void setArtist(List<String> artist) {
-        this.artist = artist;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(long duration) {
-        this.duration = duration;
-    }
-
-    public boolean isRetried() {
-        return retried;
-    }
-
-    public void setRetried(boolean retried) {
-        this.retried = retried;
     }
 }

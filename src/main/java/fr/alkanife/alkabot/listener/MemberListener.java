@@ -3,6 +3,7 @@ package fr.alkanife.alkabot.listener;
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.utils.Colors;
 import fr.alkanife.alkabot.utils.NotifUtils;
+import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
@@ -12,51 +13,54 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
+@AllArgsConstructor
 public class MemberListener extends ListenerAdapter {
+
+    private final Alkabot alkabot;
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent guildMemberJoinEvent) {
         // Welcome message
         boolean failedToWelcome = false;
         try {
-            if (Alkabot.getConfig().getWelcome_message().isEnable()) {
-                if (Alkabot.getWelcomeMessageChannel() == null) {
+            if (alkabot.getConfig().getWelcomeMessageConfig().isEnable()) {
+                if (alkabot.getWelcomeMessageChannel() == null) {
                     failedToWelcome = true;
-                    Alkabot.getLogger().warn("Unable to find the role for the autorole");
+                    alkabot.getLogger().warn("Unable to find the role for the autorole");
                 } else {
-                    Alkabot.getWelcomeMessageChannel().sendMessage(Alkabot.tr("welcome.messages", guildMemberJoinEvent.getMember().getAsMention())).queue();
+                    alkabot.getWelcomeMessageChannel().sendMessage(alkabot.tr("welcome.messages", guildMemberJoinEvent.getMember().getAsMention())).queue();
                 }
             }
         } catch (Exception exception) {
             failedToWelcome = true;
-            Alkabot.getLogger().error("Failed to send welcome message!");
+            alkabot.getLogger().error("Failed to send welcome message!");
             exception.printStackTrace();
         }
 
         // Autorole
         boolean failedAutorole = false;
         try {
-            if (Alkabot.getConfig().getAuto_role().isEnable()) {
-                if (Alkabot.getAutoRole() == null) {
+            if (alkabot.getConfig().getAutoRoleConfig().isEnable()) {
+                if (alkabot.getAutoRole() == null) {
                     failedAutorole = true;
-                    Alkabot.getLogger().warn("Unable to find the text channel for the welcome message");
+                    alkabot.getLogger().warn("Unable to find the text channel for the welcome message");
                 } else {
-                    guildMemberJoinEvent.getGuild().modifyMemberRoles(guildMemberJoinEvent.getMember(), Alkabot.getAutoRole()).queue();
+                    guildMemberJoinEvent.getGuild().modifyMemberRoles(guildMemberJoinEvent.getMember(), alkabot.getAutoRole()).queue();
                 }
             }
         } catch (Exception exception) {
             failedAutorole = true;
-            Alkabot.getLogger().error("Failed to auto-role a member!");
+            alkabot.getLogger().error("Failed to auto-role a member!");
             exception.printStackTrace();
         }
 
         // Notif
-        Alkabot.getNotificationManager().getMemberNotification().notifyJoin(guildMemberJoinEvent, failedToWelcome, failedAutorole);
+        alkabot.getNotificationManager().getMemberNotification().notifyJoin(guildMemberJoinEvent, failedToWelcome, failedAutorole);
     }
 
     @Override
     public void onGuildMemberRemove(@NotNull GuildMemberRemoveEvent guildMemberRemoveEvent) {
-        if (!Alkabot.getConfig().getNotifications().getMember().isLeave() && !Alkabot.getConfig().getNotifications().getModerator().isKick())
+        if (!alkabot.getConfig().getNotifConfig().getMemberNotifConfig().isLeave() && !alkabot.getConfig().getNotifConfig().getModNotifConfig().isKick())
             return;
 
         try {
@@ -74,22 +78,22 @@ public class MemberListener extends ListenerAdapter {
                 embedBuilder = NotifUtils.addUserAvatar(embedBuilder, user);
                 embedBuilder.setColor(Colors.RED);
 
-                if (kick && Alkabot.getConfig().getNotifications().getModerator().isKick()) {
-                    embedBuilder.setTitle(Alkabot.t("notification.moderator.kick.title"));
-                    embedBuilder.addField(Alkabot.t("notification.generic.member"), user.getAsTag() + " (" + user.getAsMention() + ")", true);
-                    embedBuilder.addField(Alkabot.t("notification.generic.moderator"), NotifUtils.notifUser(latest.getUser()), true);
-                    embedBuilder.addField(Alkabot.t("notification.generic.reason"), NotifUtils.notifValue(latest.getReason()), false);
+                if (kick && alkabot.getConfig().getNotifConfig().getModNotifConfig().isKick()) {
+                    embedBuilder.setTitle(alkabot.t("notification.moderator.kick.title"));
+                    embedBuilder.addField(alkabot.t("notification.generic.member"), user.getName() + " (" + user.getAsMention() + ")", true);
+                    embedBuilder.addField(alkabot.t("notification.generic.moderator"), NotifUtils.notifUser(latest.getUser()), true);
+                    embedBuilder.addField(alkabot.t("notification.generic.reason"), NotifUtils.notifValue(latest.getReason()), false);
 
-                    Alkabot.getNotificationManager().getModeratorNotification().notifyKick(embedBuilder.build());
+                    alkabot.getNotificationManager().getModeratorNotification().notifyKick(embedBuilder.build());
                 } else {
-                    embedBuilder.setTitle(Alkabot.t("notification.member.leave.title"));
-                    embedBuilder.addField(Alkabot.t("notification.generic.member"), NotifUtils.notifUser(user), false);
+                    embedBuilder.setTitle(alkabot.t("notification.member.leave.title"));
+                    embedBuilder.addField(alkabot.t("notification.generic.member"), NotifUtils.notifUser(user), false);
 
-                    Alkabot.getNotificationManager().getMemberNotification().notifyLeave(embedBuilder.build());
+                    alkabot.getNotificationManager().getMemberNotification().notifyLeave(embedBuilder.build());
                 }
             });
         } catch (Exception exception) {
-            Alkabot.getLogger().error("Failed to notify leave");
+            alkabot.getLogger().error("Failed to notify leave");
             exception.printStackTrace();
         }
     }

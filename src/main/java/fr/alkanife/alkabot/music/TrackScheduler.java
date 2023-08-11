@@ -1,6 +1,7 @@
 package fr.alkanife.alkabot.music;
 
-import fr.alkanife.alkabot.Alkabot;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -8,6 +9,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class TrackScheduler extends AbstractMusic {
 
+    @Getter @Setter
     private BlockingQueue<AlkabotTrack> queue;
 
     public TrackScheduler(MusicManager musicManager) {
@@ -26,8 +28,8 @@ public class TrackScheduler extends AbstractMusic {
     }
 
     public void queue(AlkabotTrack track, boolean force) {
-        if (getMusicManager().getPlayer().getPlayingTrack() == null) {
-            getMusicManager().getAlkabotTrackPlayer().play(track);
+        if (musicManager.getPlayer().getPlayingTrack() == null) {
+            musicManager.getAlkabotTrackPlayer().play(track);
             return;
         }
 
@@ -41,7 +43,7 @@ public class TrackScheduler extends AbstractMusic {
         }
 
         if (force)
-            Alkabot.getMusicManager().goNext();
+            musicManager.getAlkabot().getMusicManager().goNext();
     }
 
     public void queuePlaylist(AlkabotTrack firstTrack, List<AlkabotTrack> alkabotTrackList, boolean force) {
@@ -50,8 +52,8 @@ public class TrackScheduler extends AbstractMusic {
         if (!firstTrack.isPriority())
             newQueue.addAll(queue);
 
-        if (getMusicManager().getPlayer().getPlayingTrack() == null) {
-            getMusicManager().getAlkabotTrackPlayer().play(firstTrack);
+        if (musicManager.getPlayer().getPlayingTrack() == null) {
+            musicManager.getAlkabotTrackPlayer().play(firstTrack);
 
             for (AlkabotTrack a : alkabotTrackList)
                 if (!a.getQuery().equals(firstTrack.getQuery()))
@@ -66,14 +68,6 @@ public class TrackScheduler extends AbstractMusic {
         queue = newQueue;
 
         if (force)
-            Alkabot.getMusicManager().goNext();
-    }
-
-    public BlockingQueue<AlkabotTrack> getQueue() {
-        return queue;
-    }
-
-    public void setQueue(BlockingQueue<AlkabotTrack> queue) {
-        this.queue = queue;
+            musicManager.goNext();
     }
 }

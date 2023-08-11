@@ -2,11 +2,16 @@ package fr.alkanife.alkabot.command.music;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractCommand;
+import fr.alkanife.alkabot.command.CommandManager;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class DestroyCommand extends AbstractCommand {
+
+    public DestroyCommand(CommandManager commandManager) {
+        super(commandManager);
+    }
 
     @Override
     public String getName() {
@@ -15,12 +20,12 @@ public class DestroyCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.music.destroy.description");
+        return alkabot.t("command.music.destroy.description");
     }
 
     @Override
     public boolean isEnabled() {
-        return Alkabot.getConfig().getCommands().getMusic().isDestroy();
+        return alkabot.getConfig().getCommandConfig().getMusicCommandConfig().isDestroy();
     }
 
     @Override
@@ -30,8 +35,8 @@ public class DestroyCommand extends AbstractCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        Alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
-        Alkabot.getMusicManager().reset();
-        event.reply(Alkabot.t("command.music.destroy.done")).queue();
+        alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
+        alkabot.getMusicManager().reset();
+        event.reply(alkabot.t("command.music.destroy.done")).queue();
     }
 }

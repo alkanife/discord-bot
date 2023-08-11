@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.command.utilities;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractCommand;
+import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -20,6 +21,10 @@ import java.util.List;
 
 public class InfoCommand extends AbstractCommand {
 
+    public InfoCommand(CommandManager commandManager) {
+        super(commandManager);
+    }
+
     @Override
     public String getName() {
         return "info";
@@ -27,14 +32,14 @@ public class InfoCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.utilities.info.description");
+        return alkabot.t("command.utilities.info.description");
     }
 
     @Override
     public boolean isEnabled() {
-        return Alkabot.getConfig().getCommands().getUtilities().getInfo().isEmote()
-                || Alkabot.getConfig().getCommands().getUtilities().getInfo().isServer()
-                || Alkabot.getConfig().getCommands().getUtilities().getInfo().isMember();
+        return alkabot.getConfig().getCommandConfig().getUtilsCommandConfig().getInfoUtilsCommandConfig().isEmote()
+                || alkabot.getConfig().getCommandConfig().getUtilsCommandConfig().getInfoUtilsCommandConfig().isServer()
+                || alkabot.getConfig().getCommandConfig().getUtilsCommandConfig().getInfoUtilsCommandConfig().isMember();
     }
 
     @Override
@@ -43,16 +48,16 @@ public class InfoCommand extends AbstractCommand {
 
         List<SubcommandData> subs = new ArrayList<>();
 
-        if (Alkabot.getConfig().getCommands().getUtilities().getInfo().isServer())
-            subs.add(new SubcommandData("server", Alkabot.t("command.utilities.info.server.description")));
+        if (alkabot.getConfig().getCommandConfig().getUtilsCommandConfig().getInfoUtilsCommandConfig().isServer())
+            subs.add(new SubcommandData("server", alkabot.t("command.utilities.info.server.description")));
 
-        if (Alkabot.getConfig().getCommands().getUtilities().getInfo().isMember())
-            subs.add(new SubcommandData("member", Alkabot.t("command.utilities.info.member.description"))
-                    .addOption(OptionType.USER, "input", Alkabot.t("command.utilities.info.member.input_description"), true));
+        if (alkabot.getConfig().getCommandConfig().getUtilsCommandConfig().getInfoUtilsCommandConfig().isMember())
+            subs.add(new SubcommandData("member", alkabot.t("command.utilities.info.member.description"))
+                    .addOption(OptionType.USER, "input", alkabot.t("command.utilities.info.member.input_description"), true));
 
-        if (Alkabot.getConfig().getCommands().getUtilities().getInfo().isEmote())
-            subs.add(new SubcommandData("emote", Alkabot.t("command.utilities.info.emote.description"))
-                    .addOption(OptionType.STRING, "input", Alkabot.t("command.utilities.info.emote.input_description"), true));
+        if (alkabot.getConfig().getCommandConfig().getUtilsCommandConfig().getInfoUtilsCommandConfig().isEmote())
+            subs.add(new SubcommandData("emote", alkabot.t("command.utilities.info.emote.description"))
+                    .addOption(OptionType.STRING, "input", alkabot.t("command.utilities.info.emote.input_description"), true));
 
         if (subs.size() > 0)
             commandData.addSubcommands(subs);
@@ -82,17 +87,17 @@ public class InfoCommand extends AbstractCommand {
         embedBuilder.setTitle(guild.getName());
 
         StringBuilder description = new StringBuilder();
-        description.append(Alkabot.t("command.utilities.info.server.members")).append(" `").append(guild.getMemberCount()).append("`\n");
-        description.append(Alkabot.t("command.utilities.info.server.channels")).append(" `").append(guild.getChannels().size()).append("`\n");
-        description.append(Alkabot.t("command.utilities.info.server.emotes")).append(" `").append(guild.getEmojis().size()).append("`\n");
-        description.append(Alkabot.t("command.utilities.info.server.roles")).append(" `").append(guild.getRoles().size()).append("`\n");
-        description.append(Alkabot.t("command.utilities.info.server.boosters")).append(" `").append(guild.getBoosters().size()).append("`\n");
-        description.append(Alkabot.t("command.utilities.info.server.boosts")).append(" `").append(guild.getBoostCount()).append("`\n");
+        description.append(alkabot.t("command.utilities.info.server.members")).append(" `").append(guild.getMemberCount()).append("`\n");
+        description.append(alkabot.t("command.utilities.info.server.channels")).append(" `").append(guild.getChannels().size()).append("`\n");
+        description.append(alkabot.t("command.utilities.info.server.emotes")).append(" `").append(guild.getEmojis().size()).append("`\n");
+        description.append(alkabot.t("command.utilities.info.server.roles")).append(" `").append(guild.getRoles().size()).append("`\n");
+        description.append(alkabot.t("command.utilities.info.server.boosters")).append(" `").append(guild.getBoosters().size()).append("`\n");
+        description.append(alkabot.t("command.utilities.info.server.boosts")).append(" `").append(guild.getBoostCount()).append("`\n");
 
         if (guild.getOwner() != null)
-            description.append(Alkabot.t("command.utilities.info.server.owner")).append(" ").append(guild.getOwner().getAsMention()).append("\n");
+            description.append(alkabot.t("command.utilities.info.server.owner")).append(" ").append(guild.getOwner().getAsMention()).append("\n");
 
-        description.append(Alkabot.t("command.utilities.info.generic.creation_date")).append(" `").append(StringUtils.offsetToString(guild.getTimeCreated())).append("`\n");
+        description.append(alkabot.t("command.utilities.info.generic.creation_date")).append(" `").append(StringUtils.offsetToString(guild.getTimeCreated())).append("`\n");
         description.append("\n");
 
         if (guild.getIconUrl() != null) {
@@ -123,7 +128,7 @@ public class InfoCommand extends AbstractCommand {
         String[] args = input.split(":");
 
         if (args.length < 3) {
-            event.reply(Alkabot.t("command.utilities.info.emote.error")).setEphemeral(true).queue();
+            event.reply(alkabot.t("command.utilities.info.emote.error")).setEphemeral(true).queue();
             return;
         }
 
@@ -132,7 +137,7 @@ public class InfoCommand extends AbstractCommand {
         RichCustomEmoji richCustomEmoji = event.getJDA().getEmojiById(emoteID);
 
         if (richCustomEmoji == null) {
-            event.reply(Alkabot.t("command.utilities.info.emote.error")).setEphemeral(true).queue();
+            event.reply(alkabot.t("command.utilities.info.emote.error")).setEphemeral(true).queue();
             return;
         }
 
@@ -143,9 +148,9 @@ public class InfoCommand extends AbstractCommand {
         StringBuilder stringBuilder = new StringBuilder();
 
         if (richCustomEmoji.getGuild() != null)
-            stringBuilder.append(Alkabot.t("command.utilities.info.emote.guild")).append(" `").append(richCustomEmoji.getGuild().getName()).append("`\n");
+            stringBuilder.append(alkabot.t("command.utilities.info.emote.guild")).append(" `").append(richCustomEmoji.getGuild().getName()).append("`\n");
 
-        stringBuilder.append(Alkabot.t("command.utilities.info.generic.creation_date")).append(" `").append(StringUtils.offsetToString(richCustomEmoji.getTimeCreated())).append("`\n");
+        stringBuilder.append(alkabot.t("command.utilities.info.generic.creation_date")).append(" `").append(StringUtils.offsetToString(richCustomEmoji.getTimeCreated())).append("`\n");
         stringBuilder.append("\n[URL](").append(richCustomEmoji.getImageUrl()).append(")");
 
         embedBuilder.setDescription(stringBuilder);
@@ -166,10 +171,10 @@ public class InfoCommand extends AbstractCommand {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(user.getAsMention()).append("\n\n");
-        stringBuilder.append(Alkabot.t("command.utilities.info.member.joined.discord")).append(" `").append(StringUtils.offsetToString(user.getTimeCreated())).append("`\n");
+        stringBuilder.append(alkabot.t("command.utilities.info.member.joined.discord")).append(" `").append(StringUtils.offsetToString(user.getTimeCreated())).append("`\n");
 
         if (member != null)
-            stringBuilder.append(Alkabot.t("command.utilities.info.member.joined.server")).append(" `").append(StringUtils.offsetToString(member.getTimeJoined())).append("`\n");
+            stringBuilder.append(alkabot.t("command.utilities.info.member.joined.server")).append(" `").append(StringUtils.offsetToString(member.getTimeJoined())).append("`\n");
 
         stringBuilder.append("\n");
 

@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.listener;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AdminCommandExecution;
+import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -11,19 +12,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
+@AllArgsConstructor
 public class CommandListener extends ListenerAdapter {
+
+    private final Alkabot alkabot;
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        if (Alkabot.getConfig().getAdmin().isAdmin_only()) {
-            Member member = event.getMember();
+        Member member = event.getMember();
 
-            if (member != null)
-                if (!Alkabot.getConfig().getAdmin().getAdministrators_id().contains(member.getId()))
-                    return;
-        }
+        if (member != null)
+            if (!alkabot.getConfig().getAdminIds().contains(member.getId()))
+                return;
 
-        Alkabot.getCommandManager().handleSlash(event);
+        alkabot.getCommandManager().handleSlash(event);
     }
 
     @Override
@@ -33,10 +35,10 @@ public class CommandListener extends ListenerAdapter {
             return;
 
         // Deny if not administrator
-        if (!Alkabot.getConfig().getAdmin().getAdministrators_id().contains(event.getAuthor().getId()))
+        if (!alkabot.getConfig().getAdminIds().contains(event.getAuthor().getId()))
             return;
 
-        Alkabot.getCommandManager().handleAdmin(new AdminCommandExecution(event.getMessage().getContentRaw().toLowerCase(Locale.ROOT), event));
+        alkabot.getCommandManager().handleAdmin(new AdminCommandExecution(alkabot, event.getMessage().getContentRaw().toLowerCase(Locale.ROOT), event));
     }
 
 }

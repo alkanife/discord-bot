@@ -8,8 +8,10 @@ import fr.alkanife.alkabot.configuration.json.Configuration;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
 import fr.alkanife.alkabot.lang.TranslationsManager;
 import fr.alkanife.alkabot.listener.ListenerManager;
+import fr.alkanife.alkabot.music.MusicData;
+import fr.alkanife.alkabot.music.MusicDataLoader;
 import fr.alkanife.alkabot.music.MusicManager;
-import fr.alkanife.alkabot.music.shortcut.ShortcutManager;
+import fr.alkanife.alkabot.music.Shortcut;
 import fr.alkanife.alkabot.notification.NotificationManager;
 import fr.alkanife.alkabot.tokens.TokenLoader;
 import fr.alkanife.alkabot.tokens.Tokens;
@@ -27,6 +29,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 public class Alkabot {
 
@@ -51,18 +54,24 @@ public class Alkabot {
     private Configuration config;
     @Getter @Setter
     private TranslationsManager translationsManager;
-
-
-    private static TextChannel welcomeMessageChannel;
-    private static Role autoRole;
-    private static JDA jda;
-    private static Guild guild;
-
-    private static CommandManager commandManager;
-    private static MusicManager musicManager;
-    private static ShortcutManager shortcutManager;
-    private static NotificationManager notificationManager;
-    private static ListenerManager listenerManager;
+    @Getter
+    private CommandManager commandManager;
+    @Getter
+    private MusicManager musicManager;
+    @Getter
+    private NotificationManager notificationManager;
+    @Getter @Setter
+    private MusicData musicData;
+    @Getter
+    private ListenerManager listenerManager;
+    @Getter
+    private JDA jda;
+    @Getter @Setter
+    private TextChannel welcomeMessageChannel;
+    @Getter @Setter
+    private Role autoRole;
+    @Getter @Setter
+    private Guild guild;
 
     public Alkabot(String[] args) {
         try {
@@ -117,7 +126,7 @@ public class Alkabot {
 
             // Initializing tokens
             try {
-                verbose("Loading tokens");
+                logger.info("Loading tokens");
                 new TokenLoader(this).load();
             } catch (Exception exception) {
                 logger.error("Unable to load tokens, see error below");
@@ -131,7 +140,7 @@ public class Alkabot {
 
             // Initializing configuration
             try {
-                verbose("Loading config");
+                logger.info("Loading config");
                 new ConfigLoader(this).load();
             } catch (Exception exception) {
                 logger.error("Unable to load configuration, see error below");
@@ -140,7 +149,7 @@ public class Alkabot {
 
             // Initializing translations
             try {
-                verbose("Loading translations");
+                logger.info("Loading translations");
                 translationsManager = new TranslationsManager(this);
                 new TranslationsLoader(this).load();
             } catch (Exception exception) {
@@ -148,42 +157,42 @@ public class Alkabot {
                 return;
             }
 
-            
-
-
-
             // Initializing commands
             // Always initialize command AFTER parsing the configuration
-            commandManager = new CommandManager();
+            commandManager = new CommandManager(this);
             commandManager.initialize();
-
             logger.info(commandManager.getCommands().size() + " commands ready");
 
             // Initializing music manager
-            musicManager = new MusicManager();
+            musicManager = new MusicManager(this);
 
             // Initializing Notification manager
             notificationManager = new NotificationManager();
 
-            // Initializing shortcuts
-            shortcutManager = new ShortcutManager();
-            shortcutManager.read();
+            // Initializing music data
+            try {
+                logger.info("Loading music data");
+                new MusicDataLoader(this).load();
+            } catch (Exception exception) {
+                logger.error("Unable to load music data, see error below");
+                return;
+            }
 
             // Initializing Listener Manager
-            listenerManager = new ListenerManager();
+            listenerManager = new ListenerManager(this);
 
             // Building JDA
             logger.info("Building JDA...");
 
-            JDABuilder jdaBuilder = JDABuilder.createDefault(tokens.getDiscord_token());
+            JDABuilder jdaBuilder = JDABuilder.createDefault(tokens.getDiscordToken());
             jdaBuilder.setRawEventsEnabled(true);
-            jdaBuilder.setStatus(OnlineStatus.valueOf(configuration.getGuild().getPresence().getStatus()));
-            if (configuration.getGuild().getPresence().getActivity().isShow())
+            jdaBuilder.setStatus(OnlineStatus.valueOf(config.getGuildConfig().getGuildPresenceConfig().getStatus()));
+            if (config.getGuildConfig().getGuildPresenceConfig().getGuildActivityConfig().isShowing())
                 jdaBuilder.setActivity(AlkabotUtils.buildActivity());
 
             jdaBuilder.enableIntents(GatewayIntent.GUILD_MEMBERS,
                     GatewayIntent.GUILD_VOICE_STATES,
-                    GatewayIntent.GUILD_BANS,
+                    GatewayIntent.GUILD_MODERATION,
                     GatewayIntent.GUILD_MESSAGES,
                     GatewayIntent.DIRECT_MESSAGES,
                     GatewayIntent.MESSAGE_CONTENT);
@@ -210,11 +219,67 @@ public class Alkabot {
                 logger.info("[verbose] " + s);
     }
 
-    public static void shutdown() {
-        Alkabot.getCommandManager().getTerminalCommandHandler().setRunning(false);
-        Alkabot.getCommandManager().getTerminalCommandHandlerThread().interrupt();
+    public void shutdown() {
+        commandManager.getTerminalCommandHandler().setRunning(false);
+        commandManager.getTerminalCommandHandlerThread().interrupt();
         jda.shutdown();
         System.exit(0);
+    }
+
+    public Shortcut getShortcut(String name) {
+        Shortcut shortcut = null;
+
+        for (Shortcut s : musicData.getShortcutList())
+            if (s.getName().equalsIgnoreCase(name))
+                shortcut = s;
+
+        return shortcut;
+    }
+
+    public boolean setupGuild() {
+        Guild guild = jda.getGuildById(config.getGuildConfig().getGuildId());
+
+        if (guild == null) {
+            logger.error("The Discord guild '" + config.getGuildConfig().getGuildId() + "' was not found");
+            return false;
+        }
+
+        verbose("Guild: " + guild.getName());
+        this.guild = guild;
+
+        return true;
+    }
+
+    public boolean setupWelComeChannel() {
+        if (config.getWelcomeMessageConfig().isEnable()) {
+            TextChannel textChannel = jda.getTextChannelById(config.getWelcomeMessageConfig().getChannelId());
+            if (textChannel == null) {
+                logger.warn("Disabling welcome messages because the channel '" + config.getWelcomeMessageConfig().getChannelId() + "' was not found");
+                config.getWelcomeMessageConfig().setEnable(false);
+                return false;
+            } else {
+                verbose("Welcome message channel: " + textChannel.getName());
+                welcomeMessageChannel = textChannel;
+                return true;
+            }
+        }
+        return true;
+    }
+
+    public boolean setupAutoRole() {
+        if (config.getAutoRoleConfig().isEnable()) {
+            Role role = guild.getRoleById(config.getAutoRoleConfig().getRoleId());
+            if (role == null) {
+                logger.warn("Disabling auto-role because the role '" + config.getAutoRoleConfig().getRoleId() + "' was not found");
+                config.getAutoRoleConfig().setEnable(false);
+                return false;
+            } else {
+                verbose("Auto-role: " + role.getName());
+                autoRole = role;
+                return true;
+            }
+        }
+        return true;
     }
 
     // Shortcuts for translations

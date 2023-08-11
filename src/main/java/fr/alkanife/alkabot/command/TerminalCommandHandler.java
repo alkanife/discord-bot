@@ -1,16 +1,22 @@
 package fr.alkanife.alkabot.command;
 
 import fr.alkanife.alkabot.Alkabot;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.Locale;
 import java.util.Scanner;
 
 public class TerminalCommandHandler implements Runnable {
 
+    private final Alkabot alkabot;
+
+    @Getter @Setter
     private boolean running;
+    @Getter
     private Scanner scanner;
 
-    public TerminalCommandHandler() {
+    public TerminalCommandHandler(Alkabot alkabot) {
+        this.alkabot = alkabot;
         running = true;
         scanner = new Scanner(System.in);
     }
@@ -23,22 +29,10 @@ public class TerminalCommandHandler implements Runnable {
                 if (line != null) {
                     if (!line.equals(""))
                         if (!line.equals("\n"))
-                            Alkabot.getCommandManager().handleAdmin(new AdminCommandExecution(line.toLowerCase(), null));
+                            alkabot.getCommandManager().handleAdmin(new AdminCommandExecution(alkabot, line.toLowerCase(), null));
                 }
             }
         }
         scanner.close();
-    }
-
-    public boolean isRunning() {
-        return running;
-    }
-
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
-    public Scanner getScanner() {
-        return scanner;
     }
 }

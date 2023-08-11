@@ -1,12 +1,16 @@
 package fr.alkanife.alkabot.command.music;
 
-import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractCommand;
+import fr.alkanife.alkabot.command.CommandManager;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public class StopCommand extends AbstractCommand {
+
+    public StopCommand(CommandManager commandManager) {
+        super(commandManager);
+    }
 
     @Override
     public String getName() {
@@ -15,12 +19,12 @@ public class StopCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Alkabot.t("command.music.stop.description");
+        return alkabot.t("command.music.stop.description");
     }
 
     @Override
     public boolean isEnabled() {
-        return Alkabot.getConfig().getCommands().getMusic().isStop();
+        return alkabot.getConfig().getCommandConfig().getMusicCommandConfig().isStop();
     }
 
     @Override
@@ -30,8 +34,8 @@ public class StopCommand extends AbstractCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.reply(Alkabot.t("command.music.stop.done")).queue();
-        Alkabot.getGuild().getAudioManager().closeAudioConnection();
+        event.reply(alkabot.t("command.music.stop.done")).queue();
+        alkabot.getGuild().getAudioManager().closeAudioConnection();
         //Music.reset(); Disabled, it's not a bug it's a F E A T U R E
     }
 }

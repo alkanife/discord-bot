@@ -2,6 +2,8 @@ package fr.alkanife.alkabot.lang;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.utils.StringUtils;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,33 +11,18 @@ import java.util.Random;
 
 public class TranslationsManager {
 
+    @Getter
+    private Alkabot alkabot;
+    @Getter @Setter
     private HashMap<String, String> translations = new HashMap<>();
+    @Getter @Setter
     private HashMap<String, List<String>> randomTranslations = new HashMap<>();
 
-    public TranslationsManager() {}
-
-    public TranslationsManager(TranslationsLoader translationsLoader) {
-        translations = translationsLoader.getTranslations();
-        randomTranslations = translationsLoader.getRandomTranslations();
+    public TranslationsManager(Alkabot alkabot) {
+        this.alkabot = alkabot;
     }
 
-    public HashMap<String, String> getTranslations() {
-        return translations;
-    }
-
-    public void setTranslations(HashMap<String, String> translations) {
-        this.translations = translations;
-    }
-
-    public HashMap<String, List<String>> getRandomTranslations() {
-        return randomTranslations;
-    }
-
-    public void setRandomTranslations(HashMap<String, List<String>> randomTranslations) {
-        this.randomTranslations = randomTranslations;
-    }
-
-    public String t(String key, String... values) {
+    public String translate(String key, String... values) {
         if (translations.containsKey(key)) {
             String translation = translations.get(key);
 
@@ -47,7 +34,7 @@ public class TranslationsManager {
             return missingTranslation(key);
     }
 
-    public String tr(String key, String... values) {
+    public String translateRandom(String key, String... values) {
         if (randomTranslations.containsKey(key)) {
             List<String> randomTl = randomTranslations.get(key);
 
@@ -61,22 +48,22 @@ public class TranslationsManager {
             return missingTranslation(key);
     }
 
-    public String tri(String key, String... values) {
-        String s = tr(key, values);
+    public String translateRandomImage(String key, String... values) {
+        String s = translateRandom(key, values);
 
         if (!StringUtils.isURL(s))
-            return "https://share.alkanife.fr/alkabot.png";
+            return "";
 
         return s;
     }
 
     private String nullTranslation(String key) {
-        Alkabot.getLogger().warn("Null translation at " + key);
+        alkabot.getLogger().warn("Null translation at " + key);
         return "{" + key + "}";
     }
 
     private String missingTranslation(String key) {
-        Alkabot.getLogger().warn("Missing translation at " + key);
+        alkabot.getLogger().warn("Missing translation at " + key);
         return "{" + key + "}";
     }
 
@@ -85,7 +72,7 @@ public class TranslationsManager {
             if (values.length > 0) {
                 int i = 1;
                 for (String value : values) {
-                    String query = "[value" + i + "]";
+                    String query = "<" + i + ">";
                     translation = translation.replace(query, value);
                     i++;
                 }

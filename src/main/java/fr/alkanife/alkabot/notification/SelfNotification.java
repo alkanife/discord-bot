@@ -1,12 +1,11 @@
 package fr.alkanife.alkabot.notification;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.configuration.json.notifications.JSONNotificationsSelf;
+import fr.alkanife.alkabot.configuration.json.notifications.SelfNotifConfig;
 import fr.alkanife.alkabot.utils.Colors;
 import fr.alkanife.alkabot.utils.NotifUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -14,7 +13,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 
 public class SelfNotification extends AbstractNotification {
 
-    private final JSONNotificationsSelf jsonNotificationsSelf;
+    private final SelfNotifConfig jsonNotificationsSelf;
 
     public SelfNotification(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.SELF);

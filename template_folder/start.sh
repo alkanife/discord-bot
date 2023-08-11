@@ -1,1 +1,1 @@
-java -jar Alkabot-2.0.0-dev2.jar
+java -jar Alkabot-2.0.0-dev3.jar

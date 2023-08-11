@@ -1,8 +1,6 @@
 package fr.alkanife.alkabot.notification.guild;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.configuration.json.notifications.JSONNotificationsGuild;
-import fr.alkanife.alkabot.configuration.json.notifications.JSONNotificationsGuildRole;
 import fr.alkanife.alkabot.notification.NotificationChannel;
 import fr.alkanife.alkabot.notification.NotificationManager;
 

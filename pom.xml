@@ -25,7 +25,7 @@
                     <finalName>ALKABOT-${project.version}</finalName>
                     <archive>
                         <manifest>
-                            <mainClass>fr.alkanife.alkabot.Alkabot</mainClass>
+                            <mainClass>fr.alkanife.alkabot.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -99,8 +99,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- Todo: Updating logback to 1.3 break a lot of things -->
-
         <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -129,6 +127,20 @@
             <groupId>se.michaelthelin.spotify</groupId>
             <artifactId>spotify-web-api-java</artifactId>
             <version>7.2.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.beust</groupId>
+            <artifactId>jcommander</artifactId>
+            <version>1.82</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.28</version>
             <scope>compile</scope>
         </dependency>
 

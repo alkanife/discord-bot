@@ -2,7 +2,6 @@ package fr.alkanife.alkabot.listener;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractCommand;
-import fr.alkanife.alkabot.configuration.AbstractWorker;
 import fr.alkanife.alkabot.configuration.ConfigurationInitializer;
 import fr.alkanife.alkabot.utils.Colors;
 import net.dv8tion.jda.api.EmbedBuilder;

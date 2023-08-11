@@ -1,14 +1,13 @@
 package fr.alkanife.alkabot.notification;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.configuration.json.notifications.JSONNotificationsMessage;
+import fr.alkanife.alkabot.configuration.json.notifications.MessageNotifConfig;
 import fr.alkanife.alkabot.listener.MessageListener;
 import fr.alkanife.alkabot.utils.Colors;
 import fr.alkanife.alkabot.utils.NotifUtils;
 import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
@@ -16,7 +15,7 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 
 public class MessageNotification extends AbstractNotification {
 
-    private final JSONNotificationsMessage jsonNotificationsMessage;
+    private final MessageNotifConfig jsonNotificationsMessage;
 
     public MessageNotification(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.MESSAGE);

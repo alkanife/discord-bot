@@ -1,15 +1,13 @@
 package fr.alkanife.alkabot.notification;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.configuration.json.notifications.JSONNotificationsModerator;
+import fr.alkanife.alkabot.configuration.json.notifications.ModNotifConfig;
 import fr.alkanife.alkabot.utils.Colors;
 import fr.alkanife.alkabot.utils.NotifUtils;
 import fr.alkanife.alkabot.utils.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;
-import net.dv8tion.jda.api.entities.GuildVoiceState;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.GuildBanEvent;
@@ -19,11 +17,9 @@ import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateTimeOutEv
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildDeafenEvent;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
 
-import java.awt.*;
-
 public class ModeratorNotification extends AbstractNotification {
 
-    private final JSONNotificationsModerator jsonNotificationsModerator;
+    private final ModNotifConfig jsonNotificationsModerator;
 
     public ModeratorNotification(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.MODERATOR);

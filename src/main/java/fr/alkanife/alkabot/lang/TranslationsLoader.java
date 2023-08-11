@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.utils.tools.JsonLoader;
+import lombok.Getter;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -11,56 +13,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TranslationsLoader {
+public class TranslationsLoader extends JsonLoader {
 
+    @Getter
     private HashMap<String, String> translations = new HashMap<>();
+    @Getter
     private HashMap<String, List<String>> randomTranslations = new HashMap<>();
 
-    public TranslationsLoader(boolean reload) throws FileNotFoundException {
-        Alkabot.getLogger().info((reload ? "(RELOAD) " : "") + "Reading lang file...");
-
-        File langFile;
-        try {
-            langFile = new File(Alkabot.getConfig().getLang_file());
-
-            Alkabot.debug("Full lang file path: " + langFile.getPath());
-
-            if (!langFile.exists()) {
-                Alkabot.getLogger().error("The lang file was not found");
-                return;
-            }
-        } catch (Exception exception) {
-            Alkabot.getLogger().error("Invalid lang file path");
-            exception.printStackTrace();
-            return;
-        }
-
-        String langFileContent;
-        try {
-            langFileContent = Files.readString(langFile.toPath());
-        } catch (IOException exception) {
-            Alkabot.getLogger().error("Failed to read the lang file content!");
-            exception.printStackTrace();
-            return;
-        }
-
-        try {
-            readJSON(langFileContent);
-        } catch (Exception exception) {
-            Alkabot.getLogger().error("Failed to read the JSON of the lang file");
-            exception.printStackTrace();
-        }
-
-
-        Alkabot.getLogger().info("Loaded " + translations.size() + " translations");
+    public TranslationsLoader(Alkabot alkabot) {
+        super(alkabot);
     }
 
-    public HashMap<String, String> getTranslations() {
-        return translations;
+    @Override
+    public String getReloadMessage() {
+        return "Reloading translations";
     }
 
-    public HashMap<String, List<String>> getRandomTranslations() {
-        return randomTranslations;
+    @Override
+    public void processLoad(boolean reload) throws Exception {
+        String content = Files.readString(new File(alkabot.getParameters().getConfigurationPath()).toPath());
+
+        readJSON(content);
+
+        alkabot.getLogger().info("Loaded " + translations.size() + " translations");
+        alkabot.getTranslationsManager().setTranslations(translations);
+        alkabot.getTranslationsManager().setRandomTranslations(randomTranslations);
+        success = true;
     }
 
     public void readJSON(String content) {
@@ -72,7 +50,7 @@ public class TranslationsLoader {
         * -> "welcome_messages": ["", ""]
         *
         * NO ERROR
-        * -> "welcome" {
+        * -> "welcome": {
         *   "messages": ["", ""]
         * }
         *

@@ -1,7 +1,7 @@
 package fr.alkanife.alkabot.notification;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.configuration.json.notifications.JSONNotificationsMember;
+import fr.alkanife.alkabot.configuration.json.notifications.MemberNotifConfig;
 import fr.alkanife.alkabot.utils.Colors;
 import fr.alkanife.alkabot.utils.NotifUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 
 public class MemberNotification extends AbstractNotification {
 
-    private final JSONNotificationsMember jsonNotificationsMember;
+    private final MemberNotifConfig jsonNotificationsMember;
 
     public MemberNotification(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.MEMBER);

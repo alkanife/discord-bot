@@ -95,33 +95,6 @@
       "join": false,
       "leave": false,
       "move": false
-    },
-    "guild": {
-      "channel_id": null,
-      "channel_create": false,
-      "channel_delete": false,
-      "channel_update": false,
-      "permission_override_create": false,
-      "permission_override_delete": false,
-      "permission_override_update": false,
-      "emoji_added": false,
-      "emoji_delete": false,
-      "emoji_update": false,
-      "sticker_added": false,
-      "sticker_delete": false,
-      "sticker_update": false,
-      "invite_create": false,
-      "invite_delete": false,
-      "guild_update": false,
-      "name_update": false,
-      "icon_update": false,
-      "owner_update": false,
-      "role": {
-        "role_create": false,
-        "role_delete": false,
-        "role_update": false,
-        "member_role_update": false
-      }
     }
   }
 }

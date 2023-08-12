@@ -14,7 +14,7 @@ import fr.alkanife.alkabot.configuration.json.guild.GuildPresenceConfig;
 import fr.alkanife.alkabot.configuration.json.notifications.*;
 import fr.alkanife.alkabot.music.MusicData;
 import fr.alkanife.alkabot.tokens.Tokens;
-import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.OnlineStatus;
 
 import java.io.File;
 import java.io.InputStream;
@@ -87,7 +87,7 @@ public class DefaultFilesGenerator {
         configuration.setLangFile("en_US");
         configuration.setAdminIds(new ArrayList<>());
 
-        GuildConfig guildConfig = new GuildConfig(null, new GuildPresenceConfig(JDA.Status.CONNECTED.name(), new GuildPresenceActivityConfig(false, null, null)));
+        GuildConfig guildConfig = new GuildConfig(null, new GuildPresenceConfig(OnlineStatus.ONLINE.name(), new GuildPresenceActivityConfig(false, null, null)));
         configuration.setGuildConfig(guildConfig);
 
         configuration.setWelcomeMessageConfig(new WelcomeMessageConfig(false, null));

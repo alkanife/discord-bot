@@ -20,7 +20,9 @@ public class TokenLoader extends JsonLoader {
 
     @Override
     public void processLoad(boolean reload) throws Exception {
-        String content = Files.readString(new File(alkabot.getParameters().getTokensPath()).toPath());
+        File file = new File(alkabot.getParameters().getTokensPath());
+        alkabot.verbose(file.getPath());
+        String content = Files.readString(file.toPath());
         Tokens tokens = new GsonBuilder().serializeNulls().create().fromJson(content, Tokens.class);
 
         if (tokens == null) {

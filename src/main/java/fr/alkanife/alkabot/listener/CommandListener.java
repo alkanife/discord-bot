@@ -19,12 +19,6 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        Member member = event.getMember();
-
-        if (member != null)
-            if (!alkabot.getConfig().getAdminIds().contains(member.getId()))
-                return;
-
         alkabot.getCommandManager().handleSlash(event);
     }
 

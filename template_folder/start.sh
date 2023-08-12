@@ -1,1 +1,0 @@
-java -jar Alkabot-2.0.0-dev3.jar

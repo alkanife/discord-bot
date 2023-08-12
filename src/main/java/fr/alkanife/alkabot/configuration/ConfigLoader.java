@@ -28,7 +28,9 @@ public class ConfigLoader extends JsonLoader {
 
     @Override
     public void processLoad(boolean reload) throws Exception {
-        String content = Files.readString(new File(alkabot.getParameters().getConfigurationPath()).toPath());
+        File file = new File(alkabot.getParameters().getConfigurationPath());
+        alkabot.verbose(file.getPath());
+        String content = Files.readString(file.toPath());
         Configuration config = new GsonBuilder().serializeNulls().create().fromJson(content, Configuration.class);
 
         //
@@ -37,6 +39,9 @@ public class ConfigLoader extends JsonLoader {
         if (config.getLangFile() == null) {
             cantContinue("lang");
             return;
+        } else {
+            if (config.getLangFile().endsWith(".json"))
+                config.setLangFile(config.getLangFile().replaceAll(".json", ""));
         }
 
         if (config.getGuildConfig() == null) {

@@ -31,7 +31,9 @@ public class TranslationsLoader extends JsonLoader {
 
     @Override
     public void processLoad(boolean reload) throws Exception {
-        String content = Files.readString(new File(alkabot.getParameters().getConfigurationPath()).toPath());
+        File file = new File(alkabot.getParameters().getLangPath() + "/" + alkabot.getConfig().getLangFile() + ".json");
+        alkabot.verbose(file.getPath());
+        String content = Files.readString(file.toPath());
 
         readJSON(content);
 
@@ -59,6 +61,8 @@ public class TranslationsLoader extends JsonLoader {
         Gson gson = new GsonBuilder()
                 .serializeNulls()
                 .create();
+
+        // This code HURTS my eyes and brain please tell me there is a better way
 
         Map<?, LinkedTreeMap<? , ?>> map = gson.fromJson(content, Map.class);
 

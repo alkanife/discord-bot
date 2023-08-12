@@ -24,8 +24,6 @@ public class ReadyListener extends ListenerAdapter {
 
     @Override
     public void onReady(@NotNull ReadyEvent readyEvent) {
-        alkabot.getLogger().info("Connected and ready!");
-
         try {
             if (!alkabot.setupGuild()) {
                 alkabot.shutdown();
@@ -40,7 +38,8 @@ public class ReadyListener extends ListenerAdapter {
 
             alkabot.getCommandManager().getTerminalCommandHandlerThread().start();
 
-            alkabot.getLogger().info("Ready!");
+            alkabot.getLogger().info("Loading complete! Guild: " + alkabot.getGuild().getName());
+            alkabot.getLogger().info("To see a list of admin commands, type 'help'...");
 
             //
             // Send notification

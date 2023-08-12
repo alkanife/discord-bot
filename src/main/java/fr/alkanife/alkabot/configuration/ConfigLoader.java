@@ -185,6 +185,8 @@ public class ConfigLoader extends JsonLoader {
             changingBecauseNoValue("notifications.voice.*", "false", "notifications.voice.channel_id");
         }
 
+        alkabot.verbose("parsed configuration: " + config.toString());
+
         success = true;
         alkabot.setConfig(config);
     }

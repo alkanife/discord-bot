@@ -69,7 +69,7 @@ public class MusicManager {
 
     public void reset() {
         disable();
-        initialize(true);
+        initialize();
     }
 
     public void disable() {
@@ -83,9 +83,8 @@ public class MusicManager {
         alkabotTrackPlayer.play(trackScheduler.getQueue().poll());
     }
 
-    public void initialize(boolean reload) {
-        if(!reload)
-            alkabot.getLogger().info("Initializing music...");
+    public void initialize() {
+        alkabot.getLogger().info("Initializing music...");
 
         lavaplayerLoader = new LavaplayerLoader(this);
         spotifyLoader = new SpotifyLoader(this);
@@ -99,7 +98,7 @@ public class MusicManager {
         trackScheduler = new TrackScheduler(this);
         trackListener = new TrackListener(this);
         player.addListener(trackListener);
-        player.setVolume(70);
+        player.setVolume(alkabot.getMusicData().getVolume());
     }
 
     public void play(SlashCommandInteractionEvent event, boolean priority, boolean force) {

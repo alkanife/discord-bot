@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.command;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.admin.PingCommand;
+import fr.alkanife.alkabot.command.admin.ReloadCommand;
 import fr.alkanife.alkabot.command.admin.StatusCommand;
 import fr.alkanife.alkabot.command.music.*;
 import fr.alkanife.alkabot.command.utilities.CopyCommand;
@@ -36,7 +37,10 @@ public class CommandManager {
         terminalCommandHandler = new TerminalCommandHandler(alkabot);
         terminalCommandHandlerThread = new Thread(terminalCommandHandler, "Alkabot TCH");
 
-        registerAdminCommands(new fr.alkanife.alkabot.command.admin.StopCommand(this), new StatusCommand(this), new PingCommand(this));
+        registerAdminCommands(new fr.alkanife.alkabot.command.admin.StopCommand(this),
+                new StatusCommand(this),
+                new PingCommand(this),
+                new ReloadCommand(this));
 
         registerCommand(new AboutCommand(this));
 
@@ -92,15 +96,21 @@ public class CommandManager {
     public void handleAdmin(AdminCommandExecution execution) {
         try {
             String[] command = execution.command().split(" ");
-            AbstractAdminCommand abstractAdminCommand = getAdminCommand(command[0]);
 
-            if (abstractAdminCommand == null) {
+            if (command[0].equalsIgnoreCase("help")) {
                 adminHelp(execution);
                 return;
             }
 
+            AbstractAdminCommand abstractAdminCommand = getAdminCommand(command[0]);
+
+            if (abstractAdminCommand == null) {
+                execution.reply("Unknown command. Type 'help' to see a list of administrative commands");
+                return;
+            }
+
             if (execution.isFromDiscord())
-                alkabot.getLogger().info(execution.messageReceivedEvent().getAuthor().getName() + " -> " + execution.command());
+                alkabot.getLogger().info(execution.messageReceivedEvent().getAuthor().getName() + " executed admin command '" + execution.command() + "'");
 
             if (abstractAdminCommand.isDiscordOnly() && !execution.isFromDiscord()) {
                 alkabot.getLogger().error("This command can only be executed from Discord.");
@@ -109,9 +119,8 @@ public class CommandManager {
 
             abstractAdminCommand.execute(execution);
         } catch (Exception exception) {
-            execution.reply("An error prevented me from processing your command, check logs");
-            alkabot.getLogger().error("Failed to handle an admin command:");
-            exception.printStackTrace();
+            execution.reply("An error prevented me from processing your command.");
+            alkabot.getLogger().error("Failed to handle an admin command:", exception);
         }
     }
 
@@ -119,7 +128,7 @@ public class CommandManager {
         StringBuilder stringBuilder = new StringBuilder("Administrative commands:");
 
         for (AbstractAdminCommand command : adminCommands.values())
-            stringBuilder.append("\n- ").append(command.getUsage()).append(": ").append(command.getDescription());
+            stringBuilder.append("\n - ").append(command.getUsage()).append(": ").append(command.getDescription());
 
         execution.reply(stringBuilder.toString());
     }

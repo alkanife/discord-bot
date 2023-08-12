@@ -10,10 +10,13 @@ public record AdminCommandExecution(Alkabot alkabot, String command, MessageRece
     }
 
     public void reply(String s) {
-        if (isFromDiscord())
+        if (isFromDiscord()) {
             messageReceivedEvent.getMessage().reply("```yaml\n" + s + "\n```").queue();
-        else
-            alkabot.getLogger().info(s);
+        } else {
+            String[] lines = s.split("\n");
+            for (String line : lines)
+                alkabot.getLogger().info(line);
+        }
     }
 
 }

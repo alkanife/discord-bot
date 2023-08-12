@@ -1,6 +1,5 @@
 package fr.alkanife.alkabot.command.admin;
 
-import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractAdminCommand;
 import fr.alkanife.alkabot.command.AdminCommandExecution;
 import fr.alkanife.alkabot.command.CommandManager;

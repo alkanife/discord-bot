@@ -4,6 +4,7 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import fr.alkanife.alkabot.command.AbstractCommand;
 import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.configuration.ConfigLoader;
 import fr.alkanife.alkabot.configuration.json.Configuration;
@@ -27,6 +28,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
@@ -34,6 +36,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Alkabot {
 
@@ -60,7 +64,7 @@ public class Alkabot {
     private TranslationsManager translationsManager;
     @Getter
     private CommandManager commandManager;
-    @Getter
+    @Getter @Setter
     private MusicManager musicManager;
     @Getter
     private NotificationManager notificationManager;
@@ -303,6 +307,18 @@ public class Alkabot {
             }
         }
         return true;
+    }
+
+    public void updateCommands() {
+        logger.info("Updating commands...");
+
+        List<SlashCommandData> commands = new ArrayList<>();
+
+        for (AbstractCommand abstractCommand : commandManager.getCommands().values())
+            if (abstractCommand.isEnabled())
+                commands.add(abstractCommand.getCommandData());
+
+        guild.updateCommands().addCommands(commands).queue();
     }
 
     public void printFileError(String file, Exception exception) {

@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.listener;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractCommand;
+import fr.alkanife.alkabot.tests.Test;
 import fr.alkanife.alkabot.utils.Colors;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -32,9 +33,9 @@ public class ReadyListener extends ListenerAdapter {
 
             alkabot.setupAutoRole();
             alkabot.setupWelComeChannel();
+            alkabot.updateCommands();
 
-            updateCommands(false);
-            alkabot.getMusicManager().initialize(false);
+            alkabot.getMusicManager().initialize();
 
             alkabot.getCommandManager().getTerminalCommandHandlerThread().start();
 
@@ -83,21 +84,11 @@ public class ReadyListener extends ListenerAdapter {
             embedBuilder.setDescription(stringBuilder.toString());
 
             alkabot.getNotificationManager().getSelfNotification().notifyAdmin(embedBuilder.build());
+
+            new Test(alkabot);
         } catch (Exception exception) {
             exception.printStackTrace();
             alkabot.shutdown();
         }
-    }
-
-    public void updateCommands(boolean reload) {
-        alkabot.getLogger().info((reload ? "(reload)" : "") + "Updating commands...");
-
-        List<SlashCommandData> commands = new ArrayList<>();
-
-        for (AbstractCommand abstractCommand : alkabot.getCommandManager().getCommands().values())
-            if (abstractCommand.isEnabled())
-                commands.add(abstractCommand.getCommandData());
-
-        alkabot.getGuild().updateCommands().addCommands(commands).queue();
     }
 }

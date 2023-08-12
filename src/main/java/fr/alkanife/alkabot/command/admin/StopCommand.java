@@ -1,6 +1,5 @@
 package fr.alkanife.alkabot.command.admin;
 
-import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.AbstractAdminCommand;
 import fr.alkanife.alkabot.command.AdminCommandExecution;
 import fr.alkanife.alkabot.command.CommandManager;
@@ -46,8 +45,8 @@ public class StopCommand extends AbstractAdminCommand {
                 alkabot.getNotificationManager().getSelfNotification().notifyShutdown(embedBuilder.build(), true);
             });
         } else {
-            execution.reply("Stopping");
-            embedBuilder.setDescription(alkabot.t("notification.self.power_off.description", "`ADMIN`"));
+            execution.reply("Stopping (may take a moment!)");
+            embedBuilder.setDescription(alkabot.t("notification.self.power_off.description", "`Terminal`"));
             alkabot.getNotificationManager().getSelfNotification().notifyShutdown(embedBuilder.build(), true);
         }
     }

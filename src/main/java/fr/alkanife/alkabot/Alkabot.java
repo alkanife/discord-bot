@@ -18,6 +18,7 @@ import fr.alkanife.alkabot.notification.NotificationManager;
 import fr.alkanife.alkabot.tokens.TokenLoader;
 import fr.alkanife.alkabot.tokens.Tokens;
 import fr.alkanife.alkabot.utils.tools.BuildReader;
+import fr.alkanife.alkabot.utils.tools.DefaultFilesGenerator;
 import fr.alkanife.alkabot.utils.tools.LogsCleaner;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,7 +42,7 @@ public class Alkabot {
     @Getter @Setter
     private String version = "unknown";
     @Getter @Setter
-    private boolean snapshotBuild = true;
+    private boolean snapshotBuild = false;
     @Getter @Setter
     private String build = "unknown";
 
@@ -89,10 +90,21 @@ public class Alkabot {
                 return;
             }
 
-            verbose("Provided parameters: " + parameters.toString());
-
             if (parameters.isHelp()) {
                 jCommander.usage();
+                return;
+            }
+
+            verbose("Provided parameters: " + parameters.toString());
+
+            // Validate folder paths
+            parameters.setLogsPath(validateFolderPath(parameters.getLogsPath()));
+            parameters.setDataPath(validateFolderPath(parameters.getDataPath()));
+            parameters.setLangPath(validateFolderPath(parameters.getLangPath()));
+
+            // generate files
+            if (parameters.isGenerateFiles()) {
+                new DefaultFilesGenerator(this);
                 return;
             }
 
@@ -118,13 +130,20 @@ public class Alkabot {
                         ***                                                                                ***
                         """);
 
+            if (version.equals("unknown"))
+                System.out.println("Unable to find the current Alkabot version, be careful...");
+
             Thread.sleep(2000);
 
             // Moving old latest.log file
-            new LogsCleaner(this);
+            try {
+                new LogsCleaner(this);
+            } catch (Exception exception) {
+                printJavaError("/i\\ Failed to clean logs", exception);
+            }
 
             // Create logger
-            verbose("Creating logger");
+            verbose("Switching to SLF4J logger");
             logger = LoggerFactory.getLogger(Alkabot.class);
 
             // Initializing tokens
@@ -132,7 +151,7 @@ public class Alkabot {
                 logger.info("Loading tokens");
                 new TokenLoader(this).load();
             } catch (Exception exception) {
-                logger.error("Unable to load tokens, see error below");
+                printFileError("tokens", exception);
                 return;
             }
 
@@ -146,7 +165,7 @@ public class Alkabot {
                 logger.info("Loading config");
                 new ConfigLoader(this).load();
             } catch (Exception exception) {
-                logger.error("Unable to load configuration, see error below");
+                printFileError("configuration", exception);
                 return;
             }
 
@@ -156,7 +175,7 @@ public class Alkabot {
                 translationsManager = new TranslationsManager(this);
                 new TranslationsLoader(this).load();
             } catch (Exception exception) {
-                logger.error("Unable to load translations, see error below");
+                printFileError("translations", exception);
                 return;
             }
 
@@ -177,7 +196,7 @@ public class Alkabot {
                 logger.info("Loading music data");
                 new MusicDataLoader(this).load();
             } catch (Exception exception) {
-                logger.error("Unable to load music data, see error below");
+                printFileError("music data", exception);
                 return;
             }
 
@@ -206,7 +225,8 @@ public class Alkabot {
             logger.info("Starting JDA");
             jda = jdaBuilder.build();
         } catch (Exception exception) {
-            exception.printStackTrace();
+            System.out.println("------------");
+            printJavaError("An unexpected error prevented the bot to start:", exception);
         }
     }
 
@@ -285,6 +305,22 @@ public class Alkabot {
         return true;
     }
 
+    public void printFileError(String file, Exception exception) {
+        logger.error("Unable to load " + file + " (" + exception.toString() + ")");
+        logger.error("Please make sure that this file exists, and that the bot has access to it.");
+        logger.error("To generate default files, use the --generateFiles flag.");
+        if (parameters.isVerbose())
+            logger.error("[verbose] Detailed error: ", exception);
+    }
+
+    public void printJavaError(String message, Exception exception) {
+        System.out.println(message + " (" + exception.toString() + ")");
+        if (parameters.isVerbose()) {
+            System.out.println("[verbose] Detailed error: ");
+            exception.printStackTrace();
+        }
+    }
+
     public Activity buildActivity() {
         verbose("Building activity");
 
@@ -294,7 +330,19 @@ public class Alkabot {
 
     public void updateMusicData() throws Exception {
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
-        Files.writeString(new File(config.getMusicDataPath()).toPath(), gson.toJson(musicData, MusicData.class));
+        Files.writeString(new File(parameters.getDataPath() + "/music.json").toPath(), gson.toJson(musicData, MusicData.class));
+    }
+
+    private String validateFolderPath(String string) {
+        if (string.startsWith("/"))
+            string = string.substring(1);
+
+        if (string.endsWith("/"))
+            string = string.substring(0, string.length() - 1);
+
+        verbose("Using folder path " + string);
+
+        return string;
     }
 
     // Shortcuts for translations

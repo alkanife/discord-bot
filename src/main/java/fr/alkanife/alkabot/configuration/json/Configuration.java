@@ -15,11 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 public class Configuration {
 
-    @SerializedName("lang_path")
-    private String langFilePath;
-
-    @SerializedName("musicdata_path")
-    private String musicDataPath;
+    @SerializedName("lang")
+    private String langFile;
 
     @SerializedName("administrator_ids")
     private List<String> adminIds;

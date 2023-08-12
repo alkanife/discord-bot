@@ -48,4 +48,36 @@ public class Parameters {
     @Setter
     private String tokensPath = "tokens.json";
 
+    @Parameter(
+            names = { "--data", "-d"},
+            description = "Data folder path"
+    )
+    @Getter
+    @Setter
+    private String dataPath = "data";
+
+    @Parameter(
+            names = { "--logs", "-l"},
+            description = "Logs folder path"
+    )
+    @Getter
+    @Setter
+    private String logsPath = "logs";
+
+    @Parameter(
+            names = { "--langs", "-L"},
+            description = "Lang folder path"
+    )
+    @Getter
+    @Setter
+    private String langPath = "lang";
+
+    @Parameter(
+            names = { "--generateFiles", "-gf"},
+            description = "Generate default files"
+    )
+    @Getter
+    @Setter
+    private boolean generateFiles = false;
+
 }

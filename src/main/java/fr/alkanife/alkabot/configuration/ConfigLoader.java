@@ -34,8 +34,8 @@ public class ConfigLoader extends JsonLoader {
         //
         // CAN'T START WITHOUT IT
         //
-        if (config.getLangFilePath() == null) {
-            cantContinue("lang_path");
+        if (config.getLangFile() == null) {
+            cantContinue("lang");
             return;
         }
 
@@ -52,11 +52,6 @@ public class ConfigLoader extends JsonLoader {
         //
         // SET TO A DEFAULT VALUE IF NULL
         //
-        if (config.getMusicDataPath() == null) {
-            config.setMusicDataPath("music_data.json");
-            changeNull("musicdata_path", "music_data.json");
-        }
-
         // Admin
         if (config.getAdminIds() == null) {
             config.setAdminIds(new ArrayList<>());

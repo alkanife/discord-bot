@@ -21,7 +21,7 @@ public class MusicDataLoader extends JsonLoader {
 
     @Override
     public void processLoad(boolean reload) throws Exception {
-        String content = Files.readString(new File(alkabot.getParameters().getTokensPath()).toPath());
+        String content = Files.readString(new File(alkabot.getParameters().getDataPath() + "/music.json").toPath());
         MusicData musicData = new GsonBuilder().serializeNulls().create().fromJson(content, MusicData.class);
 
         if (musicData == null)

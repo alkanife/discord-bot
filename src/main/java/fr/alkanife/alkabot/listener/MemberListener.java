@@ -64,7 +64,7 @@ public class MemberListener extends ListenerAdapter {
             return;
 
         try {
-            alkabot.getNotificationManager().getMemberNotification().notifLeaveOrKick(guildMemberRemoveEvent);
+            alkabot.getNotificationManager().getMemberNotification().notifyLeaveOrKick(guildMemberRemoveEvent);
         } catch (Exception exception) {
             alkabot.getLogger().error("Failed to notify leave");
             exception.printStackTrace();

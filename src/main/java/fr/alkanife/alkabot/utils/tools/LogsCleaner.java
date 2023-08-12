@@ -12,7 +12,9 @@ import java.util.Date;
 public class LogsCleaner {
 
     public LogsCleaner(Alkabot alkabot) throws IOException {
-        alkabot.verbose("Moving old 'latest.log' file to the logs/ folder");
+        String paramLogs = alkabot.getParameters().getLogsPath();
+
+        alkabot.verbose("Moving old 'latest.log' file to the " + paramLogs + "/ folder");
 
         String absolutePath = Paths.get("").toAbsolutePath().toString();
 
@@ -22,22 +24,22 @@ public class LogsCleaner {
             alkabot.verbose("latest.log file existing");
             System.out.println("Cleaning logs...");
 
-            File logsFolder = new File(absolutePath + "/logs");
+            File logsFolder = new File(absolutePath + "/" + paramLogs);
 
             if (logsFolder.exists()) {
-                alkabot.verbose("logs/ folder already existing");
+                alkabot.verbose(paramLogs + "/ folder already existing");
                 if (!logsFolder.isDirectory()) {
-                    System.out.println(absolutePath + "/logs is not a directory");
+                    System.out.println(absolutePath + "/" + paramLogs + " is not a directory");
                     return;
                 }
             } else {
-                System.out.println("No logs/ directory found, creating one");
+                System.out.println("No " + paramLogs + "/ directory found, creating one");
                 if (!logsFolder.mkdir())
-                    System.out.println("Failed to create logs/ directory");
+                    System.out.println("Failed to create " + paramLogs + "/ directory");
             }
 
             String date = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
-            String newPath = absolutePath + "/logs/before-" + date + ".log";
+            String newPath = absolutePath + "/" + paramLogs + "/before-" + date + ".log";
 
             alkabot.verbose("Moving latest.log file to " + newPath);
             Files.move(latestLogs.toPath(), Paths.get(newPath));

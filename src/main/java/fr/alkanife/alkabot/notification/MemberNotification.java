@@ -45,7 +45,7 @@ public class MemberNotification extends AbstractNotification {
         getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
     }
 
-    public void notifLeaveOrKick(GuildMemberRemoveEvent guildMemberRemoveEvent) {
+    public void notifyLeaveOrKick(GuildMemberRemoveEvent guildMemberRemoveEvent) {
         User user = guildMemberRemoveEvent.getUser();
         guildMemberRemoveEvent.getGuild().retrieveAuditLogs().queue(auditLogEntries -> {
             AuditLogEntry latest = auditLogEntries.get(0);
@@ -70,7 +70,7 @@ public class MemberNotification extends AbstractNotification {
                 embedBuilder.setTitle(getNotificationManager().getAlkabot().t("notification.member.leave.title"));
                 embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.generic.member"), notifUser(user), false);
 
-                getNotificationManager().getAlkabot().getNotificationManager().getMemberNotification().notifyLeave(embedBuilder.build());
+                notifyLeave(embedBuilder.build());
             }
         });
     }
@@ -78,8 +78,6 @@ public class MemberNotification extends AbstractNotification {
     public void notifyLeave(MessageEmbed messageEmbed) {
         if (!jsonNotificationsMember.isLeave())
             return;
-
-        // In MemberListener
 
         getNotificationManager().sendNotification(getNotificationChannel(), messageEmbed);
     }

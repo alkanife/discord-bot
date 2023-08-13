@@ -99,6 +99,15 @@ public class Alkabot {
                 return;
             }
 
+            // Read build information
+            new BuildReader(this);
+
+            if (parameters.isVersion()) {
+                System.out.println("Alkabot version " + getVersion());
+                System.out.println("Build " + getBuild());
+                return;
+            }
+
             verbose("Provided parameters: " + parameters.toString());
 
             // Validate folder paths
@@ -111,9 +120,6 @@ public class Alkabot {
                 new DefaultFilesGenerator(this);
                 return;
             }
-
-            // Read build information
-            new BuildReader(this);
 
             // Splash text
             System.out.println("           _ _         _           _");

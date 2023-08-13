@@ -1,13 +1,7 @@
 package fr.alkanife.alkabot.listener;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.notification.AbstractNotification;
-import fr.alkanife.alkabot.utils.Colors;
 import lombok.AllArgsConstructor;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.ActionType;
-import net.dv8tion.jda.api.audit.AuditLogEntry;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

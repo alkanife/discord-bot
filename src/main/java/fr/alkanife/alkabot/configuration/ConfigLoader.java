@@ -8,7 +8,7 @@ import fr.alkanife.alkabot.configuration.json.commands.*;
 import fr.alkanife.alkabot.configuration.json.guild.GuildPresenceActivityConfig;
 import fr.alkanife.alkabot.configuration.json.guild.GuildPresenceConfig;
 import fr.alkanife.alkabot.configuration.json.notifications.*;
-import fr.alkanife.alkabot.utils.tools.JsonLoader;
+import fr.alkanife.alkabot.util.tool.JsonLoader;
 import net.dv8tion.jda.api.OnlineStatus;
 
 import java.io.File;

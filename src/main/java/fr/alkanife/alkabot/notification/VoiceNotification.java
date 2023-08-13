@@ -1,7 +1,7 @@
 package fr.alkanife.alkabot.notification;
 
 import fr.alkanife.alkabot.configuration.json.notifications.VoiceNotifConfig;
-import fr.alkanife.alkabot.utils.Colors;
+import fr.alkanife.alkabot.util.Colors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;

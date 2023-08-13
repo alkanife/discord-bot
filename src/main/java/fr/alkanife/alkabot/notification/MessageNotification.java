@@ -2,8 +2,8 @@ package fr.alkanife.alkabot.notification;
 
 import fr.alkanife.alkabot.configuration.json.notifications.MessageNotifConfig;
 import fr.alkanife.alkabot.listener.MessageListener;
-import fr.alkanife.alkabot.utils.Colors;
-import fr.alkanife.alkabot.utils.StringUtils;
+import fr.alkanife.alkabot.util.Colors;
+import fr.alkanife.alkabot.util.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;

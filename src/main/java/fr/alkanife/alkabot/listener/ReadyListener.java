@@ -1,21 +1,14 @@
 package fr.alkanife.alkabot.listener;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.command.AbstractCommand;
-import fr.alkanife.alkabot.tests.Test;
-import fr.alkanife.alkabot.utils.Colors;
+import fr.alkanife.alkabot.test.Test;
+import fr.alkanife.alkabot.util.Colors;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.event.Level;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor

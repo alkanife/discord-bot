@@ -11,16 +11,16 @@ import fr.alkanife.alkabot.configuration.json.Configuration;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
 import fr.alkanife.alkabot.lang.TranslationsManager;
 import fr.alkanife.alkabot.listener.ListenerManager;
-import fr.alkanife.alkabot.music.MusicData;
-import fr.alkanife.alkabot.music.MusicDataLoader;
+import fr.alkanife.alkabot.music.data.MusicData;
+import fr.alkanife.alkabot.music.data.MusicDataLoader;
 import fr.alkanife.alkabot.music.MusicManager;
 import fr.alkanife.alkabot.music.Shortcut;
 import fr.alkanife.alkabot.notification.NotificationManager;
-import fr.alkanife.alkabot.tokens.TokenLoader;
-import fr.alkanife.alkabot.tokens.Tokens;
-import fr.alkanife.alkabot.utils.tools.BuildReader;
-import fr.alkanife.alkabot.utils.tools.DefaultFilesGenerator;
-import fr.alkanife.alkabot.utils.tools.LogsCleaner;
+import fr.alkanife.alkabot.token.TokenLoader;
+import fr.alkanife.alkabot.token.Tokens;
+import fr.alkanife.alkabot.util.tool.BuildReader;
+import fr.alkanife.alkabot.util.tool.DefaultFilesGenerator;
+import fr.alkanife.alkabot.util.tool.LogsCleaner;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
@@ -356,7 +356,7 @@ public class Alkabot {
         if (string.endsWith("/"))
             string = string.substring(0, string.length() - 1);
 
-        verbose("Using folder path " + string);
+        verbose("Using folder path '" + string + "'");
 
         return string;
     }

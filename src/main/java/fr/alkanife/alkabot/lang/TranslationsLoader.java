@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.utils.tools.JsonLoader;
+import fr.alkanife.alkabot.util.tool.JsonLoader;
 import lombok.Getter;
 
 import java.io.*;

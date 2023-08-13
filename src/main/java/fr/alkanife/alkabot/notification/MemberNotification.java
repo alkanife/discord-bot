@@ -1,7 +1,7 @@
 package fr.alkanife.alkabot.notification;
 
 import fr.alkanife.alkabot.configuration.json.notifications.MemberNotifConfig;
-import fr.alkanife.alkabot.utils.Colors;
+import fr.alkanife.alkabot.util.Colors;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.audit.ActionType;
 import net.dv8tion.jda.api.audit.AuditLogEntry;

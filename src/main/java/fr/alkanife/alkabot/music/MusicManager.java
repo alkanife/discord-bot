@@ -7,7 +7,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.music.loader.LavaplayerLoader;
 import fr.alkanife.alkabot.music.loader.SpotifyLoader;
-import fr.alkanife.alkabot.utils.StringUtils;
+import fr.alkanife.alkabot.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.entities.Member;

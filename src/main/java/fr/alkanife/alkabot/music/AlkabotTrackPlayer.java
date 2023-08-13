@@ -4,8 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.utils.Colors;
+import fr.alkanife.alkabot.util.Colors;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 

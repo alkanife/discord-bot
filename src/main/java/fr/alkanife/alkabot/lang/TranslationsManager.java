@@ -1,7 +1,7 @@
 package fr.alkanife.alkabot.lang;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.utils.StringUtils;
+import fr.alkanife.alkabot.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 

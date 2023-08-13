@@ -1,9 +1,10 @@
 package fr.alkanife.alkabot.listener;
 
 import fr.alkanife.alkabot.Alkabot;
-import fr.alkanife.alkabot.command.AdminCommandExecution;
+import fr.alkanife.alkabot.command.SlashCommandHandler;
+import fr.alkanife.alkabot.command.admin.AdminCommandExecution;
+import fr.alkanife.alkabot.command.admin.AdminCommandHandler;
 import lombok.AllArgsConstructor;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -19,7 +20,7 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        alkabot.getCommandManager().handleSlash(event);
+        new SlashCommandHandler(alkabot, event);
     }
 
     @Override
@@ -32,7 +33,7 @@ public class CommandListener extends ListenerAdapter {
         if (!alkabot.getConfig().getAdminIds().contains(event.getAuthor().getId()))
             return;
 
-        alkabot.getCommandManager().handleAdmin(new AdminCommandExecution(alkabot, event.getMessage().getContentRaw().toLowerCase(Locale.ROOT), event));
+        new AdminCommandHandler(alkabot, new AdminCommandExecution(alkabot, event.getMessage().getContentRaw().toLowerCase(Locale.ROOT), event));
     }
 
 }

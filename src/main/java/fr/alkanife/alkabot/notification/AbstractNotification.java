@@ -1,5 +1,6 @@
 package fr.alkanife.alkabot.notification;
 
+import fr.alkanife.alkabot.Alkabot;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -17,15 +18,19 @@ import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import java.awt.*;
 import java.util.List;
 
-@AllArgsConstructor
 public abstract class AbstractNotification {
 
-    @Getter
-    private final NotificationManager notificationManager;
-    @Getter
-    private final NotificationChannel notificationChannel;
+    public Alkabot alkabot;
+    public final NotificationManager notificationManager;
+    public final NotificationChannel notificationChannel;
 
-    public String notifMember(Member member) {
+    public AbstractNotification(NotificationManager notificationManager, NotificationChannel notificationChannel) {
+        this.alkabot = notificationManager.getAlkabot();
+        this.notificationManager = notificationManager;
+        this.notificationChannel = notificationChannel;
+    }
+
+    /*public String notifMember(Member member) {
         return notifUser(member.getUser());
     }
 
@@ -154,5 +159,5 @@ public abstract class AbstractNotification {
         embedBuilder.addField(notificationManager.getAlkabot().t("notification.generic.new_value"), notifValue(newValue), true);
 
         return embedBuilder;
-    }
+    }*/
 }

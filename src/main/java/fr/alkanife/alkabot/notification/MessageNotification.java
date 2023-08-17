@@ -1,8 +1,8 @@
 package fr.alkanife.alkabot.notification;
 
 import fr.alkanife.alkabot.configuration.json.notifications.MessageNotifConfig;
+import fr.alkanife.alkabot.lang.Lang;
 import fr.alkanife.alkabot.listener.MessageListener;
-import fr.alkanife.alkabot.util.Colors;
 import fr.alkanife.alkabot.util.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
@@ -17,7 +17,7 @@ public class MessageNotification extends AbstractNotification {
 
     public MessageNotification(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.MESSAGE);
-        jsonNotificationsMessage = getNotificationManager().getAlkabot().getConfig().getNotifConfig().getMessageNotifConfig();
+        jsonNotificationsMessage = alkabot.getConfig().getNotifConfig().getMessageNotifConfig();
     }
 
     public void notifyEdit(MessageUpdateEvent event) {
@@ -31,33 +31,46 @@ public class MessageNotification extends AbstractNotification {
                 beforeMessage = StringUtils.limitString(sentMessage.getContent(), 1000);
 
         if (beforeMessage == null)
-            beforeMessage = getNotificationManager().getAlkabot().t("notification.generic.unknown");
+            beforeMessage = Lang.t("notification.generic.unknown").getValue();
 
-        User user = event.getAuthor();
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder = addUserAvatar(embedBuilder, user);
-        embedBuilder.setColor(Colors.CYAN);
-        embedBuilder.setTitle(getNotificationManager().getAlkabot().t("notification.message.edit.title"));
-        embedBuilder.setDescription("[" + getNotificationManager().getAlkabot().t("notification.message.generic.message") + "](" + event.getMessage().getJumpUrl() + ")");
-        embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.generic.channel"), notifChannel(event.getChannel()), true);
-        embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.message.generic.author"), notifUser(user), true);
-        embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.message.edit.before"), beforeMessage, false);
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(
+                Lang.t("notification.message.edit.title")
+                        .parseUserNames(event.getAuthor())
+                        .parseGuildName(alkabot.getGuild())
+                        .getValue()
+        );
+        embed.setColor(Lang.t("notification.message.edit.color").getColor());
+        embed.setThumbnail(
+                Lang.t("notification.message.edit.icon")
+                        .parseUserAvatars(event.getAuthor())
+                        .parseBotAvatars(alkabot)
+                        .parseGuildAvatar(event.getGuild())
+                        .getImage()
+        );
+        embed.setDescription(
+                "[" + Lang.t("notification.message.edit.jump").getValue() + "](" + event.getMessage().getJumpUrl() + ")"
+        );
+        embed.addField(NotificationUtils.createMessageChannelField("notification.message.edit", event.getChannel(), true));
+        embed.addField(NotificationUtils.createUserField("notification.message.edit", event.getAuthor(), true));
+
+        embed.addField(Lang.t("notification.message.edit.before").getValue(), beforeMessage, false);
 
         String after = StringUtils.limitString(event.getMessage().getContentDisplay(), 1000);
 
         if (after.equals(""))
-            after = getNotificationManager().getAlkabot().t("notification.generic.attachment");
+            after = Lang.t("notification.generic.attachment").getValue();
 
-        embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.message.edit.after"), after, false);
+        embed.addField(Lang.t("notification.message.edit.after").getValue(), after, false);
 
-        getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
+        embed.setFooter("ID " + event.getMessageId());
+
+        notificationManager.sendNotification(notificationChannel, embed.build());
     }
 
-    public void notifyDelete(MessageDeleteEvent event) {
+    public void notifyDelete(MessageDeleteEvent event) { // todo: detect moderator
         if (!jsonNotificationsMessage.isDelete())
             return;
-
-        MessageChannelUnion messageChannelUnion = event.getChannel();
 
         CachedMessage cachedMessage = null;
 
@@ -65,27 +78,43 @@ public class MessageNotification extends AbstractNotification {
             if (sentMessage.getId() == event.getMessageIdLong())
                 cachedMessage = sentMessage;
 
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle(getNotificationManager().getAlkabot().t("notification.message.delete.title"));
-        embedBuilder.setColor(Colors.RED);
-        embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.generic.channel"), notifChannel(messageChannelUnion), true);
+        User author = null;
+        String message = null;
 
-        if (cachedMessage == null) {
-            embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.message.generic.author"), getNotificationManager().getAlkabot().t("notification.generic.unknown"), true);
-            embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.message.generic.message"), getNotificationManager().getAlkabot().t("notification.generic.unknown"), false);
-        } else {
-            Member member = getNotificationManager().getAlkabot().getGuild().getMemberById(cachedMessage.getAuthor());
-            String author = cachedMessage.getAuthor() + " (" + getNotificationManager().getAlkabot().t("notification.message.delete.not_a_member") + ")";
+        if (cachedMessage != null) {
+            Member member = alkabot.getGuild().getMemberById(cachedMessage.getAuthor());
 
-            if (member != null) {
-                author = member.getUser().getName() + " (" + member.getAsMention() + ")";
-                embedBuilder.setThumbnail(member.getUser().getAvatarUrl());
-            }
+            if (member != null)
+                author = member.getUser();
 
-            embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.message.generic.author"), author, true);
-            embedBuilder.addField(getNotificationManager().getAlkabot().t("notification.message.generic.message"), StringUtils.limitString(cachedMessage.getContent().equals("") ? getNotificationManager().getAlkabot().t("notification.generic.attachment") : cachedMessage.getContent(), 1000), false);
+            message = cachedMessage.getContent();
         }
 
-        getNotificationManager().sendNotification(getNotificationChannel(), embedBuilder.build());
+        if (message == null)
+            message = Lang.t("notification.generic.unknown").getValue();
+        else
+            message = StringUtils.limitString(cachedMessage.getContent().equals("") ? Lang.t("notification.generic.attachment").getValue() : cachedMessage.getContent(), 1000);
+
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setColor(Lang.t("notification.message.delete.color").getColor());
+        embed.setTitle(
+                Lang.t("notification.message.delete.title")
+                        .parseUserNames(author)
+                        .parseGuildName(alkabot.getGuild())
+                        .getValue()
+        );
+        embed.setThumbnail(
+                Lang.t("notification.message.delete.icon")
+                        .parseUserAvatars(author)
+                        .parseBotAvatars(alkabot)
+                        .parseGuildAvatar(event.getGuild())
+                        .getImage()
+        );
+        embed.addField(NotificationUtils.createMessageChannelField("notification.message.delete", event.getChannel(), true));
+        embed.addField(NotificationUtils.createUserField("notification.message.delete", author, true));
+        embed.addField(Lang.t("notification.message.delete.message").getValue(), message, false);
+        embed.setFooter("ID " + event.getMessageId());
+
+        notificationManager.sendNotification(notificationChannel, embed.build());
     }
 }

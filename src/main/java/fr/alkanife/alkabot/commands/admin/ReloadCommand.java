@@ -5,7 +5,6 @@ import fr.alkanife.alkabot.command.admin.AdminCommandExecution;
 import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.configuration.ConfigLoader;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
-import fr.alkanife.alkabot.lang.TranslationsManager;
 import fr.alkanife.alkabot.music.data.MusicDataLoader;
 import fr.alkanife.alkabot.music.MusicManager;
 

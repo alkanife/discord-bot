@@ -13,27 +13,27 @@ public class VoiceListener extends ListenerAdapter {
     private final Alkabot alkabot;
 
     @Override
-    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent guildVoiceUpdateEvent) {
-        if (guildVoiceUpdateEvent.getMember().getUser().isBot())
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent event) {
+        if (event.getMember().getUser().isBot())
             return;
 
-        AudioChannelUnion joinChannelUnion = guildVoiceUpdateEvent.getChannelJoined();
-        AudioChannelUnion leftChannelUnion = guildVoiceUpdateEvent.getChannelLeft();
+        AudioChannelUnion joinChannelUnion = event.getChannelJoined();
+        AudioChannelUnion leftChannelUnion = event.getChannelLeft();
 
         if (joinChannelUnion == null && leftChannelUnion == null)
             return;
 
         if (joinChannelUnion == null) {
-            alkabot.getNotificationManager().getVoiceNotification().notifyLeave(guildVoiceUpdateEvent);
+            alkabot.getNotificationManager().getVoiceNotification().notifyLeave(event.getMember(), event.getChannelLeft());
             return;
         }
 
         if (leftChannelUnion == null) {
-            alkabot.getNotificationManager().getVoiceNotification().notifyJoin(guildVoiceUpdateEvent);
+            alkabot.getNotificationManager().getVoiceNotification().notifyJoin(event.getMember(), event.getChannelJoined());
             return;
         }
 
-        alkabot.getNotificationManager().getVoiceNotification().notifyMove(guildVoiceUpdateEvent);
+        alkabot.getNotificationManager().getVoiceNotification().notifyMove(event.getMember(), event.getChannelJoined(), event.getChannelLeft()); // todo: moderator move
     }
 
 }

@@ -9,7 +9,6 @@ import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.configuration.ConfigLoader;
 import fr.alkanife.alkabot.configuration.json.Configuration;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
-import fr.alkanife.alkabot.lang.TranslationsManager;
 import fr.alkanife.alkabot.listener.ListenerManager;
 import fr.alkanife.alkabot.music.data.MusicData;
 import fr.alkanife.alkabot.music.data.MusicDataLoader;
@@ -60,8 +59,6 @@ public class Alkabot {
     private boolean spotifySupport = true;
     @Getter @Setter
     private Configuration config;
-    @Getter @Setter
-    private TranslationsManager translationsManager;
     @Getter
     private CommandManager commandManager;
     @Getter @Setter
@@ -182,7 +179,6 @@ public class Alkabot {
             // Initializing translations
             try {
                 logger.info("Loading translations");
-                translationsManager = new TranslationsManager(this);
                 new TranslationsLoader(this).load();
             } catch (Exception exception) {
                 printFileError("translations", exception);
@@ -365,18 +361,5 @@ public class Alkabot {
         verbose("Using folder path '" + string + "'");
 
         return string;
-    }
-
-    // Shortcuts for translations
-    public String t(String key, String... values) {
-        return getTranslationsManager().translate(key, values);
-    }
-
-    public String tr(String key, String... values) {
-        return getTranslationsManager().translateRandom(key, values);
-    }
-
-    public String tri(String key, String... values) {
-        return getTranslationsManager().translateRandomImage(key, values);
     }
 }

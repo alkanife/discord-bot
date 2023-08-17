@@ -3,7 +3,7 @@ package fr.alkanife.alkabot.commands.admin;
 import fr.alkanife.alkabot.command.admin.AbstractAdminCommand;
 import fr.alkanife.alkabot.command.admin.AdminCommandExecution;
 import fr.alkanife.alkabot.command.CommandManager;
-import fr.alkanife.alkabot.util.Colors;
+import fr.alkanife.alkabot.lang.Lang;
 import net.dv8tion.jda.api.EmbedBuilder;
 
 public class StopCommand extends AbstractAdminCommand {
@@ -35,18 +35,31 @@ public class StopCommand extends AbstractAdminCommand {
     @Override
     public void execute(AdminCommandExecution execution) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle(alkabot.t("notification.self.power_off.title"));
-        embedBuilder.setThumbnail(alkabot.getJda().getSelfUser().getAvatarUrl());
-        embedBuilder.setColor(Colors.ORANGE);
+        embedBuilder.setTitle(
+                Lang.t("notification.self.power_off.title")
+                        .parseBotClientNames(alkabot)
+                        .parseGuildName(alkabot.getGuild())
+                        .getValue()
+        );
+        embedBuilder.setColor(Lang.getColor("notification.self.power_off.color"));
+        embedBuilder.setThumbnail(
+                Lang.t("notification.self.power_off.icon")
+                        .parseBotAvatars(alkabot)
+                        .parseGuildAvatar(alkabot.getGuild())
+                        .getValue()
+        );
+        embedBuilder.setDescription(
+                Lang.t("notification.self.power_off.description")
+                        .parseAdmin(execution.messageReceivedEvent().getAuthor())
+                        .parseBot(alkabot)
+                        .parseGuildName(alkabot.getGuild())
+                        .getValue()
+        );
 
         if (execution.isFromDiscord()) {
-            execution.messageReceivedEvent().getMessage().reply("Stopping (may take a moment!)").queue(message -> {
-                embedBuilder.setDescription(alkabot.t("notification.self.power_off.description", execution.messageReceivedEvent().getAuthor().getAsMention()));
-                alkabot.getNotificationManager().getSelfNotification().notifyShutdown(embedBuilder.build(), true);
-            });
+            execution.messageReceivedEvent().getMessage().reply("Stopping (may take a moment!)").queue(message -> alkabot.getNotificationManager().getSelfNotification().notifyShutdown(embedBuilder.build(), true));
         } else {
             execution.reply("Stopping (may take a moment!)");
-            embedBuilder.setDescription(alkabot.t("notification.self.power_off.description", "`Terminal`"));
             alkabot.getNotificationManager().getSelfNotification().notifyShutdown(embedBuilder.build(), true);
         }
     }

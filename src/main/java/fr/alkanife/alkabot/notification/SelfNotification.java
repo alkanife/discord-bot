@@ -1,7 +1,7 @@
 package fr.alkanife.alkabot.notification;
 
 import fr.alkanife.alkabot.configuration.json.notifications.SelfNotifConfig;
-import fr.alkanife.alkabot.util.Colors;
+import fr.alkanife.alkabot.lang.Lang;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -22,81 +22,107 @@ public class SelfNotification extends AbstractNotification {
         if (!selfNotifConfig.isAdmin())
             return;
 
-        getNotificationManager().sendNotification(getNotificationChannel(), messageEmbed);
+        notificationManager.sendNotification(notificationChannel, messageEmbed);
+    }
+
+    public void notifyStart() {
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setTitle(
+                Lang.t("notification.self.power_on.title")
+                        .parseBotClientNames(alkabot)
+                        .parseGuildName(alkabot.getGuild())
+                        .getValue()
+        );
+        embedBuilder.setColor(Lang.getColor("notification.self.power_on.color"));
+        embedBuilder.setThumbnail(
+                Lang.t("notification.self.power_on.icon")
+                        .parseBotAvatars(alkabot)
+                        .parseGuildAvatar(alkabot.getGuild())
+                        .getImage()
+        );
+        embedBuilder.setDescription(
+                Lang.t("notification.self.power_on.description")
+                        .parseBot(alkabot)
+                        .parseAdmins(alkabot)
+                        .getValue()
+        );
+
+        notifyAdmin(embedBuilder.build());
     }
 
     public void notifyShutdown(MessageEmbed messageEmbed, boolean shutdownAfter) {
         if (!selfNotifConfig.isAdmin() && shutdownAfter) {
-            getNotificationManager().getAlkabot().shutdown();
+            alkabot.shutdown();
             return;
         }
 
         if (!selfNotifConfig.isAdmin())
             return;
 
-        TextChannel textChannel = getNotificationManager().getAlkabot().getJda().getTextChannelById(getNotificationChannel().getChannelID(getNotificationManager().getAlkabot().getConfig()));
+        TextChannel textChannel = alkabot.getJda().getTextChannelById(notificationChannel.getChannelID(alkabot.getConfig()));
 
         if (textChannel == null) {
             if (shutdownAfter)
-                getNotificationManager().getAlkabot().shutdown();
+                alkabot.shutdown();
             return;
         }
 
         try {
             textChannel.sendMessageEmbeds(messageEmbed).queue(message -> {
                 if (shutdownAfter)
-                    getNotificationManager().getAlkabot().shutdown();
+                    alkabot.shutdown();
             });
         } catch (Exception exception) {
-            getNotificationManager().getAlkabot().getLogger().error("Failed to send the shutdown notification '" + messageEmbed.getTitle() + "':");
+            alkabot.getLogger().error("Failed to send the shutdown notification '" + messageEmbed.getTitle() + "':");
             exception.printStackTrace();
             if (shutdownAfter)
-                getNotificationManager().getAlkabot().shutdown();
+                alkabot.shutdown();
         }
     }
 
-    public void notifyCommand(SlashCommandInteractionEvent event, boolean success) {
+    public void notifyCommand(SlashCommandInteractionEvent event, Exception exception) {
         if (!selfNotifConfig.isCommands())
             return;
 
+        boolean success = exception == null;
+        String index = success ? "success" : "fail";
+
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle(getNotificationManager().getAlkabot().t("notification.self.command.title") + (success ? "" : (" " + getNotificationManager().getAlkabot().t("notification.self.command.fail_suffix"))));
+        embed.setTitle(
+                Lang.t("notification.command." + index + ".title")
+                        .parseMemberNames(event.getMember())
+                        .parseGuildName(alkabot.getGuild())
+                        .parseCommand(event)
+                        .getValue()
+        );
+        embed.setColor(Lang.getColor("notification.command." + index + ".color"));
+        embed.setThumbnail(
+                Lang.t("notification.command.success.icon")
+                        .parseBotAvatars(alkabot)
+                        .parseGuildAvatar(alkabot.getGuild())
+                        .parseMemberAvatars(event.getMember())
+                        .getImage()
+        );
+        embed.addField(NotificationUtils.createMessageChannelField("notification.command." + index, event.getChannel(), true));
+        embed.addField(NotificationUtils.createMemberField("notification.command." + index, event.getMember(), true));
+        embed.addField(
+                Lang.t("notification.command." + index + ".command.title")
+                        .getValue(),
+                Lang.t("notification.command." + index + ".command.field")
+                        .parseCommand(event)
+                        .getValue(),
+                false);
 
-        if (success)
-            embed.setColor(Colors.CYAN);
-        else
-            embed.setColor(Colors.RED);
-
-        if (event.getMember() != null)
-            embed = addMemberAvatar(embed, event.getMember());
-
-        embed.addField(getNotificationManager().getAlkabot().t("notification.generic.channel"), notifChannel(event.getChannel()), true);
-        embed.addField(getNotificationManager().getAlkabot().t("notification.generic.member"), notifMember(event.getMember()), true);
-
-        StringBuilder command = new StringBuilder();
-        command.append(event.getFullCommandName());
-
-        if (event.getOptions().size() > 0)
-            command.append("\n\n");
-
-        for (OptionMapping option : event.getOptions()) {
-            command.append("`").append(option.getName()).append("`: ");
-
-            OptionType optionType = option.getType();
-
-            switch (optionType) {
-                case USER -> command.append(notifUser(option.getAsUser()));
-                case ROLE -> command.append(notifRole(option.getAsRole()));
-                case CHANNEL -> command.append(notifGuildChannel(option.getAsChannel()));
-                default -> command.append(option.getAsString());
-            }
-
-            command.append("\n");
+        if (!success) {
+            embed.addField(
+                    Lang.t("notification.command.fail.error.title")
+                            .getValue(),
+                    Lang.t("notification.command.fail.error.field")
+                            .parseError(exception)
+                            .getValue(),
+                    false);
         }
 
-        embed.addField(getNotificationManager().getAlkabot().t("notification.self.command.command"), command.toString(), false);
-
-        getNotificationManager().sendNotification(getNotificationChannel(), embed.build());
+        notificationManager.sendNotification(notificationChannel, embed.build());
     }
-
 }

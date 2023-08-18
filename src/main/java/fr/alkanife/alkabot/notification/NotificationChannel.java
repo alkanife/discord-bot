@@ -4,7 +4,7 @@ import fr.alkanife.alkabot.configuration.json.Configuration;
 
 public enum NotificationChannel {
 
-    SELF, MESSAGE, MEMBER, MODERATOR, VOICE, GUILD;
+    SELF, MESSAGE, MEMBER, MODERATOR, VOICE;
 
     public String getChannelID(Configuration configuration) {
         String channelID = "";

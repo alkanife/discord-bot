@@ -1,20 +1,19 @@
-package fr.alkanife.alkabot.notification;
+package fr.alkanife.alkabot.notification.notifier;
 
 import fr.alkanife.alkabot.configuration.json.notifications.MemberNotifConfig;
 import fr.alkanife.alkabot.lang.Lang;
+import fr.alkanife.alkabot.notification.NotificationChannel;
+import fr.alkanife.alkabot.notification.NotificationManager;
+import fr.alkanife.alkabot.notification.NotificationUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.ActionType;
-import net.dv8tion.jda.api.audit.AuditLogEntry;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
 
-public class MemberNotification extends AbstractNotification {
+public class MemberNotifier extends Notifier {
 
     private final MemberNotifConfig jsonNotificationsMember;
 
-    public MemberNotification(NotificationManager notificationManager) {
+    public MemberNotifier(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.MEMBER);
         jsonNotificationsMember = alkabot.getConfig().getNotifConfig().getMemberNotifConfig();
     }

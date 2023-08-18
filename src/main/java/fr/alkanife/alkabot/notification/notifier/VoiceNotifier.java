@@ -1,17 +1,19 @@
-package fr.alkanife.alkabot.notification;
+package fr.alkanife.alkabot.notification.notifier;
 
 import fr.alkanife.alkabot.configuration.json.notifications.VoiceNotifConfig;
 import fr.alkanife.alkabot.lang.Lang;
+import fr.alkanife.alkabot.notification.NotificationChannel;
+import fr.alkanife.alkabot.notification.NotificationManager;
+import fr.alkanife.alkabot.notification.NotificationUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 
-public class VoiceNotification extends AbstractNotification {
+public class VoiceNotifier extends Notifier {
 
     private final VoiceNotifConfig voiceNotifConfig;
 
-    public VoiceNotification(NotificationManager notificationManager) {
+    public VoiceNotifier(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.VOICE);
         voiceNotifConfig = notificationManager.getAlkabot().getConfig().getNotifConfig().getVoiceNotifConfig();
     }

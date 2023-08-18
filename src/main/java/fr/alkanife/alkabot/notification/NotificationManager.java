@@ -1,6 +1,7 @@
 package fr.alkanife.alkabot.notification;
 
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.notification.notifier.*;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -11,24 +12,24 @@ public class NotificationManager {
     private final Alkabot alkabot;
 
     @Getter
-    private final SelfNotification selfNotification;
+    private final SelfNotifier selfNotification;
     @Getter
-    private final MessageNotification messageNotification;
+    private final MessageNotifier messageNotification;
     @Getter
-    private final MemberNotification memberNotification;
+    private final MemberNotifier memberNotification;
     @Getter
-    private final ModeratorNotification moderatorNotification;
+    private final ModeratorNotifier moderatorNotification;
     @Getter
-    private final VoiceNotification voiceNotification;
+    private final VoiceNotifier voiceNotification;
 
     public NotificationManager(Alkabot alkabot) {
         this.alkabot = alkabot;
 
-        selfNotification = new SelfNotification(this);
-        messageNotification = new MessageNotification(this);
-        memberNotification = new MemberNotification(this);
-        moderatorNotification = new ModeratorNotification(this);
-        voiceNotification = new VoiceNotification(this);
+        selfNotification = new SelfNotifier(this);
+        messageNotification = new MessageNotifier(this);
+        memberNotification = new MemberNotifier(this);
+        moderatorNotification = new ModeratorNotifier(this);
+        voiceNotification = new VoiceNotifier(this);
     }
 
     public void sendNotification(NotificationChannel notificationChannel, MessageEmbed messageEmbed) {

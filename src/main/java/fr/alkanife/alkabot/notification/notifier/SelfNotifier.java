@@ -1,19 +1,20 @@
-package fr.alkanife.alkabot.notification;
+package fr.alkanife.alkabot.notification.notifier;
 
 import fr.alkanife.alkabot.configuration.json.notifications.SelfNotifConfig;
 import fr.alkanife.alkabot.lang.Lang;
+import fr.alkanife.alkabot.notification.NotificationChannel;
+import fr.alkanife.alkabot.notification.NotificationManager;
+import fr.alkanife.alkabot.notification.NotificationUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
 
-public class SelfNotification extends AbstractNotification {
+public class SelfNotifier extends Notifier {
 
     private final SelfNotifConfig selfNotifConfig;
 
-    public SelfNotification(NotificationManager notificationManager) {
+    public SelfNotifier(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.SELF);
         selfNotifConfig = notificationManager.getAlkabot().getConfig().getNotifConfig().getSelfNotifConfig();
     }

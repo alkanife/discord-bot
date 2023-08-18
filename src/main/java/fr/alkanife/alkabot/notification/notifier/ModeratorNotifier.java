@@ -1,31 +1,24 @@
-package fr.alkanife.alkabot.notification;
+package fr.alkanife.alkabot.notification.notifier;
 
 import fr.alkanife.alkabot.configuration.json.notifications.ModNotifConfig;
 import fr.alkanife.alkabot.lang.Lang;
-import fr.alkanife.alkabot.util.StringUtils;
+import fr.alkanife.alkabot.notification.NotificationChannel;
+import fr.alkanife.alkabot.notification.NotificationManager;
+import fr.alkanife.alkabot.notification.NotificationUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.audit.ActionType;
-import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.guild.GuildBanEvent;
-import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
-import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateTimeOutEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildDeafenEvent;
-import net.dv8tion.jda.api.events.guild.voice.GuildVoiceGuildMuteEvent;
 
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.Date;
 
-public class ModeratorNotification extends AbstractNotification {
+public class ModeratorNotifier extends Notifier {
 
     private final ModNotifConfig jsonNotificationsModerator;
 
-    public ModeratorNotification(NotificationManager notificationManager) {
+    public ModeratorNotifier(NotificationManager notificationManager) {
         super(notificationManager, NotificationChannel.MODERATOR);
         jsonNotificationsModerator = alkabot.getConfig().getNotifConfig().getModNotifConfig();
     }

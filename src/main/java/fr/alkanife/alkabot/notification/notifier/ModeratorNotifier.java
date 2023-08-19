@@ -32,12 +32,14 @@ public class ModeratorNotifier extends Notifier {
         embed.setTitle(
                 Lang.t("notification.moderator.kick.title")
                         .parseUserNames(user)
+                        .parseModNames(moderator)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.moderator.kick.icon")
                         .parseUserAvatars(user)
+                        .parseModAvatars(moderator)
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()
@@ -58,12 +60,14 @@ public class ModeratorNotifier extends Notifier {
         embed.setTitle(
                 Lang.t("notification.moderator.ban.title")
                         .parseUserNames(user)
+                        .parseModNames(moderator)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.moderator.ban.icon")
                         .parseUserAvatars(user)
+                        .parseModAvatars(moderator)
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()
@@ -84,12 +88,14 @@ public class ModeratorNotifier extends Notifier {
         embed.setTitle(
                 Lang.t("notification.moderator.unban.title")
                         .parseUserNames(user)
+                        .parseModNames(moderator)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.moderator.unban.icon")
                         .parseUserAvatars(user)
+                        .parseModAvatars(moderator)
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()
@@ -100,7 +106,7 @@ public class ModeratorNotifier extends Notifier {
         notificationManager.sendNotification(notificationChannel, embed.build());
     }
 
-    public void notifyTimeout(User user, User moderator, String reason, OffsetDateTime timeout) { // Experimental
+    public void notifyTimeout(Member member, User moderator, String reason, OffsetDateTime timeout) { // Experimental
         if (!jsonNotificationsModerator.isTimeout())
             return;
 
@@ -108,18 +114,20 @@ public class ModeratorNotifier extends Notifier {
         embed.setColor(Lang.t("notification.moderator.timeout.color").getColor());
         embed.setTitle(
                 Lang.t("notification.moderator.timeout.title")
-                        .parseUserNames(user)
+                        .parseMemberNames(member)
+                        .parseModNames(moderator)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.moderator.timeout.icon")
-                        .parseUserAvatars(user)
+                        .parseMemberAvatars(member)
+                        .parseModAvatars(moderator)
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()
         );
-        embed.addField(NotificationUtils.createUserField("notification.moderator.timeout", user, true));
+        embed.addField(NotificationUtils.createMemberField("notification.moderator.timeout", member, true));
         embed.addField(NotificationUtils.createModeratorField("notification.moderator.timeout", moderator, true));
         embed.addField(
                 Lang.t("notification.moderator.timeout.until")
@@ -130,7 +138,7 @@ public class ModeratorNotifier extends Notifier {
         notificationManager.sendNotification(notificationChannel, embed.build());
     }
 
-    public void notifyUntimeout(User user, User moderator) { // Experimental
+    public void notifyUntimeout(Member member, User moderator) { // Experimental
         if (!jsonNotificationsModerator.isTimeout()) // todo: untimout in config
             return;
 
@@ -138,24 +146,26 @@ public class ModeratorNotifier extends Notifier {
         embed.setColor(Lang.t("notification.moderator.untimeout.color").getColor());
         embed.setTitle(
                 Lang.t("notification.moderator.untimeout.title")
-                        .parseUserNames(user)
+                        .parseMemberNames(member)
+                        .parseModNames(moderator)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.moderator.untimeout.icon")
-                        .parseUserAvatars(user)
+                        .parseMemberAvatars(member)
+                        .parseModAvatars(moderator)
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()
         );
-        embed.addField(NotificationUtils.createUserField("notification.moderator.untimeout", user, true));
+        embed.addField(NotificationUtils.createMemberField("notification.moderator.untimeout", member, true));
         embed.addField(NotificationUtils.createModeratorField("notification.moderator.untimeout", moderator, true));
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }
 
-    public void notifyTimeoutChange(User user, User moderator, OffsetDateTime oldTimeout, OffsetDateTime newTimeout) { // Experimental
+    public void notifyTimeoutChange(Member member, User moderator, OffsetDateTime oldTimeout, OffsetDateTime newTimeout) { // Experimental
         if (!jsonNotificationsModerator.isTimeout()) // todo: timeout_change in config
             return;
 
@@ -163,18 +173,20 @@ public class ModeratorNotifier extends Notifier {
         embed.setColor(Lang.t("notification.moderator.timeout_change.color").getColor());
         embed.setTitle(
                 Lang.t("notification.moderator.timeout_change.title")
-                        .parseUserNames(user)
+                        .parseMemberNames(member)
+                        .parseModNames(moderator)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.moderator.timeout_change.icon")
-                        .parseUserAvatars(user)
+                        .parseMemberAvatars(member)
+                        .parseModAvatars(moderator)
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()
         );
-        embed.addField(NotificationUtils.createUserField("notification.moderator.timeout_change", user, true));
+        embed.addField(NotificationUtils.createMemberField("notification.moderator.timeout_change", member, true));
         embed.addField(NotificationUtils.createModeratorField("notification.moderator.timeout_change", moderator, true));
         embed.addField(
                 Lang.t("notification.moderator.timeout_change.old")
@@ -197,12 +209,14 @@ public class ModeratorNotifier extends Notifier {
         embed.setTitle(
                 Lang.t("notification.moderator.deafen.title")
                         .parseMemberNames(member)
+                        .parseModNames(moderator)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.moderator.deafen.icon")
                         .parseMemberAvatars(member)
+                        .parseModAvatars(moderator)
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()
@@ -212,7 +226,7 @@ public class ModeratorNotifier extends Notifier {
 
         GuildVoiceState guildVoiceState = member.getVoiceState();
         if (guildVoiceState != null)
-            embed.addField(NotificationUtils.createAudioChannelField("notification.moderator.deafen", guildVoiceState.getChannel(), false));
+            embed.addField(NotificationUtils.createChannelField("notification.moderator.deafen", guildVoiceState.getChannel(), false));
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }
@@ -226,12 +240,14 @@ public class ModeratorNotifier extends Notifier {
         embed.setTitle(
                 Lang.t("notification.moderator.undeafen.title")
                         .parseMemberNames(member)
+                        .parseModNames(moderator)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.moderator.undeafen.icon")
                         .parseMemberAvatars(member)
+                        .parseModAvatars(moderator)
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()
@@ -241,7 +257,7 @@ public class ModeratorNotifier extends Notifier {
 
         GuildVoiceState guildVoiceState = member.getVoiceState();
         if (guildVoiceState != null)
-            embed.addField(NotificationUtils.createAudioChannelField("notification.moderator.undeafen", guildVoiceState.getChannel(), false));
+            embed.addField(NotificationUtils.createChannelField("notification.moderator.undeafen", guildVoiceState.getChannel(), false));
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }
@@ -255,12 +271,14 @@ public class ModeratorNotifier extends Notifier {
         embed.setTitle(
                 Lang.t("notification.moderator.mute.title")
                         .parseMemberNames(member)
+                        .parseModNames(moderator)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.moderator.mute.icon")
                         .parseMemberAvatars(member)
+                        .parseModAvatars(moderator)
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()
@@ -270,7 +288,7 @@ public class ModeratorNotifier extends Notifier {
 
         GuildVoiceState guildVoiceState = member.getVoiceState();
         if (guildVoiceState != null)
-            embed.addField(NotificationUtils.createAudioChannelField("notification.moderator.mute", guildVoiceState.getChannel(), false));
+            embed.addField(NotificationUtils.createChannelField("notification.moderator.mute", guildVoiceState.getChannel(), false));
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }
@@ -284,12 +302,14 @@ public class ModeratorNotifier extends Notifier {
         embed.setTitle(
                 Lang.t("notification.moderator.unmute.title")
                         .parseMemberNames(member)
+                        .parseModNames(moderator)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.moderator.unmute.icon")
                         .parseMemberAvatars(member)
+                        .parseModAvatars(moderator)
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()
@@ -299,7 +319,7 @@ public class ModeratorNotifier extends Notifier {
 
         GuildVoiceState guildVoiceState = member.getVoiceState();
         if (guildVoiceState != null)
-            embed.addField(NotificationUtils.createAudioChannelField("notification.moderator.unmute", guildVoiceState.getChannel(), false));
+            embed.addField(NotificationUtils.createChannelField("notification.moderator.unmute", guildVoiceState.getChannel(), false));
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }
@@ -313,12 +333,14 @@ public class ModeratorNotifier extends Notifier {
         embed.setTitle(
                 Lang.t("notification.moderator.nickname.title")
                         .parseMemberNames(member)
+                        .parseModNames(moderator)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.moderator.nickname.icon")
                         .parseMemberAvatars(member)
+                        .parseModAvatars(moderator)
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()

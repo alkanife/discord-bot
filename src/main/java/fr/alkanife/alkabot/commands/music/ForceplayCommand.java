@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.commands.music;
 
 import fr.alkanife.alkabot.command.AbstractCommand;
 import fr.alkanife.alkabot.command.CommandManager;
+import fr.alkanife.alkabot.lang.Lang;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -20,7 +21,7 @@ public class ForceplayCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return alkabot.t("command.music.forceplay.description");
+        return Lang.get("command.music.forceplay.description");
     }
 
     @Override
@@ -31,7 +32,7 @@ public class ForceplayCommand extends AbstractCommand {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getName(), getDescription())
-                .addOption(OptionType.STRING, "input", alkabot.t("command.music.play.input_description"), true);
+                .addOption(OptionType.STRING, "input", Lang.get("command.music.play.input_description"), true);
     }
 
     @Override

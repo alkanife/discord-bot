@@ -54,7 +54,7 @@ public class MessageNotifier extends Notifier {
         embed.setDescription(
                 "[" + Lang.t("notification.message.edit.jump").getValue() + "](" + event.getMessage().getJumpUrl() + ")"
         );
-        embed.addField(NotificationUtils.createMessageChannelField("notification.message.edit", event.getChannel(), true));
+        embed.addField(NotificationUtils.createChannelField("notification.message.edit", event.getChannel(), true));
         embed.addField(NotificationUtils.createUserField("notification.message.edit", event.getAuthor(), true));
 
         embed.addField(Lang.t("notification.message.edit.before").getValue(), beforeMessage, false);
@@ -65,8 +65,6 @@ public class MessageNotifier extends Notifier {
             after = Lang.t("notification.generic.attachment").getValue();
 
         embed.addField(Lang.t("notification.message.edit.after").getValue(), after, false);
-
-        embed.setFooter("ID " + event.getMessageId());
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }
@@ -113,10 +111,9 @@ public class MessageNotifier extends Notifier {
                         .parseGuildAvatar(event.getGuild())
                         .getImage()
         );
-        embed.addField(NotificationUtils.createMessageChannelField("notification.message.delete", event.getChannel(), true));
+        embed.addField(NotificationUtils.createChannelField("notification.message.delete", event.getChannel(), true));
         embed.addField(NotificationUtils.createUserField("notification.message.delete", author, true));
         embed.addField(Lang.t("notification.message.delete.message").getValue(), message, false);
-        embed.setFooter("ID " + event.getMessageId());
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }

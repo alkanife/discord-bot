@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.commands.utilities;
 
 import fr.alkanife.alkabot.command.AbstractCommand;
 import fr.alkanife.alkabot.command.CommandManager;
+import fr.alkanife.alkabot.lang.Lang;
 import fr.alkanife.alkabot.util.StringUtils;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -24,7 +25,7 @@ public class CopyCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return alkabot.t("command.utilities.copy.description");
+        return Lang.get("command.utilities.copy.description");
     }
 
     @Override
@@ -35,7 +36,7 @@ public class CopyCommand extends AbstractCommand {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getName(), getDescription())
-                .addOption(OptionType.STRING, "input", alkabot.t("command.utilities.copy.input_description"), true);
+                .addOption(OptionType.STRING, "input", Lang.get("command.utilities.copy.input_description"), true);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class CopyCommand extends AbstractCommand {
             String copyURL = copyOption.getAsString();
 
             if (!StringUtils.isURL(copyURL)) {
-                event.reply(alkabot.t("command.utilities.copy.error.not_url")).setEphemeral(true).queue();
+                event.reply(Lang.get("command.utilities.copy.error.not_url")).setEphemeral(true).queue();
                 return;
             }
 
@@ -60,20 +61,20 @@ public class CopyCommand extends AbstractCommand {
             Guild guild = event.getJDA().getGuildById(serverId);
 
             if (guild == null) {
-                event.reply(alkabot.t("command.utilities.copy.error.guild")).setEphemeral(true).queue();
+                event.reply(Lang.get("command.utilities.copy.error.guild")).setEphemeral(true).queue();
                 return;
             }
 
             TextChannel textChannel = guild.getTextChannelById(channelId);
 
             if (textChannel == null) {
-                event.reply(alkabot.t("command.utilities.copy.error.channel")).setEphemeral(true).queue();
+                event.reply(Lang.get("command.utilities.copy.error.channel")).setEphemeral(true).queue();
                 return;
             }
 
             textChannel.retrieveMessageById(messageId).queue(message -> {
                 if (message == null) {
-                    event.reply(alkabot.t("command.utilities.copy.error.message")).setEphemeral(true).queue();
+                    event.reply(Lang.get("command.utilities.copy.error.message")).setEphemeral(true).queue();
                     return;
                 }
 
@@ -81,7 +82,7 @@ public class CopyCommand extends AbstractCommand {
             });
 
         } catch (Exception exception) {
-            event.reply(alkabot.t("command.utilities.copy.error.generic")).setEphemeral(true).queue();
+            event.reply(Lang.get("command.utilities.copy.error.generic")).setEphemeral(true).queue();
         }
     }
 }

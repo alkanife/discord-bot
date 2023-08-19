@@ -1,6 +1,7 @@
 package fr.alkanife.alkabot.command;
 
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.lang.Lang;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
@@ -11,8 +12,6 @@ public class SlashCommandHandler extends AbstractCommandHandler {
     public SlashCommandHandler(Alkabot alkabot, SlashCommandInteractionEvent event) {
         super(alkabot);
 
-        boolean success = true;
-
         try {
             AbstractCommand abstractCommand = alkabot.getCommandManager().getCommand(event.getName().toLowerCase(Locale.ROOT));
 
@@ -21,14 +20,13 @@ public class SlashCommandHandler extends AbstractCommandHandler {
 
             alkabot.verbose("Invoking command '" + event.getFullCommandName() + "'");
             abstractCommand.execute(event);
+            alkabot.getNotificationManager().getSelfNotification().notifyCommand(event, null);
         } catch (Exception exception) {
-            event.reply(alkabot.t("command.generic.error")).queue();
-            alkabot.getLogger().error("Failed to handle a command:\n" + buildTrace(event));
-            exception.printStackTrace();
-            success = false;
+            event.reply(Lang.t("command.error").getValue()).queue();
+            alkabot.getLogger().error("Failed to handle a command:\n" + buildTrace(event), exception);
+            alkabot.getNotificationManager().getSelfNotification().notifyCommand(event, exception);
         }
 
-        alkabot.getNotificationManager().getSelfNotification().notifyCommand(event, success);
     }
 
     private String buildTrace(SlashCommandInteractionEvent event) {

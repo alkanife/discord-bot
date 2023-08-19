@@ -1,10 +1,12 @@
 package fr.alkanife.alkabot.lang;
 
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.command.admin.AdminCommandExecution;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -18,20 +20,24 @@ import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TranslationHandler {
 
     @Getter
     private String value;
 
-    private final String NULL = "[null]";
+    private final String NULL_VALUE = "[null]";
 
     public TranslationHandler(String key) {
+        // Get object
         Object obj = Lang.getTranslations().get(key);
 
+        // If not found, return a missing translation
         if (obj == null) {
-            //translationsManager.getAlkabot().getLogger().warn("Missing translation at " + key); todo: logs
             value = "{" + key + "}";
+            System.out.println("Missing translation: " + key); // todo: logging
             return;
         }
 
@@ -43,262 +49,129 @@ public class TranslationHandler {
         } else {
             value = obj.toString();
         }
-    }
 
-    private void replaceTag(@NotNull String tag, @Nullable String value) {
-        if (value == null)
-            value = NULL;
+        // Replace {variables}
+        Pattern pattern = Pattern.compile("\\{([^}]*)}");
+        Matcher matcher = pattern.matcher(value);
 
-        this.value = value.replaceAll("<" + tag.toLowerCase() + ">", value);
-    }
+        while (matcher.find()) {
+            String variableKey = matcher.group(1);
+            Object variableObject = Lang.getTranslations().get(variableKey);
 
-    public void replaceDate(@NotNull String tag, @Nullable Date date) {
-        if (date == null) {
-            replaceTag(tag, NULL);
-            return;
+            if (variableObject == null) {
+                System.out.println("Missing translation for '" + key + "': '" + variableKey + "'"); // todo: logging
+            } else {
+                value = value.replaceAll("\\{"+variableKey+"}", variableObject.toString());
+            }
         }
-
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Lang.getDateFormat(), Lang.getDateLocale());
-        replaceTag(tag, simpleDateFormat.format(date));
     }
 
-    public void replaceOffsetDateTime(@NotNull String tag, @Nullable OffsetDateTime offsetDateTime) {
-        if (offsetDateTime == null) {
-            replaceTag(tag, NULL);
-            return;
-        }
+    private void replaceTag(@NotNull String tag, @Nullable String tagValue) {
+        if (tagValue == null)
+            tagValue = NULL_VALUE;
 
-        replaceDate(tag, new Date(offsetDateTime.toInstant().toEpochMilli()));
+        value = value.replaceAll("<" + tag.toLowerCase() + ">", tagValue);
     }
 
-    // ---------------
-    //     PARSE
-    // ---------------
     public TranslationHandler parse(@NotNull String tag, @Nullable String value) {
         replaceTag(tag, value);
         return this;
     }
 
-    public TranslationHandler parseError(Exception exception) {
-        return this;
+    // -------------
+    // GENERIC
+    // -------------
+    public TranslationHandler parseAvatars(@Nullable User user, @NotNull String field) {
+        if (user == null)
+            return parse(field + "_avatar_url", null)
+                    .parse(field + "_effective_avatar_url", null)
+                    .parse(field + "_default_avatar_url", null);
+        else
+            return parse(field + "_avatar_url", user.getAvatarUrl())
+                    .parse(field + "_effective_avatar_url", user.getEffectiveAvatarUrl())
+                    .parse(field + "_default_avatar_url", user.getDefaultAvatarUrl());
     }
 
+    public TranslationHandler parseNames(@Nullable User user, @NotNull String field) {
+        if (user == null)
+            return parse(field + "_name", null)
+                    .parse(field + "_effective_name", null)
+                    .parse(field + "_global_name", null);
+        else
+            return parse(field + "_name", user.getName())
+                    .parse(field + "_effective_name", user.getEffectiveName())
+                    .parse(field + "_global_name", user.getGlobalName());
+    }
+
+    public TranslationHandler parseMention(@Nullable IMentionable mentionable, @NotNull String field) {
+        if (mentionable == null)
+            return parse(field + "_mention", null);
+        else
+            return parse(field + "_mention", mentionable.getAsMention());
+    }
+
+    public TranslationHandler parseId(@Nullable ISnowflake snowflake, @NotNull String field) {
+        if (snowflake == null)
+            return parse(field + "_id", null);
+        else
+            return parse(field + "_id", snowflake.getId());
+    }
+
+    public TranslationHandler parseError(@Nullable Exception exception) {
+        String error = NULL_VALUE;
+        if (exception != null)
+            error = exception.toString();
+
+        return parse("error", error);
+    }
+
+    // -------------
     // BOT
+    // -------------
     public TranslationHandler parseBot(@NotNull Alkabot alkabot) {
-        return this;
+        return parseBotClientNames(alkabot)
+                .parseBotMention(alkabot)
+                .parseBotAvatars(alkabot)
+                .parseBotId(alkabot)
+                .parseBotVersion(alkabot)
+                .parseBotBuildDate(alkabot)
+                .parseBotFullVersion(alkabot)
+                .parseBotGithub(alkabot);
     }
 
     public TranslationHandler parseBotClientNames(@NotNull Alkabot alkabot) {
-        return this;
+        return parseNames(alkabot.getJda().getSelfUser(), "bot");
     }
 
     public TranslationHandler parseBotMention(@NotNull Alkabot alkabot) {
-        return this;
+        return parseMention(alkabot.getJda().getSelfUser(), "bot");
     }
 
     public TranslationHandler parseBotAvatars(@NotNull Alkabot alkabot) {
-        return this;
+        return parseAvatars(alkabot.getJda().getSelfUser(), "bot");
     }
 
     public TranslationHandler parseBotId(@NotNull Alkabot alkabot) {
-        return this;
+        return parseId(alkabot.getJda().getSelfUser(), "bot");
     }
 
     public TranslationHandler parseBotVersion(@NotNull Alkabot alkabot) {
-        return this;
+        return parse("bot_version", alkabot.getVersion());
     }
 
     public TranslationHandler parseBotBuildDate(@NotNull Alkabot alkabot) {
-        return this;
+        return parse("bot_build_date", alkabot.getBuild());
     }
 
     public TranslationHandler parseBotFullVersion(@NotNull Alkabot alkabot) {
-        return this;
+        return parse("bot_full_version", alkabot.getFullVersion());
     }
 
     public TranslationHandler parseBotGithub(@NotNull Alkabot alkabot) {
-        return this;
+        return parse("bot_github", alkabot.getGithub());
     }
 
-    // BOT -- ADMIN
     public TranslationHandler parseAdmins(@NotNull Alkabot alkabot) {
-        return this;
-    }
-
-    public TranslationHandler parseAdmin(@Nullable Object object) {
-        return this;
-    }
-
-    // COMMAND
-    public TranslationHandler parseCommand(@Nullable SlashCommandInteractionEvent event) {
-        return this;
-    }
-
-    // GUILD
-    public TranslationHandler parseGuild(@Nullable Guild guild) {
-        return this;
-    }
-
-    public TranslationHandler parseGuildName(@Nullable Guild guild) {
-        return this;
-    }
-
-    public TranslationHandler parseGuildAvatar(@Nullable Guild guild) {
-        return this;
-    }
-
-    // CHANNEL
-    public TranslationHandler parseChannel(@Nullable MessageChannelUnion channel) {
-        return this;
-    }
-
-    public TranslationHandler parseChannelName(@Nullable MessageChannelUnion channel) {
-        return this;
-    }
-    public TranslationHandler parseChannel(@Nullable AudioChannelUnion channel) {
-        return this;
-    }
-
-    // MEMBER
-    public TranslationHandler parseMember(@Nullable Member member) {
-        return this;
-    }
-
-    public TranslationHandler parseMemberNames(@Nullable Member member) {
-        return this;
-    }
-
-    public TranslationHandler parseMemberMention(@Nullable Member member) {
-        return this;
-    }
-
-    public TranslationHandler parseMemberId(@Nullable Member member) {
-        return this;
-    }
-
-    public TranslationHandler parseMemberAvatars(@Nullable Member member) {
-        return this;
-    }
-
-    // USER
-    public TranslationHandler parseUser(@Nullable User user) {
-        return this;
-    }
-
-    public TranslationHandler parseUserNames(@Nullable User user) {
-        return this;
-    }
-
-    public TranslationHandler parseUserMention(@Nullable User user) {
-        return this;
-    }
-
-    public TranslationHandler parseUserId(@Nullable User user) {
-        return this;
-    }
-
-    public TranslationHandler parseUserAvatars(@Nullable User user) {
-        return this;
-    }
-
-    /*public TranslationHandler placeAlkabot(@NotNull Alkabot alkabot) {
-        replaceTag("bot_version", alkabot.getVersion());
-        replaceTag("bot_build_date", alkabot.getBuild());
-        replaceTag("bot_full_version", alkabot.getFullVersion());
-        replaceTag("bot_github", alkabot.getGithub());
-        return this;
-    }
-
-    public TranslationHandler placeBotNames(@NotNull Alkabot alkabot) {
-        SelfUser selfUser = alkabot.getJda().getSelfUser();
-        replaceTag("bot_name", selfUser.getName());
-        replaceTag("bot_effective_name", selfUser.getEffectiveName());
-        replaceTag("bot_global_name", selfUser.getGlobalName());
-        replaceTag("bot_nickname", alkabot.getGuild().getSelfMember().getNickname());
-        return this;
-    }
-
-    public TranslationHandler placeBotAvatars(@NotNull Alkabot alkabot) {
-        replaceTag("bot_avatar_url", alkabot.getJda().getSelfUser().getAvatarUrl());
-        replaceTag("bot_default_avatar_url", alkabot.getJda().getSelfUser().getDefaultAvatarUrl());
-        replaceTag("bot_effective_avatar_url", alkabot.getJda().getSelfUser().getEffectiveAvatarUrl());
-        return this;
-    }
-
-    public TranslationHandler placeUser(@NotNull User user) {
-        replaceTag("user_name", user.getName());
-        replaceTag("user_effective_name", user.getEffectiveName());
-        replaceTag("user_global_name", user.getGlobalName());
-        replaceTag("user_mention", user.getAsMention());
-        replaceTag("user_id", user.getId());
-        replaceTag("user_avatar_url", user.getAvatarUrl());
-        replaceTag("user_default_avatar_url", user.getDefaultAvatarUrl());
-        replaceTag("user_effective_avatar_url", user.getEffectiveAvatarUrl());
-        replaceOffsetDateTime("user_time_created", user.getTimeCreated());
-        return this;
-    }
-
-    public TranslationHandler placeMember(@Nullable Member member) {
-        if (member == null) {
-            replaceTag("member_name", NULL);
-            replaceTag("member_nickname", NULL);
-            replaceTag("member_effective_name", NULL);
-            replaceTag("member_global_name", NULL);
-            replaceTag("member_mention", NULL);
-            replaceTag("member_id", NULL);
-            replaceTag("member_avatar_url", NULL);
-            replaceTag("member_default_avatar_url", NULL);
-            replaceTag("member_effective_avatar_url", NULL);
-            replaceTag("member_time_created", NULL);
-            replaceTag("member_time_joined", NULL);
-            replaceTag("member_time_boosted", NULL);
-            return this;
-        }
-
-        replaceTag("member_name", member.getUser().getName());
-        replaceTag("member_nickname", member.getNickname());
-        replaceTag("member_effective_name", member.getEffectiveName());
-        replaceTag("member_global_name", member.getUser().getGlobalName());
-        replaceTag("member_mention", member.getAsMention());
-        replaceTag("member_id", member.getId());
-        replaceTag("member_avatar_url", member.getAvatarUrl());
-        replaceTag("member_default_avatar_url", member.getDefaultAvatarUrl());
-        replaceTag("member_effective_avatar_url", member.getEffectiveAvatarUrl());
-        replaceOffsetDateTime("member_time_created", member.getTimeCreated());
-        replaceOffsetDateTime("member_time_joined", member.getTimeJoined());
-        replaceOffsetDateTime("member_time_boosted", member.getTimeBoosted());
-
-        member.getVoiceState();
-        member.getRoles();
-
-        return this;
-    }
-
-    public TranslationHandler placeGuildName(Alkabot alkabot) {
-        replaceTag("guild_name", alkabot.getGuild().getName());
-        return this;
-    }
-
-    public TranslationHandler placeGuildAvatar(Alkabot alkabot) {
-        replaceTag("guild_icon", alkabot.getGuild().getIconUrl());
-        return this;
-    }
-
-    public TranslationHandler placeAdminNames(@NotNull Object object) {
-        if (object instanceof User user) {
-            replaceTag("admin_name", user.getName());
-            replaceTag("admin_effective_name", user.getEffectiveName());
-            replaceTag("admin_global_name", user.getGlobalName());
-        } else {
-            replaceTag("admin_name", "`Terminal`");
-            replaceTag("admin_effective_name", "`Terminal`");
-            replaceTag("admin_global_name", "`Terminal`");
-        }
-
-        return this;
-    }
-
-    public TranslationHandler placeAdmins(Alkabot alkabot) {
         String admins = "";
         if (alkabot.getConfig().getAdminIds().size() > 0) {
             int i = 0;
@@ -317,31 +190,135 @@ public class TranslationHandler {
                 i++;
             }
         } else {
-            admins = Lang.t("notification.generic.none").getValue();
+            admins = Lang.get("notification.generic.none");
         }
 
-        replaceTag("admins", admins);
-        replaceTag("admin_count", alkabot.getConfig().getAdminIds().size()+"");
-        return this;
+        return parse("admins", admins).parse("admin_count", alkabot.getConfig().getAdminIds().size()+"");
     }
 
-    public TranslationHandler placeDate(@Nullable Date date) {
-        replaceDate("date", date);
-        return this;
+    public TranslationHandler parseAdmin(@NotNull AdminCommandExecution execution, @NotNull String adminPath) {
+        if (execution.messageReceivedEvent() == null)
+            return parse("admin", Lang.get(adminPath + ".system"));
+        else
+            return parse("admin",
+                    Lang.t(adminPath + ".admin")
+                            .parseNames(execution.messageReceivedEvent().getAuthor(), "admin")
+                            .parseMention(execution.messageReceivedEvent().getAuthor(), "admin")
+                            .getValue()
+            );
     }
 
-    public TranslationHandler placeOffsetDateTime(@Nullable OffsetDateTime offsetDateTime) {
-        replaceOffsetDateTime("date", offsetDateTime);
-        return this;
+    public TranslationHandler parseCommand(@NotNull SlashCommandInteractionEvent event) {
+        return parse("command", event.getCommandString())
+                .parse("full_command", event.getFullCommandName())
+                .parse("command_name", event.getName());
     }
 
-    public TranslationHandler placeCommand(@NotNull SlashCommandInteractionEvent event) {
-        return this;
+    // -------------
+    // GUILD
+    // -------------
+    public TranslationHandler parseGuildName(@Nullable Guild guild) {
+        if (guild == null)
+            return parse("guild_name", null);
+        else
+            return parse("guild_name", guild.getName());
     }
 
-    public TranslationHandler parseChannel(MessageChannelUnion channel) {
-        return this;
-    }*/
+    public TranslationHandler parseGuildAvatar(@Nullable Guild guild) {
+        if (guild == null)
+            return parse("guild_icon", null);
+        else
+            return parse("guild_icon", guild.getIconUrl());
+    }
+
+    // -------------
+    // CHANNEL
+    // -------------
+    public TranslationHandler parseChannel(@Nullable Channel channel) {
+        return parseChannelName(channel)
+                .parseChannelMention(channel)
+                .parseChannelId(channel);
+    }
+
+    public TranslationHandler parseChannelName(@Nullable Channel channel) {
+        if (channel == null)
+            return parse("channel_name", null);
+        else
+            return parse("channel_name", channel.getName());
+    }
+
+    public TranslationHandler parseChannelMention(@Nullable Channel channel) {
+        return parseMention(channel, "channel");
+    }
+
+    public TranslationHandler parseChannelId(@Nullable Channel channel) {
+        return parseId(channel, "channel");
+    }
+
+    // -------------
+    // MEMBER
+    // -------------
+    public TranslationHandler parseMemberNames(@Nullable Member member) {
+        if (member == null)
+            return parseNames(null, "member")
+                    .parse("member_nickname", null);
+        else
+            return parseNames(member.getUser(), "member")
+                    .parse("member_nickname", null);
+    }
+
+    public TranslationHandler parseMemberMention(@Nullable Member member) {
+        return parseMention(member, "member");
+    }
+
+    public TranslationHandler parseMemberId(@Nullable Member member) {
+        return parseId(member, "member");
+    }
+
+    public TranslationHandler parseMemberAvatars(@Nullable Member member) {
+        if (member == null)
+            return parseAvatars(null, "member");
+        else
+            return parseAvatars(member.getUser(), "member");
+    }
+
+    // ---------
+    // USER
+    // ---------
+    public TranslationHandler parseUserNames(@Nullable User user) {
+        return parseNames(user, "user");
+    }
+
+    public TranslationHandler parseUserMention(@Nullable User user) {
+        return parseMention(user, "user");
+    }
+
+    public TranslationHandler parseUserId(@Nullable User user) {
+        return parseId(user, "user");
+    }
+
+    public TranslationHandler parseUserAvatars(@Nullable User user) {
+        return parseAvatars(user, "user");
+    }
+
+    // ---------
+    // MODERATOR
+    // ---------
+    public TranslationHandler parseModNames(@Nullable User user) {
+        return parseNames(user, "moderator");
+    }
+
+    public TranslationHandler parseModMention(@Nullable User user) {
+        return parseMention(user, "moderator");
+    }
+
+    public TranslationHandler parseModId(@Nullable User user) {
+        return parseId(user, "moderator");
+    }
+
+    public TranslationHandler parseModAvatars(@Nullable User user) {
+        return parseAvatars(user, "moderator");
+    }
 
     public String getImage() {
         try {

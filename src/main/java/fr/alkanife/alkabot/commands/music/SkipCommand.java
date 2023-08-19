@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.commands.music;
 
 import fr.alkanife.alkabot.command.AbstractCommand;
 import fr.alkanife.alkabot.command.CommandManager;
+import fr.alkanife.alkabot.lang.Lang;
 import fr.alkanife.alkabot.music.MusicManager;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -22,7 +23,7 @@ public class SkipCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return alkabot.t("command.music.skip.description");
+        return Lang.get("command.music.skip.description");
     }
 
     @Override
@@ -33,7 +34,7 @@ public class SkipCommand extends AbstractCommand {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getName(), getDescription())
-                .addOption(OptionType.INTEGER, "input", alkabot.t("command.music.skip.input_description"), false);
+                .addOption(OptionType.INTEGER, "input", Lang.get("command.music.skip.input_description"), false);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class SkipCommand extends AbstractCommand {
         MusicManager musicManager = alkabot.getMusicManager();
 
         if (musicManager.getPlayer().getPlayingTrack() == null) {
-            event.reply(alkabot.t("command.music.generic.not_playing")).queue();
+            event.reply(Lang.get("command.music.generic.not_playing")).queue();
             return;
         }
 
@@ -53,7 +54,7 @@ public class SkipCommand extends AbstractCommand {
             long skipLong = skipSize.getAsLong();
 
             if (skipLong >= musicManager.getTrackScheduler().getQueue().size()) {
-                event.reply(alkabot.t("command.music.generic.not_enough")).queue();
+                event.reply(Lang.get("command.music.generic.not_enough")).queue();
                 return;
             }
 
@@ -64,8 +65,8 @@ public class SkipCommand extends AbstractCommand {
         musicManager.goNext();
 
         if (skipSize == null)
-            event.reply(alkabot.t("command.music.skip.one")).queue();
+            event.reply(Lang.get("command.music.skip.one")).queue();
         else
-            event.reply(alkabot.t("command.music.skip.mult", skip + "")).queue();
+            event.reply(Lang.get("command.music.skip.mult") + skip).queue();
     }
 }

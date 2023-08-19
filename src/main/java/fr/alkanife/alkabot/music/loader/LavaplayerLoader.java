@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import fr.alkanife.alkabot.lang.Lang;
 import fr.alkanife.alkabot.music.AbstractMusic;
 import fr.alkanife.alkabot.music.AlkabotTrack;
 import fr.alkanife.alkabot.music.MusicManager;
@@ -35,15 +36,15 @@ public class LavaplayerLoader extends AbstractMusic {
                 if (slashCommandInteractionEvent.getMember() != null)
                     id = slashCommandInteractionEvent.getMember().getId();
 
-                AlkabotTrack alkabotTrack = new AlkabotTrack(track, musicManager.getAlkabot().t("command.music.play.source.url"), id, priority);
+                AlkabotTrack alkabotTrack = new AlkabotTrack(track, Lang.get("command.music.play.source.url"), id, priority);
 
                 musicManager.getAlkabot().getMusicManager().getTrackScheduler().queue(alkabotTrack, force);
 
                 EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder.setTitle(musicManager.getAlkabot().t("command.music.play.title") + " " + (priority ? musicManager.getAlkabot().t("command.music.play.priority") : ""));
-                embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ") " + musicManager.getAlkabot().t("command.music.generic.by")
+                embedBuilder.setTitle(Lang.get("command.music.play.title") + " " + (priority ? Lang.get("command.music.play.priority") : ""));
+                embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ") " + Lang.get("command.music.generic.by")
                         + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ") " + StringUtils.durationToString(alkabotTrack.getDuration(), true, false) +
-                        (priority ? "" : ("\n\n" + (musicManager.getAlkabot().t("command.music.play.position") + " `" + (musicManager.getTrackScheduler().getQueue().size() + 1) + "`"))));
+                        (priority ? "" : ("\n\n" + (Lang.get("command.music.play.position") + " `" + (musicManager.getTrackScheduler().getQueue().size() + 1) + "`"))));
                 embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
                 slashCommandInteractionEvent.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
@@ -65,15 +66,15 @@ public class LavaplayerLoader extends AbstractMusic {
                     id = slashCommandInteractionEvent.getMember().getId();
 
                 if (url.startsWith("ytsearch")) {
-                    AlkabotTrack alkabotTrack = new AlkabotTrack(firstTrack, musicManager.getAlkabot().t("command.music.play.source.search"), id, priority);
+                    AlkabotTrack alkabotTrack = new AlkabotTrack(firstTrack, Lang.get("command.music.play.source.search"), id, priority);
 
                     musicManager.getTrackScheduler().queue(alkabotTrack, force);
 
                     EmbedBuilder embedBuilder = new EmbedBuilder();
-                    embedBuilder.setTitle(musicManager.getAlkabot().t("command.music.play.title") + " " + (priority ? musicManager.getAlkabot().t("command.music.play.priority") : ""));
-                    embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ") " + musicManager.getAlkabot().t("command.music.generic.by")
+                    embedBuilder.setTitle(Lang.get("command.music.play.title") + " " + (priority ? Lang.get("command.music.play.priority") : ""));
+                    embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ") " + Lang.get("command.music.generic.by")
                             + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ") " + StringUtils.durationToString(alkabotTrack.getDuration(), true, false) +
-                            (priority ? "" : ("\n\n" + (musicManager.getAlkabot().t("command.music.play.position") + " `" + (musicManager.getTrackScheduler().getQueue().size() + 1) + "`"))));
+                            (priority ? "" : ("\n\n" + (Lang.get("command.music.play.position") + " `" + (musicManager.getTrackScheduler().getQueue().size() + 1) + "`"))));
                     embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
                     slashCommandInteractionEvent.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
@@ -82,7 +83,7 @@ public class LavaplayerLoader extends AbstractMusic {
                 } else {
                     List<AlkabotTrack> alkabotTrackList = new ArrayList<>();
 
-                    String source = musicManager.getAlkabot().t("command.music.play.source.url_playlist") + " / \"" + playlist.getName() + "\"";
+                    String source = Lang.get("command.music.play.source.url_playlist") + " / \"" + playlist.getName() + "\"";
 
                     for (AudioTrack audioTrack : playlist.getTracks())
                         alkabotTrackList.add(new AlkabotTrack(audioTrack, source, id, priority));
@@ -92,10 +93,10 @@ public class LavaplayerLoader extends AbstractMusic {
                     musicManager.getTrackScheduler().queuePlaylist(firstAlkabotTrack, alkabotTrackList, force);
 
                     EmbedBuilder embedBuilder = new EmbedBuilder();
-                    embedBuilder.setTitle(musicManager.getAlkabot().t("command.music.play.title_playlist") + " " + (priority ? musicManager.getAlkabot().t("command.music.play.priority") : ""));
+                    embedBuilder.setTitle(Lang.get("command.music.play.title_playlist") + " " + (priority ? Lang.get("command.music.play.priority") : ""));
                     embedBuilder.setDescription("[" + playlist.getName() + "](" + url + ")\n\n" +
-                            musicManager.getAlkabot().t("command.music.play.entries") + " `" + playlist.getTracks().size() + "`\n" +
-                            musicManager.getAlkabot().t("command.music.play.newtime") + " `" + StringUtils.durationToString(musicManager.getTrackScheduler().getQueueDuration(), false, true) + "`");
+                            Lang.get("command.music.play.entries") + " `" + playlist.getTracks().size() + "`\n" +
+                            Lang.get("command.music.play.newtime") + " `" + StringUtils.durationToString(musicManager.getTrackScheduler().getQueueDuration(), false, true) + "`");
 
                     embedBuilder.setThumbnail(firstAlkabotTrack.getThumbUrl());
 
@@ -109,7 +110,7 @@ public class LavaplayerLoader extends AbstractMusic {
             public void noMatches() {
                 retrying = false;
 
-                slashCommandInteractionEvent.getHook().sendMessage(musicManager.getAlkabot().t("command.music.play.error.no_matches")).queue();
+                slashCommandInteractionEvent.getHook().sendMessage(Lang.get("command.music.play.error.no_matches")).queue();
                 musicManager.getAlkabot().verbose("No matches!");
             }
 
@@ -117,7 +118,7 @@ public class LavaplayerLoader extends AbstractMusic {
             public void loadFailed(FriendlyException exception) {
                 musicManager.getAlkabot().getLogger().warn("Load fail - retry = " + retrying);
                 if (retrying) {
-                    slashCommandInteractionEvent.getHook().sendMessage(musicManager.getAlkabot().t("command.music.play.error.generic")).queue();
+                    slashCommandInteractionEvent.getHook().sendMessage(Lang.get("command.music.play.error.generic")).queue();
                     musicManager.getAlkabot().verbose("Failed to load!");
                     retrying = false;
                 } else {

@@ -26,29 +26,39 @@ public class MemberNotifier extends Notifier {
         embed.setColor(Lang.t("notification.member.join.color").getColor());
         embed.setTitle(
                 Lang.t("notification.member.join.title")
-                        .parseUserNames(event.getUser())
+                        .parseMemberAvatars(event.getMember())
                         .parseGuildName(alkabot.getGuild())
                         .getValue()
         );
         embed.setThumbnail(
                 Lang.t("notification.member.join.icon")
-                        .parseUserAvatars(event.getUser())
+                        .parseMemberAvatars(event.getMember())
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(event.getGuild())
                         .getImage()
         );
-        embed.addField(NotificationUtils.createUserField("notification.member.join", event.getUser(), true));
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(
+                Lang.t("notification.member.join.member")
+                        .parseMemberId(event.getMember())
+                        .parseMemberNames(event.getMember())
+                        .parseMemberMention(event.getMember())
+                        .getValue()
+        );
 
         if (failAutorole || failWelcome) {
-            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("\n");
             if (failWelcome)
                 stringBuilder.append(Lang.t("notification.member.join.fail.welcome").getValue());
             if (failAutorole && failWelcome)
                 stringBuilder.append("\n");
             if (failAutorole)
                 stringBuilder.append(Lang.t("notification.member.join.fail.auto_role").getValue());
-            embed.setDescription(stringBuilder.toString());
         }
+
+        embed.setDescription(stringBuilder.toString());
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }
@@ -72,7 +82,13 @@ public class MemberNotifier extends Notifier {
                         .parseGuildAvatar(event.getGuild())
                         .getImage()
         );
-        embed.addField(NotificationUtils.createUserField("notification.member.leave", event.getUser(), true));
+        embed.setDescription(
+                Lang.t("notification.member.leave.user")
+                        .parseUserId(event.getUser())
+                        .parseUserNames(event.getUser())
+                        .parseUserMention(event.getUser())
+                        .getValue()
+        );
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }

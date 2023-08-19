@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.commands.music;
 
 import fr.alkanife.alkabot.command.AbstractCommand;
 import fr.alkanife.alkabot.command.CommandManager;
+import fr.alkanife.alkabot.lang.Lang;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -19,7 +20,7 @@ public class DestroyCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return alkabot.t("command.music.destroy.description");
+        return Lang.get("command.music.destroy.description");
     }
 
     @Override
@@ -36,6 +37,6 @@ public class DestroyCommand extends AbstractCommand {
     public void execute(SlashCommandInteractionEvent event) {
         alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
         alkabot.getMusicManager().reset();
-        event.reply(alkabot.t("command.music.destroy.done")).queue();
+        event.reply(Lang.get("command.music.destroy.done")).queue();
     }
 }

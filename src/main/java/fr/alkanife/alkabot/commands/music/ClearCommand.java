@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.commands.music;
 
 import fr.alkanife.alkabot.command.AbstractCommand;
 import fr.alkanife.alkabot.command.CommandManager;
+import fr.alkanife.alkabot.lang.Lang;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -21,7 +22,7 @@ public class ClearCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return alkabot.t("command.music.clear.description");
+        return Lang.get("command.music.clear.description");
     }
 
     @Override
@@ -38,6 +39,6 @@ public class ClearCommand extends AbstractCommand {
     public void execute(SlashCommandInteractionEvent event) {
         alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
         alkabot.getMusicManager().getTrackScheduler().setQueue(new LinkedBlockingQueue<>());
-        event.reply(alkabot.t("command.music.clear.done")).queue();
+        event.reply(Lang.get("command.music.clear.done")).queue();
     }
 }

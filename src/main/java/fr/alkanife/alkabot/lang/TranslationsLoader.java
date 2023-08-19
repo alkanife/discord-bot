@@ -66,8 +66,8 @@ public class TranslationsLoader extends JsonLoader {
             for (LinkedTreeMap.Entry<?, ?> entryValue : mapValue.entrySet())
                 readEntry(address + "." + entryValue.getKey(), entryValue);
         } else {
-            translations.put(address + "." + entry.getKey(), entry.getValue());
-            //alkabot.verbose(address + " = " + entry.getValue().toString());
+            translations.put(address, entry.getValue());
+            //System.out.println(address + " = " + entry.getValue().toString());
         }
     }
 }

@@ -19,34 +19,38 @@
       "attachment": "[attachment]",
       "channel": {
         "title": "Channel",
-        "field": "<channel_name> (<channel_mention>)"
+        "field": "<channel_mention> (<channel_name>)"
       },
       "member": {
         "title": "Member",
-        "field": "<member_name> (<member_mention>)"
+        "field": "<member_mention> (<member_name>)"
       },
       "user": {
         "title": "User",
-        "field": "<user_name> (<user_mention>)"
+        "field": "<user_mention> (<user_name>)"
       }
     },
     "self": {
       "power_on": {
         "title": "Successfully connected", // bot client names, guild name
         "color": "{colors.green}",
-        "icon": "<bot_avatar>", // bot avatars, guild avatar
+        "icon": "<bot_avatar_url>", // bot avatars, guild avatar
         "description": "Alkabot version <bot_version>\n\n\uD83D\uDD27 Administrators (<admin_count>) : <admins>\n\nFor more details on the current configuration of the bot, go to my DMs." // bot, admins
       },
       "power_off": {
         "title": "Stopping", // bot client names, guild name
         "color": "{colors.orange}",
-        "icon": "<bot_avatar>", // bot avatars, guild avatar
-        "description": "<admin> requested my shutdown." // admin, bot, guild name
+        "icon": "<bot_avatar_url>", // bot avatars, guild avatar
+        "description": "<admin> requested my shutdown.", // admin_name, admin_mention, bot, guild name
+        "admin": {
+          "system": "`CLI`",
+          "admin": "<admin_mention> (<admin_name>)"
+        }
       },
       "command": {
         "command": {
           "title": "Command",
-          "field": "<full_command>" // command
+          "field": "<command>" // command
         },
         "success": {
           "title": "A command has been executed", // member names, guild name, command
@@ -90,7 +94,8 @@
     },
     "message": {
       "generic": {
-        "author": "Message's author"
+        "author": "Message's author",
+        "id": "Message id: <message_id>"
       },
       "edit": {
         "title": "A message has been edited", // user names, guild name
@@ -117,7 +122,7 @@
           "field": "{notification.generic.channel.field}" // channel
         },
         "user": {
-          "user": "{notification.message.generic.author}",
+          "title": "{notification.message.generic.author}",
           "field": "{notification.generic.user.field}" // user names, user mention, user id
         },
         "message": "Deleted message"
@@ -127,11 +132,8 @@
       "join": {
         "title": "Someone has joined the server!", // guild name, user names
         "color": "{colors.green}",
-        "icon": "<user_avatar_url>", // user avatars, bot avatars, guild avatars
-        "member": {
-          "title": "{notification.generic.member.title}",
-          "field": "{notification.generic.member.field}" // member names, member mention, member id
-        },
+        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars
+        "member": "{notification.generic.member.field}", // member names, member mention, member id
         "fail": {
           "welcome": "⚠️ I failed to send the welcome message",
           "auto_role": "⚠️ I failed to set the default role"
@@ -141,24 +143,21 @@
         "title": "A member left the server", // guild name, user names
         "color": "{colors.red}",
         "icon": "<user_avatar_url>", // user avatars, bot avatars, guild avatars
-        "user": {
-          "title": "{notification.generic.user.title}",
-          "field": "{notification.generic.user.field}" // user names, user mention, user id
-        }
+        "user": "{notification.generic.user.field}" // user names, user mention, user id
       }
     },
     "moderator": {
       "generic": {
         "moderator": {
           "title": "Moderator",
-          "field": "<moderator_name> (<moderator_mention>)"
+          "field": "<moderator_mention> (<moderator_name>)"
         },
-        "reason": "Reason provided"
+        "reason": "Reason"
       },
       "kick": {
-        "title": "A member has been kicked", // guild name, user names
+        "title": "A member has been kicked", // guild name, user names, mod names
         "color": "{colors.red}",
-        "icon": "<user_avatar_url>", // user avatars, bot avatars, guild avatars
+        "icon": "<user_avatar_url>", // user avatars, bot avatars, guild avatars, mod avatars
         "user": {
           "title": "{notification.generic.user.title}",
           "field": "{notification.generic.user.field}" // user names, user mention, user id
@@ -170,9 +169,9 @@
         "reason": "{notification.moderator.generic.reason}"
       },
       "ban": {
-        "title": "A member has been banned", // guild name, user names
+        "title": "The ban hammer has spoken", // guild name, user names, mod names
         "color": "{colors.red}",
-        "icon": "<user_avatar_url>", // user avatars, bot avatars, guild avatars
+        "icon": "<user_avatar_url>", // user avatars, bot avatars, guild avatars, mod avatars
         "user": {
           "title": "{notification.generic.user.title}",
           "field": "{notification.generic.user.field}" // user names, user mention, user id
@@ -184,9 +183,9 @@
         "reason": "{notification.moderator.generic.reason}"
       },
       "unban": {
-        "title": "A user has been unbanned", // guild name, user names
-        "color": "{colors.cyan}",
-        "icon": "<user_avatar_url>", // user avatars, bot avatars, guild avatars
+        "title": "A user has been unbanned", // guild name, user names, mod names
+        "color": "{colors.green}",
+        "icon": "<user_avatar_url>", // user avatars, bot avatars, guild avatars, mod avatars
         "user": {
           "title": "{notification.generic.user.title}",
           "field": "{notification.generic.user.field}" // user names, user mention, user id
@@ -197,26 +196,27 @@
         }
       },
       "timeout": {
-        "title": "A user has been timed out", // guild name, user names
+        "title": "A member has been timed out", // guild name, member names, mod names
         "color": "{colors.red}",
-        "icon": "<user_avatar_url>", // user avatars, bot avatars, guild avatars
-        "user": {
-          "title": "{notification.generic.user.title}",
-          "field": "{notification.generic.user.field}" // user names, user mention, user id
+        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars, mod avatars
+        "member": {
+          "title": "{notification.generic.member.title}",
+          "field": "{notification.generic.member.field}" // member names, member mention, member id
         },
         "moderator": {
           "title": "{notification.moderator.generic.moderator.title}",
           "field": "{notification.moderator.generic.moderator.field}" // moderator names, moderator mention, moderator id
         },
-        "until": "Until the"
+        "until": "Until the",
+        "reason": "{notification.moderator.generic.reason}"
       },
       "untimeout": {
-        "title": "A timeout has been cancelled", // guild name, user names
-        "color": "{colors.cyan}",
-        "icon": "<user_avatar_url>", // user avatars, bot avatars, guild avatars
-        "user": {
-          "title": "{notification.generic.user.title}",
-          "field": "{notification.generic.user.field}" // user names, user mention, user id
+        "title": "A timeout has been cancelled", // guild name, member names, mod names
+        "color": "{colors.green}",
+        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars, mod avatars
+        "member": {
+          "title": "{notification.generic.member.title}",
+          "field": "{notification.generic.member.field}" // member names, member mention, member id
         },
         "moderator": {
           "title": "{notification.moderator.generic.moderator.title}",
@@ -224,24 +224,24 @@
         }
       },
       "timeout_change": {
-        "title": "A timeout has been updated", // guild name, user names
+        "title": "A timeout has been updated", // guild name, member names, mod names
         "color": "{colors.orange}",
-        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars
-        "user": {
-          "title": "{notification.generic.user.title}",
-          "field": "{notification.generic.user.field}" // user names, user mention, user id
+        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars, mod avatars
+        "member": {
+          "title": "{notification.generic.member.title}",
+          "field": "{notification.generic.member.field}" // member names, member mention, member id
         },
         "moderator": {
           "title": "{notification.moderator.generic.moderator.title}",
           "field": "{notification.moderator.generic.moderator.field}" // moderator names, moderator mention, moderator id
         },
         "old": "Old date",
-        "new": "new date"
+        "new": "New date"
       },
       "deafen": {
-        "title": "A user has been deafened", // guild name, user names
+        "title": "A member has been deafened", // guild name, user names, mod names
         "color": "{colors.red}",
-        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars
+        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars, mod avatars
         "member": {
           "title": "{notification.generic.member.title}",
           "field": "{notification.generic.member.field}" // member names, member mention, member id
@@ -256,9 +256,9 @@
         }
       },
       "undeafen": {
-        "title": "A user has been un-deafened",
-        "color": "{colors.cyan}",
-        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars
+        "title": "A member has been un-deafened", // member names, mod names, guild name
+        "color": "{colors.green}",
+        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars, mod avatars
         "member": {
           "title": "{notification.generic.member.title}",
           "field": "{notification.generic.member.field}" // member names, member mention, member id
@@ -273,9 +273,9 @@
         }
       },
       "mute": {
-        "title": "A user has been muted",
+        "title": "A member has been muted", // member names, mod names, guild name
         "color": "{colors.red}",
-        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars
+        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars, mod avatars
         "member": {
           "title": "{notification.generic.member.title}",
           "field": "{notification.generic.member.field}" // member names, member mention, member id
@@ -290,9 +290,9 @@
         }
       },
       "unmute": {
-        "title": "A user has been un-muted",
-        "color": "{colors.cyan}",
-        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars
+        "title": "A member has been un-muted", // member names, mod names, guild name
+        "color": "{colors.green}",
+        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars, mod avatars
         "member": {
           "title": "{notification.generic.member.title}",
           "field": "{notification.generic.member.field}" // member names, member mention, member id
@@ -307,9 +307,9 @@
         }
       },
       "nickname": {
-        "title": "A moderator changed a member's nickname",
+        "title": "A moderator changed a member's nickname", // member names, mod names, guild name
         "color": "{colors.cyan}",
-        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars
+        "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars, mod avatars
         "member": {
           "title": "{notification.generic.member.title}",
           "field": "{notification.generic.member.field}" // member names, member mention, member id
@@ -319,12 +319,12 @@
           "field": "{notification.moderator.generic.moderator.field}" // moderator names, moderator mention, moderator id
         },
         "old": "Old nickname",
-        "new": "new nickname"
+        "new": "New nickname"
       }
     },
     "voice": {
       "join": {
-        "title": "A member has joined a voice channel",
+        "title": "A member has joined a voice channel", // member names, guild name
         "color": "{colors.cyan}",
         "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars
         "member": {
@@ -337,7 +337,7 @@
         }
       },
       "left": {
-        "title": "A member has left a voice channel",
+        "title": "A member has left a voice channel", // member names, guild name
         "color": "{colors.cyan}",
         "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars
         "member": {
@@ -350,7 +350,7 @@
         }
       },
       "move": {
-        "title": "A member moved from a voice channel to another",
+        "title": "A member moved from a voice channel to another", // member names, guild name
         "color": "{colors.cyan}",
         "icon": "<member_avatar_url>", // member avatars, bot avatars, guild avatars
         "member": {
@@ -369,16 +369,14 @@
     }
   },
   "command": {
-    "generic": {
-      "no_perms": "I can't let you use this command.",
-      "error": "Sorry, an error occurred while executing your command."
-    },
+    "error": "Sorry, an error occurred while executing your command.",
     "about": {
-      "description": "Who am I?"
+      "description": "❔ Who am I?",
+      "content": "I am a bot running on Alkabot version <bot_version>.\n<bot_github>" // bot
     },
     "utilities": {
       "copy": {
-        "description": "Copy a message while preserving the syntax",
+        "description": "🔧 Copy a message while preserving the syntax",
         "input_description": "Message URL",
         "error": {
           "generic": "I can't copy this message. Maybe your URL is invalid or I don't have access to the message, or the copied message is too long.",
@@ -388,13 +386,13 @@
           "message": "Sorry, I can not read this message."
         }
       },
-      "info": {
-        "description": "Information commands",
+      "info": { // todo
+        "description": "📄 Information commands",
         "generic": {
           "creation_date": "Creation date <date>"
         },
         "server": {
-          "description": "Give information about the server",
+          "description": "📄 Give information about the server",
           "members": "Members: <members>",
           "channels": "Channels: <channels>",
           "emotes": "Emotes: <emotes>",
@@ -404,7 +402,7 @@
           "owner": "Owner: <owner>"
         },
         "member": {
-          "description": "Give information about a member",
+          "description": "📄 Give information about a member",
           "input_description": "Member",
           "joined": {
             "discord": "Joined Discord:",
@@ -412,7 +410,7 @@
           }
         },
         "emote": {
-          "description": "Give information about an emote",
+          "description": "📄 Give information about an emote",
           "input_description": "The emote",
           "error": "Sorry, I can't find this emote.",
           "guild": "Original server: <server>"

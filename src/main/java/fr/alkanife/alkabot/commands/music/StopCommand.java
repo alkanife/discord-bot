@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.commands.music;
 
 import fr.alkanife.alkabot.command.AbstractCommand;
 import fr.alkanife.alkabot.command.CommandManager;
+import fr.alkanife.alkabot.lang.Lang;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -19,7 +20,7 @@ public class StopCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return alkabot.t("command.music.stop.description");
+        return Lang.get("command.music.stop.description");
     }
 
     @Override
@@ -34,7 +35,7 @@ public class StopCommand extends AbstractCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.reply(alkabot.t("command.music.stop.done")).queue();
+        event.reply(Lang.get("command.music.stop.done")).queue();
         alkabot.getGuild().getAudioManager().closeAudioConnection();
         //Music.reset(); Disabled, it's not a bug it's a F E A T U R E
     }

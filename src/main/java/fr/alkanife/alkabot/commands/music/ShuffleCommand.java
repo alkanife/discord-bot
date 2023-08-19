@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.commands.music;
 
 import fr.alkanife.alkabot.command.AbstractCommand;
 import fr.alkanife.alkabot.command.CommandManager;
+import fr.alkanife.alkabot.lang.Lang;
 import fr.alkanife.alkabot.music.AlkabotTrack;
 import fr.alkanife.alkabot.music.MusicManager;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -27,7 +28,7 @@ public class ShuffleCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return alkabot.t("command.music.shuffle.description");
+        return Lang.get("command.music.shuffle.description");
     }
 
     @Override
@@ -57,6 +58,6 @@ public class ShuffleCommand extends AbstractCommand {
 
         musicManager.getTrackScheduler().setQueue(blockingQueue);
 
-        event.reply(alkabot.t("command.music.shuffle.done")).queue();
+        event.reply(Lang.get("command.music.shuffle.done")).queue();
     }
 }

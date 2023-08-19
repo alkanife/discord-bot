@@ -47,7 +47,6 @@ public class ReloadCommand extends AbstractAdminCommand {
             case "lang" -> {
                 try {
                     alkabot.getLogger().info("Reloading translations");
-                    alkabot.setTranslationsManager(new TranslationsManager(alkabot));
                     new TranslationsLoader(alkabot).load();
                     execution.reply("Reload complete");
                 } catch (Exception exception) {

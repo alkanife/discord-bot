@@ -15,7 +15,7 @@ public class Lang {
 
     @Getter
     @Setter
-    private static String defaultImageURL = "";
+    private static String defaultImageURL = "https://cdn.discordapp.com/embed/avatars/1.png";
 
     @Getter
     @Setter

@@ -46,11 +46,11 @@ public class StopCommand extends AbstractAdminCommand {
                 Lang.t("notification.self.power_off.icon")
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
-                        .getValue()
+                        .getImage()
         );
         embedBuilder.setDescription(
                 Lang.t("notification.self.power_off.description")
-                        .parseAdmin(execution.messageReceivedEvent().getAuthor())
+                        .parseAdmin(execution, "notification.self.power_off.admin")
                         .parseBot(alkabot)
                         .parseGuildName(alkabot.getGuild())
                         .getValue()

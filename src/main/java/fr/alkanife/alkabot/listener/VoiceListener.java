@@ -33,7 +33,7 @@ public class VoiceListener extends ListenerAdapter {
             return;
         }
 
-        alkabot.getNotificationManager().getVoiceNotification().notifyMove(event.getMember(), event.getChannelJoined(), event.getChannelLeft()); // todo: moderator move
+        alkabot.getNotificationManager().getVoiceNotification().notifyMove(event.getMember(), event.getChannelJoined(), event.getChannelLeft()); // todo: moderator move & disconnect
     }
 
 }

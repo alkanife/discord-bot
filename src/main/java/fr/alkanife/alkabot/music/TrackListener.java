@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import fr.alkanife.alkabot.lang.Lang;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
@@ -38,9 +39,9 @@ public class TrackListener extends AudioEventAdapter {
 
                         if (musicManager.getAlkabot().getMusicManager().getLastMusicCommandChannel() != null) {
                             EmbedBuilder embedBuilder = new EmbedBuilder();
-                            embedBuilder.setTitle(musicManager.getAlkabot().t("command.music.generic.alone.title"));
-                            embedBuilder.setColor(Colors.BIG_RED);
-                            embedBuilder.setDescription(musicManager.getAlkabot().t("command.music.generic.alone.description"));
+                            embedBuilder.setTitle(Lang.get("command.music.generic.alone.title"));
+                            //embedBuilder.setColor(Colors.BIG_RED);
+                            embedBuilder.setDescription(Lang.get("command.music.generic.alone.description"));
 
                             musicManager.getAlkabot().getMusicManager().getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
                         }
@@ -60,11 +61,11 @@ public class TrackListener extends AudioEventAdapter {
             musicManager.getAlkabot().verbose("Failed to play '" + track.getInfo().title + "'");
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(musicManager.getAlkabot().t("command.music.play.error.fail.title"));
-            embedBuilder.setColor(Colors.BIG_RED);
+            embedBuilder.setTitle(Lang.get("command.music.play.error.fail.title"));
+            //embedBuilder.setColor(Colors.BIG_RED);
             embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")"
-                    + " " + musicManager.getAlkabot().t("command.music.generic.by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
-                    musicManager.getAlkabot().t("command.music.play.error.fail.message"));
+                    + " " + Lang.get("command.music.generic.by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
+                    Lang.get("command.music.play.error.fail.message"));
             embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
 
             if (musicManager != null)

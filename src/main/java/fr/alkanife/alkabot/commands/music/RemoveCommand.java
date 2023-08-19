@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.commands.music;
 
 import fr.alkanife.alkabot.command.AbstractCommand;
 import fr.alkanife.alkabot.command.CommandManager;
+import fr.alkanife.alkabot.lang.Lang;
 import fr.alkanife.alkabot.music.AlkabotTrack;
 import fr.alkanife.alkabot.music.MusicManager;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -29,7 +30,7 @@ public class RemoveCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return alkabot.t("command.music.remove.description");
+        return Lang.get("command.music.remove.description");
     }
 
     @Override
@@ -40,7 +41,7 @@ public class RemoveCommand extends AbstractCommand {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getName(), getDescription())
-                .addOption(OptionType.INTEGER, "input", alkabot.t("command.music.remove.input_description"), true);
+                .addOption(OptionType.INTEGER, "input", Lang.get("command.music.remove.input_description"), true);
     }
 
     @Override
@@ -50,7 +51,7 @@ public class RemoveCommand extends AbstractCommand {
         MusicManager musicManager = alkabot.getMusicManager();
 
         if (musicManager.getPlayer().getPlayingTrack() == null) {
-            event.reply(alkabot.t("command.music.generic.not_playing")).queue();
+            event.reply(Lang.get("command.music.generic.not_playing")).queue();
             return;
         }
 
@@ -60,7 +61,7 @@ public class RemoveCommand extends AbstractCommand {
             remove = removeOption.getAsLong();
 
             if (remove > musicManager.getTrackScheduler().getQueue().size()) {
-                event.reply(alkabot.t("command.music.generic.not_enough")).queue();
+                event.reply(Lang.get("command.music.generic.not_enough")).queue();
                 return;
             }
         }
@@ -81,16 +82,16 @@ public class RemoveCommand extends AbstractCommand {
             musicManager.getTrackScheduler().setQueue(newBlockingQueue);
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(alkabot.t("command.music.remove.title"));
+            embedBuilder.setTitle(Lang.get("command.music.remove.title"));
             embedBuilder.setDescription("[" + t.getTitle() + "](" + t.getUrl() + ")"
-                    + " " + alkabot.t("command.music.generic.by") + " [" + t.getArtists() + "](" + t.getUrl() + ")");
+                    + " " + Lang.get("command.music.generic.by") + " [" + t.getArtists() + "](" + t.getUrl() + ")");
             embedBuilder.setThumbnail(t.getThumbUrl());
 
             event.replyEmbeds(embedBuilder.build()).queue();
         } catch (Exception e) {
             alkabot.getLogger().error("Failed to remove a music from the queue:");
             e.printStackTrace();
-            event.reply(alkabot.t("command.music.remove.error")).queue();
+            event.reply(Lang.get("command.music.remove.error")).queue();
         }
     }
 }

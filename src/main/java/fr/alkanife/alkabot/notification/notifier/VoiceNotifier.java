@@ -38,7 +38,7 @@ public class VoiceNotifier extends Notifier {
                         .getImage()
         );
         embed.addField(NotificationUtils.createMemberField("notification.voice.join", member, true));
-        embed.addField(NotificationUtils.createAudioChannelField("notification.voice.join", channel, true));
+        embed.addField(NotificationUtils.createChannelField("notification.voice.join", channel, true));
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }
@@ -62,9 +62,9 @@ public class VoiceNotifier extends Notifier {
                         .parseGuildAvatar(alkabot.getGuild())
                         .getImage()
         );
-        embed.addField(NotificationUtils.createMemberField("notification.voice.move", member, true));
-        embed.addField(NotificationUtils.createAudioChannelField("notification.voice.move", "channel_joined", channelJoined, false));
-        embed.addField(NotificationUtils.createAudioChannelField("notification.voice.move", "channel_left", channelLeft, false));
+        embed.addField(NotificationUtils.createMemberField("notification.voice.move", member, false));
+        embed.addField(NotificationUtils.createChannelField("notification.voice.move", "channel_joined", channelJoined, true));
+        embed.addField(NotificationUtils.createChannelField("notification.voice.move", "channel_left", channelLeft, true));
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }
@@ -89,7 +89,7 @@ public class VoiceNotifier extends Notifier {
                         .getImage()
         );
         embed.addField(NotificationUtils.createMemberField("notification.voice.left", member, true));
-        embed.addField(NotificationUtils.createAudioChannelField("notification.voice.left", channel, false));
+        embed.addField(NotificationUtils.createChannelField("notification.voice.left", channel, true));
 
         notificationManager.sendNotification(notificationChannel, embed.build());
     }

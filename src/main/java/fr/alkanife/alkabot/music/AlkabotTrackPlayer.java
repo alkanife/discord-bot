@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import fr.alkanife.alkabot.lang.Lang;
 import lombok.Getter;
 import net.dv8tion.jda.api.EmbedBuilder;
 
@@ -54,13 +55,13 @@ public class AlkabotTrackPlayer {
 
                 if (musicManager.getLastMusicCommandChannel() != null) {
                     EmbedBuilder embedBuilder = new EmbedBuilder();
-                    embedBuilder.setTitle(musicManager.getAlkabot().t("command.music.play.error.not_found.title"));
-                    embedBuilder.setColor(Colors.BIG_RED);
+                    embedBuilder.setTitle(Lang.get("command.music.play.error.not_found.title"));
+                    //embedBuilder.setColor(Colors.BIG_RED);
                     embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ")"
-                            + " " + musicManager.getAlkabot().t("command.music.generic.by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
-                            musicManager.getAlkabot().t("command.music.generic.added_by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
-                            musicManager.getAlkabot().t("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
-                            musicManager.getAlkabot().t("command.music.play.error.not_found.description"));
+                            + " " + Lang.get("command.music.generic.by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
+                            Lang.get("command.music.generic.added_by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
+                            Lang.get("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
+                            Lang.get("command.music.play.error.not_found.description"));
                     embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
                     musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
@@ -74,13 +75,13 @@ public class AlkabotTrackPlayer {
                 if (retrying) {
                     if (musicManager.getLastMusicCommandChannel() != null) {
                         EmbedBuilder embedBuilder = new EmbedBuilder();
-                        embedBuilder.setTitle(musicManager.getAlkabot().t("command.music.play.error.fail.title"));
-                        embedBuilder.setColor(Colors.BIG_RED);
+                        embedBuilder.setTitle(Lang.get("command.music.play.error.fail.title"));
+                        //embedBuilder.setColor(Colors.BIG_RED);
                         embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ")"
-                                + " " + musicManager.getAlkabot().t("command.music.generic.by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
-                                musicManager.getAlkabot().t("command.music.generic.added_by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
-                                musicManager.getAlkabot().t("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
-                                musicManager.getAlkabot().t("command.music.play.error.fail.message"));
+                                + " " + Lang.get("command.music.generic.by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
+                                Lang.get("command.music.generic.added_by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
+                                Lang.get("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
+                                Lang.get("command.music.play.error.fail.message"));
                         embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
                         musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();

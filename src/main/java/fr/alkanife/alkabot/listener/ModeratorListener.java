@@ -64,17 +64,17 @@ public class ModeratorListener extends ListenerAdapter {
                     return;
 
                 if (event.getOldTimeOutEnd() != null && event.getNewTimeOutEnd() != null) {
-                    alkabot.getNotificationManager().getModeratorNotification().notifyTimeoutChange(event.getUser(), logEntry.getUser(), event.getOldTimeOutEnd(), event.getNewTimeOutEnd());
+                    alkabot.getNotificationManager().getModeratorNotification().notifyTimeoutChange(event.getMember(), logEntry.getUser(), event.getOldTimeOutEnd(), event.getNewTimeOutEnd());
                     return;
                 }
 
                 if (event.getOldTimeOutEnd() == null && event.getNewTimeOutEnd() != null) {
-                    alkabot.getNotificationManager().getModeratorNotification().notifyTimeout(event.getUser(), logEntry.getUser(), logEntry.getReason(), event.getNewTimeOutEnd());
+                    alkabot.getNotificationManager().getModeratorNotification().notifyTimeout(event.getMember(), logEntry.getUser(), logEntry.getReason(), event.getNewTimeOutEnd());
                     return;
                 }
 
                 if (event.getOldTimeOutEnd() != null && event.getNewTimeOutEnd() == null) {
-                    alkabot.getNotificationManager().getModeratorNotification().notifyUntimeout(event.getUser(), logEntry.getUser());
+                    alkabot.getNotificationManager().getModeratorNotification().notifyUntimeout(event.getMember(), logEntry.getUser());
                 }
             });
         } catch (Exception exception) {
@@ -123,7 +123,7 @@ public class ModeratorListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
+    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) { // Experimental
         try {
             event.getGuild().retrieveAuditLogs().queue(auditLogEntries -> {
                 AuditLogEntry logEntry = NotificationUtils.getFirstLogEntry(auditLogEntries, ActionType.MEMBER_UPDATE, "nick", event.getUser().getId());

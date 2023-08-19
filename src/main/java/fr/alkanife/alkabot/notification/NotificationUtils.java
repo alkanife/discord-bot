@@ -7,14 +7,13 @@ import net.dv8tion.jda.api.audit.AuditLogEntry;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
-import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
+import net.dv8tion.jda.api.entities.channel.Channel;
 
 import java.util.List;
 
 public class NotificationUtils {
 
-    public static MessageEmbed.Field createMessageChannelField(String root, MessageChannelUnion channel, boolean inline) {
+    public static MessageEmbed.Field createChannelField(String root, Channel channel, boolean inline) {
         return new MessageEmbed.Field(
                 Lang.t(root + ".channel.title").getValue(),
                 Lang.t(root + ".channel.field")
@@ -23,16 +22,7 @@ public class NotificationUtils {
                 inline);
     }
 
-    public static MessageEmbed.Field createAudioChannelField(String root, AudioChannelUnion channel, boolean inline) {
-        return new MessageEmbed.Field(
-                Lang.t(root + ".channel.title").getValue(),
-                Lang.t(root + ".channel.field")
-                        .parseChannel(channel)
-                        .getValue(),
-                inline);
-    }
-
-    public static MessageEmbed.Field createAudioChannelField(String root, String field, AudioChannelUnion channel, boolean inline) {
+    public static MessageEmbed.Field createChannelField(String root, String field, Channel channel, boolean inline) {
         return new MessageEmbed.Field(
                 Lang.t(root + "." + field + ".title").getValue(),
                 Lang.t(root + "." + field + ".field")
@@ -67,9 +57,9 @@ public class NotificationUtils {
         return new MessageEmbed.Field(
                 Lang.t(root + ".moderator.title").getValue(),
                 Lang.t(root + ".moderator.field")
-                        .parseUserId(user)
-                        .parseUserNames(user)
-                        .parseUserMention(user)
+                        .parseModId(user)
+                        .parseModNames(user)
+                        .parseModMention(user)
                         .getValue(),
                 inline);
     }

@@ -90,35 +90,35 @@ public class SelfNotifier extends Notifier {
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(
-                Lang.t("notification.command." + index + ".title")
+                Lang.t("notification.self.command." + index + ".title")
                         .parseMemberNames(event.getMember())
                         .parseGuildName(alkabot.getGuild())
                         .parseCommand(event)
                         .getValue()
         );
-        embed.setColor(Lang.getColor("notification.command." + index + ".color"));
+        embed.setColor(Lang.getColor("notification.self.command." + index + ".color"));
         embed.setThumbnail(
-                Lang.t("notification.command.success.icon")
+                Lang.t("notification.self.command.success.icon")
                         .parseBotAvatars(alkabot)
                         .parseGuildAvatar(alkabot.getGuild())
                         .parseMemberAvatars(event.getMember())
                         .getImage()
         );
-        embed.addField(NotificationUtils.createMessageChannelField("notification.command." + index, event.getChannel(), true));
-        embed.addField(NotificationUtils.createMemberField("notification.command." + index, event.getMember(), true));
+        embed.addField(NotificationUtils.createChannelField("notification.self.command." + index, event.getChannel(), true));
+        embed.addField(NotificationUtils.createMemberField("notification.self.command." + index, event.getMember(), true));
         embed.addField(
-                Lang.t("notification.command." + index + ".command.title")
+                Lang.t("notification.self.command." + index + ".command.title")
                         .getValue(),
-                Lang.t("notification.command." + index + ".command.field")
+                Lang.t("notification.self.command." + index + ".command.field")
                         .parseCommand(event)
                         .getValue(),
                 false);
 
         if (!success) {
             embed.addField(
-                    Lang.t("notification.command.fail.error.title")
+                    Lang.t("notification.self.command.fail.error.title")
                             .getValue(),
-                    Lang.t("notification.command.fail.error.field")
+                    Lang.t("notification.self.command.fail.error.field")
                             .parseError(exception)
                             .getValue(),
                     false);

@@ -37,6 +37,6 @@ public class DestroyCommand extends AbstractCommand {
     public void execute(SlashCommandInteractionEvent event) {
         alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
         alkabot.getMusicManager().reset();
-        event.reply(Lang.get("command.music.destroy.done")).queue();
+        event.reply(Lang.get("command.music.destroy.message")).queue();
     }
 }

@@ -7,25 +7,25 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
-public class StopCommand extends AbstractCommand {
+public class NowplayingCommand extends AbstractCommand {
 
-    public StopCommand(CommandManager commandManager) {
+    public NowplayingCommand(CommandManager commandManager) {
         super(commandManager);
     }
 
     @Override
     public String getName() {
-        return "stop";
+        return "nowplaying";
     }
 
     @Override
     public String getDescription() {
-        return Lang.get("command.music.stop.description");
+        return Lang.get("command.music.nowplaying.description");
     }
 
     @Override
     public boolean isEnabled() {
-        return alkabot.getConfig().getCommandConfig().getMusicCommandConfig().isStop();
+        return alkabot.getConfig().getCommandConfig().getMusicCommandConfig().isNowplaying();
     }
 
     @Override
@@ -35,8 +35,12 @@ public class StopCommand extends AbstractCommand {
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        event.reply(Lang.get("command.music.stop.message")).queue();
-        alkabot.getGuild().getAudioManager().closeAudioConnection();
-        //Music.reset(); Disabled, it's not a bug it's a F E A T U R E
+        if (alkabot.getMusicManager().getPlayer().getPlayingTrack() == null) {
+            event.reply(Lang.get("command.music.nowplaying.error.not_playing")).queue();
+            return;
+        }
+
+        event.deferReply().queue();
+        alkabot.getMusicManager().nowPlaying(event);
     }
 }

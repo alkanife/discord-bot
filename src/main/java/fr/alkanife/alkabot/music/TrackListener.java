@@ -74,7 +74,7 @@ public class TrackListener extends AudioEventAdapter {
             musicManager.getAlkabot().verbose("Retrying to play '" + track.getInfo().title + "'...");
             retriedTracks.add(track.getInfo().title);
 
-            musicManager.getTrackScheduler().queue(new AlkabotTrack(track, musicManager.getAlkabot().getJda().getSelfUser().getName(), musicManager.getAlkabot().getJda().getSelfUser().getId(), true), false);
+            musicManager.getTrackScheduler().queue(new AlkabotTrack(track, musicManager.getAlkabot().getJda().getSelfUser().getId()), 0, false);
         }
     }
 }

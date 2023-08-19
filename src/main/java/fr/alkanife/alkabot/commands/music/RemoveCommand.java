@@ -41,7 +41,7 @@ public class RemoveCommand extends AbstractCommand {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getName(), getDescription())
-                .addOption(OptionType.INTEGER, "input", Lang.get("command.music.remove.input_description"), true);
+                .addOption(OptionType.INTEGER, "track", Lang.get("command.music.remove.track"), true);
     }
 
     @Override
@@ -51,17 +51,17 @@ public class RemoveCommand extends AbstractCommand {
         MusicManager musicManager = alkabot.getMusicManager();
 
         if (musicManager.getPlayer().getPlayingTrack() == null) {
-            event.reply(Lang.get("command.music.generic.not_playing")).queue();
+            event.reply(Lang.get("command.music.remove.error.no_track")).queue();
             return;
         }
 
-        OptionMapping removeOption = event.getOption("input");
+        OptionMapping removeOption = event.getOption("track");
         long remove = 1;
         if (removeOption != null) {
             remove = removeOption.getAsLong();
 
-            if (remove > musicManager.getTrackScheduler().getQueue().size()) {
-                event.reply(Lang.get("command.music.generic.not_enough")).queue();
+            if (remove > musicManager.getTrackScheduler().getQueue().size() || remove <= 0) {
+                event.reply(Lang.get("command.music.remove.error.no_track")).queue();
                 return;
             }
         }
@@ -76,22 +76,34 @@ public class RemoveCommand extends AbstractCommand {
             BlockingQueue<AlkabotTrack> newBlockingQueue = new LinkedBlockingQueue<>();
 
             for (AlkabotTrack audioTrack : aTracks)
-                //noinspection ResultOfMethodCallIgnored
                 newBlockingQueue.offer(audioTrack);
 
             musicManager.getTrackScheduler().setQueue(newBlockingQueue);
 
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(Lang.get("command.music.remove.title"));
-            embedBuilder.setDescription("[" + t.getTitle() + "](" + t.getUrl() + ")"
-                    + " " + Lang.get("command.music.generic.by") + " [" + t.getArtists() + "](" + t.getUrl() + ")");
-            embedBuilder.setThumbnail(t.getThumbUrl());
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.setTitle(
+                    Lang.t("command.music.remove.success.title")
+                            .parseTrack(t)
+                            .getValue()
+            );
+            embed.setThumbnail(
+                    Lang.t("command.music.remove.success.icon")
+                            .parseTrackThumbnail(t)
+                            .parseMemberAvatars(event.getMember())
+                            .parseBotAvatars(alkabot)
+                            .parseGuildAvatar(event.getGuild())
+                            .getImage()
+            );
+            embed.setColor(Lang.getColor("command.music.remove.success.color"));
+            embed.setDescription(
+                    Lang.t("command.music.remove.success.description")
+                            .parseTrack(t)
+                            .getValue()
+            );
 
-            event.replyEmbeds(embedBuilder.build()).queue();
+            event.replyEmbeds(embed.build()).queue();
         } catch (Exception e) {
-            alkabot.getLogger().error("Failed to remove a music from the queue:");
-            e.printStackTrace();
-            event.reply(Lang.get("command.music.remove.error")).queue();
+            event.reply(Lang.get("command.music.remove.error.generic")).queue();
         }
     }
 }

@@ -30,6 +30,7 @@ public class AlkabotTrackPlayer {
                 retrying = false;
                 musicManager.getAlkabot().verbose("Now playing: " + track.getInfo().uri);
                 musicManager.getPlayer().startTrack(track, false);
+                musicManager.getTrackScheduler().setNowPlaying(alkabotTrack);
             }
 
             @Override
@@ -45,6 +46,7 @@ public class AlkabotTrackPlayer {
                 if (alkabotTrack.getQuery().startsWith("ytsearch")) {
                     musicManager.getAlkabot().verbose("Now playing (from spotify query): " + firstTrack.getInfo().uri);
                     musicManager.getPlayer().startTrack(firstTrack, false);
+                    musicManager.getTrackScheduler().setNowPlaying(alkabotTrack);
                 }
             }
 
@@ -60,7 +62,7 @@ public class AlkabotTrackPlayer {
                     embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ")"
                             + " " + Lang.get("command.music.generic.by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
                             Lang.get("command.music.generic.added_by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
-                            Lang.get("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
+                            //Lang.get("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
                             Lang.get("command.music.play.error.not_found.description"));
                     embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 
@@ -80,7 +82,7 @@ public class AlkabotTrackPlayer {
                         embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ")"
                                 + " " + Lang.get("command.music.generic.by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
                                 Lang.get("command.music.generic.added_by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
-                                Lang.get("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
+                                //Lang.get("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
                                 Lang.get("command.music.play.error.fail.message"));
                         embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
 

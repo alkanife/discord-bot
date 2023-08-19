@@ -98,7 +98,7 @@ public class DefaultFilesGenerator {
         CommandConfig commandConfig = new CommandConfig();
         commandConfig.setAbout(true);
 
-        MusicCommandConfig musicCommandConfig = new MusicCommandConfig(true, true, true, true, true, true, true, true, true, true, new ShortcutCommandConfig(true, true, true, true));
+        MusicCommandConfig musicCommandConfig = new MusicCommandConfig(true, true, true, true, true, true, true, true, true, true, true, new ShortcutCommandConfig(true, true, true, true));
         commandConfig.setMusicCommandConfig(musicCommandConfig);
 
         commandConfig.setUtilsCommandConfig(new UtilsCommandConfig(new InfoUtilsCommandConfig(true, true, true), true));

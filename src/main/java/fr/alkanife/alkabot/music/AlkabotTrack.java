@@ -1,12 +1,14 @@
 package fr.alkanife.alkabot.music;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import fr.alkanife.alkabot.lang.Lang;
 import lombok.*;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.Track;
 
 import java.util.*;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class AlkabotTrack {
@@ -16,13 +18,9 @@ public class AlkabotTrack {
     @Getter @Setter
     private String url;
     @Getter @Setter
-    private String trackSource;
-    @Getter @Setter
     private Date dateAdded;
     @Getter @Setter
     private String addedByID;
-    @Getter @Setter
-    private boolean priority;
     @Getter @Setter
     private String thumbUrl;
     @Getter @Setter
@@ -35,27 +33,23 @@ public class AlkabotTrack {
     @Getter @Setter
     private boolean retried = false;
 
-    public AlkabotTrack(AudioTrack track, String trackSource, String addedByID, boolean priority) {
+    public AlkabotTrack(AudioTrack track, String addedByID) {
         this.url = track.getInfo().uri;
 
         this.query = this.url;
 
-        this.trackSource = trackSource;
         this.dateAdded = new Date();
         this.addedByID = addedByID;
-        this.priority = priority;
         this.thumbUrl = "https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg";
         this.title = track.getInfo().title;
         this.artistList = Collections.singletonList(track.getInfo().author);
         this.duration = track.getDuration();
     }
 
-    public AlkabotTrack(Track track, String trackSource, String addedByID, boolean priority) {
+    public AlkabotTrack(Track track, String addedByID) {
         this.url = "https://open.spotify.com/track/" + track.getId();
-        this.trackSource = trackSource;
         this.dateAdded = new Date();
         this.addedByID = addedByID;
-        this.priority = priority;
 
         if (track.getAlbum() != null)
             if (track.getAlbum().getImages() != null)
@@ -63,7 +57,7 @@ public class AlkabotTrack {
                     this.thumbUrl = track.getAlbum().getImages()[0].getUrl();
 
         if (thumbUrl == null)
-            this.thumbUrl = "https://share.alkanife.fr/alkabot/spotify.png";
+            this.thumbUrl = Lang.getImage("music.spotify.thumbnail");
 
         this.title = track.getName();
 

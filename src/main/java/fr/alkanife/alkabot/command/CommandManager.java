@@ -9,7 +9,6 @@ import fr.alkanife.alkabot.commands.admin.ReloadCommand;
 import fr.alkanife.alkabot.commands.admin.StatusCommand;
 import fr.alkanife.alkabot.commands.music.*;
 import fr.alkanife.alkabot.commands.utilities.CopyCommand;
-import fr.alkanife.alkabot.commands.utilities.InfoCommand;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -55,10 +54,11 @@ public class CommandManager {
                 new RemoveCommand(this),
                 new ShuffleCommand(this),
                 new SkipCommand(this),
-                new fr.alkanife.alkabot.commands.music.StopCommand(this));
+                new fr.alkanife.alkabot.commands.music.StopCommand(this),
+                new NowplayingCommand(this));
 
-        registerCommands(new CopyCommand(this),
-                new InfoCommand(this));
+        registerCommands(new CopyCommand(this));/*,
+                new InfoCommand(this)); Info command disabled for now #TODO*/
     }
 
     public void registerCommands(AbstractCommand... abstractCommands) {

@@ -5,15 +5,18 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.lang.Lang;
 import fr.alkanife.alkabot.music.loader.LavaplayerLoader;
 import fr.alkanife.alkabot.music.loader.SpotifyLoader;
 import fr.alkanife.alkabot.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.entities.channel.unions.MessageChannelUnion;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import org.jetbrains.annotations.Nullable;
 
 public class MusicManager {
@@ -101,34 +104,76 @@ public class MusicManager {
         player.setVolume(alkabot.getMusicData().getVolume());
     }
 
-    public void play(SlashCommandInteractionEvent event, boolean priority, boolean force) {
-        alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
+    public void nowPlaying(SlashCommandInteractionEvent event) {
+        AlkabotTrack current = trackScheduler.getNowPlaying();
 
-        event.deferReply().queue();
+        EmbedBuilder embed = new EmbedBuilder();
+        embed.setTitle(
+                Lang.t("command.music.nowplaying.success.title")
+                        .parseTrack(current)
+                        .getValue()
+        );
+        embed.setThumbnail(
+                Lang.t("command.music.nowplaying.success.icon")
+                        .parseMemberAvatars(event.getMember())
+                        .parseGuildAvatar(event.getGuild())
+                        .parseBotAvatars(alkabot)
+                        .parseTrackThumbnail(current)
+                        .getValue()
+        );
+        embed.setColor(Lang.getColor("command.music.nowplaying.success.color"));
+        embed.setDescription(
+                Lang.t("command.music.nowplaying.success.description")
+                        .parseTrack(current)
+                        .getValue()
+        );
+
+        event.getHook().sendMessageEmbeds(embed.build()).queue();
+    }
+
+    public void playCommand(SlashCommandInteractionEvent event, final String commandSource, int position, boolean skipCurrent) {
+        alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
 
         alkabot.getMusicManager().connect(event.getMember());
 
-        String input = event.getOption("input").getAsString();
+        // Parse query
+        OptionMapping queryOption = event.getOption("query");
 
-        if (input.startsWith("https://open.spotify.com/playlist")) {
-            if (alkabot.isSpotifySupport())
-                alkabot.getMusicManager().getSpotifyLoader().load(event, input, priority, force);
-            else
-                event.reply("command.music.play.error.no_spotify_support").queue();
+        if (queryOption == null) {
+            event.reply(Lang.get("command.music" + commandSource + ".error.invalid_query")).queue();
+            return;
+        }
+
+        String query = queryOption.getAsString();
+
+        if (query.isBlank() || query.isEmpty()) {
+            event.reply(Lang.get("command.music" + commandSource + ".error.invalid_query")).queue();
+            return;
+        }
+
+        if (query.startsWith("https://open.spotify.com/playlist")) {
+            if (alkabot.isSpotifySupport()) {
+                event.deferReply().queue();
+                alkabot.getMusicManager().getSpotifyLoader().load(event, commandSource, query, position, skipCurrent);
+            } else {
+                event.reply(Lang.get("command.music." + commandSource + ".error.no_spotify_support")).queue();
+            }
         } else {
-            if (!StringUtils.isURL(input)) {
-                Shortcut shortcut = alkabot.getShortcut(input);
+            if (!StringUtils.isURL(query)) {
+                Shortcut shortcut = alkabot.getShortcut(query);
 
-                if (shortcut == null)
-                    input = "ytsearch: " + input;
-                else
-                if (StringUtils.isURL(shortcut.getQuery()))
-                    input = shortcut.getQuery();
-                else
-                    input = "ytsearch: " + shortcut.getQuery();
+                if (shortcut == null) {
+                    query = "ytsearch: " + query;
+                } else {
+                    if (StringUtils.isURL(shortcut.getQuery()))
+                        query = shortcut.getQuery();
+                    else
+                        query = "ytsearch: " + shortcut.getQuery();
+                }
             }
 
-            alkabot.getMusicManager().getLavaplayerLoader().load(event, input, priority, force);
+            event.deferReply().queue();
+            alkabot.getMusicManager().getLavaplayerLoader().load(event, commandSource, query, position, skipCurrent);
         }
     }
 }

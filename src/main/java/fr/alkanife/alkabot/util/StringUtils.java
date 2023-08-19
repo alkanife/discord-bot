@@ -48,38 +48,6 @@ public class StringUtils {
         return s.toLowerCase(Locale.ROOT).startsWith("http");
     }
 
-    /**
-     * Convert milliseconds music durations in human-readable time (00:00:00)
-     *
-     * @param duration the duration
-     * @param format   adds some []
-     * @param noLimit  if the method should return nothing when the duration is above 20 hours
-     * @return the string
-     */
-    public static @NotNull String durationToString(long duration, boolean format, boolean noLimit) {
-        if (!noLimit)
-            if (duration >= 72000000) // 20 hours
-                return "";
-
-        StringBuilder stringBuilder = new StringBuilder();
-
-        if (format)
-            stringBuilder.append("[");
-
-        if (duration >= 3600000) // 1 hour
-             stringBuilder.append(String.format("%02d:%02d:%02d",  TimeUnit.MILLISECONDS.toHours(duration),
-                     TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
-                     TimeUnit.MILLISECONDS.toSeconds(duration) % TimeUnit.MINUTES.toSeconds(1)));
-        else
-            stringBuilder.append(String.format("%02d:%02d",  TimeUnit.MILLISECONDS.toMinutes(duration) % TimeUnit.HOURS.toMinutes(1),
-                    TimeUnit.MILLISECONDS.toSeconds(duration) % TimeUnit.MINUTES.toSeconds(1)));
-
-        if (format)
-            stringBuilder.append("]");
-
-        return stringBuilder.toString();
-    }
-
     public static boolean endsWithZero(int i) { //what an ugly way
         return Integer.toString(i).endsWith("0");
     }

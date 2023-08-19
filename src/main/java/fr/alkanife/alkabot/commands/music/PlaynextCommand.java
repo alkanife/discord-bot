@@ -32,11 +32,11 @@ public class PlaynextCommand extends AbstractCommand {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getName(), getDescription())
-                .addOption(OptionType.STRING, "input", Lang.get("command.music.play.input_description"), true);
+                .addOption(OptionType.STRING, "query", Lang.get("command.music.playnext.input.query"), true);
     }
 
     @Override
     public void execute(SlashCommandInteractionEvent event) {
-        alkabot.getMusicManager().play(event, true, false);
+        alkabot.getMusicManager().playCommand(event, "playnext", 0, false);
     }
 }

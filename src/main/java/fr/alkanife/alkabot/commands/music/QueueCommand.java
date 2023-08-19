@@ -6,6 +6,7 @@ import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.lang.Lang;
 import fr.alkanife.alkabot.music.AlkabotTrack;
 import fr.alkanife.alkabot.music.MusicManager;
+import fr.alkanife.alkabot.music.MusicUtils;
 import fr.alkanife.alkabot.util.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -30,7 +31,7 @@ public class QueueCommand extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return Lang.get("command.music.queue.description");
+        return Lang.get("command.music.queue.command.description");
     }
 
     @Override
@@ -41,7 +42,7 @@ public class QueueCommand extends AbstractCommand {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getName(), getDescription())
-                .addOption(OptionType.INTEGER, "input", Lang.get("command.music.queue.input_description"), false);
+                .addOption(OptionType.INTEGER, "page", Lang.get("command.music.queue.command.page"), false);
     }
 
     @Override
@@ -53,7 +54,7 @@ public class QueueCommand extends AbstractCommand {
         AudioTrack current = musicManager.getPlayer().getPlayingTrack();
 
         if (current == null) {
-            event.reply(Lang.get("command.music.generic.not_playing")).queue();
+            event.reply(Lang.get("command.music.queue.error.not_playing")).queue();
             return;
         }
 
@@ -71,45 +72,61 @@ public class QueueCommand extends AbstractCommand {
             }
         }
         pages = tracksSize / 10;
-        OptionMapping pageOption = event.getOption("input");
+        OptionMapping pageOption = event.getOption("page");
         int page = 0;
         if (pageOption != null)
             page = ((int) pageOption.getAsLong()) - 1;
         if (page < 0)
             page = 0;
         if ((page - 1) > pages) {
-            event.reply(Lang.get("command.music.queue.out_of_range")).queue();
+            event.getHook().sendMessage(Lang.get("command.music.queue.error.out_of_range")).queue();
             return;
         }
 
-        EmbedBuilder embedBuilder = new EmbedBuilder();
-        String desc = "";
-        if (tracks.size() == 0) {
-            embedBuilder.setTitle(Lang.get("command.music.queue.one_now_playing"));
-            embedBuilder.setThumbnail("https://img.youtube.com/vi/" + current.getIdentifier() + "/0.jpg");
-            desc += "**[" + current.getInfo().title + "](" + current.getInfo().uri + ")** " + StringUtils.durationToString(current.getDuration(), true, false);
-        } else {
-            embedBuilder.setTitle(Lang.get("command.music.queue.title") + musicManager.getTrackScheduler().getQueue().size());
-            embedBuilder.setThumbnail(Lang.t("command.music.generic.images").getImage());
-            desc = "__" + Lang.get("command.music.queue.now_playing") + "__\n" +
-                    "**[" + current.getInfo().title + "](" + current.getInfo().uri + ")** " + StringUtils.durationToString(current.getDuration(), true, false) + "\n" +
-                    "\n" +
-                    "__" + Lang.get("command.music.queue.incoming") + "__\n";
 
+        if (tracks.size() == 0) {
+            alkabot.getMusicManager().nowPlaying(event);
+        } else {
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.setTitle(
+                    Lang.t("command.music.queue.title")
+                            .parseQueue(alkabot.getMusicManager())
+                            .getValue()
+            );
+            embed.setColor(Lang.getColor("command.music.queue.color"));
+            embed.setThumbnail(
+                    Lang.t("command.music.queue.icon")
+                            .parseBotAvatars(alkabot)
+                            .parseMemberAvatars(event.getMember())
+                            .parseGuildAvatar(event.getGuild())
+                            .getImage()
+            );
+
+            StringBuilder followingTracks = new StringBuilder();
             for (int i = (page * 10); i < ((page * 10) + 10); i++) {
                 try {
-                    AlkabotTrack audioTrack = tracks.get(i);
-                    //noinspection StringConcatenationInLoop
-                    desc += "`" + (i + 1) + ".` [" + audioTrack.getTitle() + "](" + audioTrack.getUrl()+ ") " + StringUtils.durationToString(audioTrack.getDuration(), true, false) + "\n";
-                } catch (Exception e) {
+                    followingTracks.append(
+                            Lang.t("command.music.queue.following_track")
+                                    .parse("index", String.valueOf(i + 1))
+                                    .parseTrack(tracks.get(i))
+                                    .getValue()
+                    ).append("\n");
+                } catch (Exception ignored) {
                     break;
                 }
             }
 
-            desc += "\n__" + Lang.get("command.music.queue.time_left") + "__ `" + StringUtils.durationToString(musicManager.getTrackScheduler().getQueueDuration(), false, true) + "`\n\n" +
-                    "**PAGE " + (page + 1) + " / " + pages + "**\n\n";
+            embed.setDescription(
+                    Lang.t("command.music.queue.description")
+                            .parseTrack(alkabot.getMusicManager().getTrackScheduler().getNowPlaying())
+                            .parse("following", followingTracks.toString())
+                            .parseQueue(alkabot.getMusicManager())
+                            .parse("page", String.valueOf(page + 1))
+                            .parse("page_count", String.valueOf(pages))
+                            .getValue()
+            );
+
+            event.getHook().sendMessageEmbeds(embed.build()).queue();
         }
-        embedBuilder.setDescription(desc);
-        event.getHook().sendMessageEmbeds(embedBuilder.build()).queue();
     }
 }

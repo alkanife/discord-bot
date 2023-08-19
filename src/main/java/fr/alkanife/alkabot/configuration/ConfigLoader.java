@@ -117,7 +117,7 @@ public class ConfigLoader extends JsonLoader {
         }
 
         if (config.getCommandConfig().getMusicCommandConfig() == null) {
-            config.getCommandConfig().setMusicCommandConfig(new MusicCommandConfig(true, true, true, true, true, true, true, true, true, true, null));
+            config.getCommandConfig().setMusicCommandConfig(new MusicCommandConfig(true, true, true, true, true, true, true, true, true, true, true, null));
             changingBecauseNoValue("commands.music.*", "true", "commands.music");
         }
 

@@ -2,6 +2,11 @@ package fr.alkanife.alkabot.lang;
 
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.admin.AdminCommandExecution;
+import fr.alkanife.alkabot.music.AlkabotTrack;
+import fr.alkanife.alkabot.music.AlkabotTrackPlaylist;
+import fr.alkanife.alkabot.music.MusicManager;
+import fr.alkanife.alkabot.music.MusicUtils;
+import fr.alkanife.alkabot.util.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -70,7 +75,7 @@ public class TranslationHandler {
         if (tagValue == null)
             tagValue = NULL_VALUE;
 
-        value = value.replaceAll("<" + tag.toLowerCase() + ">", tagValue);
+        value = value.replaceAll("<" + tag.toLowerCase() + ">", Matcher.quoteReplacement(tagValue));
     }
 
     public TranslationHandler parse(@NotNull String tag, @Nullable String value) {
@@ -320,6 +325,44 @@ public class TranslationHandler {
         return parseAvatars(user, "moderator");
     }
 
+    // --------
+    // MUSIC
+    // --------
+    public TranslationHandler parseTrack(@NotNull AlkabotTrack track) {
+        return parse("track_title", track.getTitle())
+                .parse("track_click_title", "[" + track.getTitle() + "](" + track.getUrl() + ")")
+                .parse("track_artists", track.getArtists())
+                .parse("track_click_artists", "[" + track.getArtists() + "](" + track.getUrl() + ")")
+                .parse("track_url", track.getUrl())
+                .parse("track_query", track.getQuery())
+                .parse("track_duration", MusicUtils.durationToString(track.getDuration(), false))
+                .parse("track_added_by_mention", "<@" + track.getAddedByID() + ">")
+                .parse("track_added_by_id", track.getAddedByID())
+                .parseTrackThumbnail(track);
+    }
+
+    public TranslationHandler parseTrackThumbnail(@NotNull AlkabotTrack track) {
+        return parse("track_thumbnail", track.getThumbUrl());
+    }
+
+    public TranslationHandler parsePlaylist(@NotNull AlkabotTrackPlaylist playlist) {
+        return parse("playlist_title", playlist.getTitle())
+                .parse("playlist_click_title", "[" + playlist.getTitle() + "](" + playlist.getUrl() + ")")
+                .parse("playlist_url", playlist.getUrl())
+                .parse("playlist_size", playlist.getTracks().size() + "")
+                .parse("playlist_duration", MusicUtils.getPlaylistDuration(playlist))
+                .parsePlaylistThumbnail(playlist);
+    }
+
+    public TranslationHandler parsePlaylistThumbnail(@NotNull AlkabotTrackPlaylist playlist) {
+        return parse("playlist_thumbnail", playlist.getThumbnailUrl());
+    }
+
+    public TranslationHandler parseQueue(@NotNull MusicManager musicManager) {
+        return parse("queue_duration", MusicUtils.durationToString(musicManager.getTrackScheduler().getQueueDuration(), true))
+                .parse("queue_size", musicManager.getTrackScheduler().getQueue().size()+"");
+    }
+
     public String getImage() {
         try {
             new URL(value).toURI();
@@ -330,6 +373,9 @@ public class TranslationHandler {
     }
 
     public Color getColor() {
+        if (value.equalsIgnoreCase("none"))
+            return null;
+
         Color color = Lang.getDefaultColor();
         try {
             color = Color.decode(value);

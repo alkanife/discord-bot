@@ -39,6 +39,6 @@ public class ClearCommand extends AbstractCommand {
     public void execute(SlashCommandInteractionEvent event) {
         alkabot.getMusicManager().setLastMusicCommandChannel(event.getChannel());
         alkabot.getMusicManager().getTrackScheduler().setQueue(new LinkedBlockingQueue<>());
-        event.reply(Lang.get("command.music.clear.done")).queue();
+        event.reply(Lang.get("command.music.clear.message")).queue();
     }
 }

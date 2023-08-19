@@ -53,11 +53,10 @@ public class ShuffleCommand extends AbstractCommand {
         BlockingQueue<AlkabotTrack> blockingQueue = new LinkedBlockingQueue<>();
 
         for (AlkabotTrack audioTrack : audioTracks)
-            //noinspection ResultOfMethodCallIgnored
             blockingQueue.offer(audioTrack);
 
         musicManager.getTrackScheduler().setQueue(blockingQueue);
 
-        event.reply(Lang.get("command.music.shuffle.done")).queue();
+        event.reply(Lang.t("command.music.shuffle.message").parseQueue(alkabot.getMusicManager()).getValue()).queue();
     }
 }

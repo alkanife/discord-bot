@@ -34,7 +34,7 @@ public class SkipCommand extends AbstractCommand {
     @Override
     public SlashCommandData getCommandData() {
         return Commands.slash(getName(), getDescription())
-                .addOption(OptionType.INTEGER, "input", Lang.get("command.music.skip.input_description"), false);
+                .addOption(OptionType.INTEGER, "tracks", Lang.get("command.music.skip.tracks"), false);
     }
 
     @Override
@@ -44,17 +44,17 @@ public class SkipCommand extends AbstractCommand {
         MusicManager musicManager = alkabot.getMusicManager();
 
         if (musicManager.getPlayer().getPlayingTrack() == null) {
-            event.reply(Lang.get("command.music.generic.not_playing")).queue();
+            event.reply(Lang.get("command.music.skip.error.not_playing")).queue();
             return;
         }
 
-        OptionMapping skipSize = event.getOption("input");
+        OptionMapping skipSize = event.getOption("tracks");
         int skip = 0;
         if (skipSize != null) {
             long skipLong = skipSize.getAsLong();
 
-            if (skipLong >= musicManager.getTrackScheduler().getQueue().size()) {
-                event.reply(Lang.get("command.music.generic.not_enough")).queue();
+            if (skipLong >= musicManager.getTrackScheduler().getQueue().size() || skipLong <= 0) {
+                event.reply(Lang.get("command.music.skip.error.invalid")).queue();
                 return;
             }
 
@@ -64,9 +64,9 @@ public class SkipCommand extends AbstractCommand {
 
         musicManager.goNext();
 
-        if (skipSize == null)
-            event.reply(Lang.get("command.music.skip.one")).queue();
+        if (skipSize == null || skip == 0)
+            event.reply(Lang.get("command.music.skip.success.one")).queue();
         else
-            event.reply(Lang.get("command.music.skip.mult") + skip).queue();
+            event.reply(Lang.t("command.music.skip.success.multiple").parse("tracks", String.valueOf(skip)).getValue()).queue();
     }
 }

@@ -434,11 +434,11 @@
       },
       "clear": {
         "description": "🎶 Clear the queue",
-        "done": "The queue has been reset."
+        "message": "The queue has been reset."
       },
       "destroy": {
         "description": "🎶 Disconnects the bot from the channel and resets the queue",
-        "done": "Bye! \uD83D\uDC4B\uD83C\uDFFB"
+        "message": "Bye! \uD83D\uDC4B\uD83C\uDFFB"
       },
       "play": {
         "description": "🎶 Join a voice channel and start the jukebox",

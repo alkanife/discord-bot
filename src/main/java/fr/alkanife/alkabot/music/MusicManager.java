@@ -6,6 +6,7 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.lang.Lang;
+import fr.alkanife.alkabot.music.data.Shortcut;
 import fr.alkanife.alkabot.music.loader.LavaplayerLoader;
 import fr.alkanife.alkabot.music.loader.SpotifyLoader;
 import fr.alkanife.alkabot.util.StringUtils;

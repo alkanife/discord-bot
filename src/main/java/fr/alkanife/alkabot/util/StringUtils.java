@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.util.Date;
@@ -30,22 +31,13 @@ public class StringUtils {
         return buf.toString();
     }
 
-    public static String dateToString(Date date) {
-        if (date == null)
-            return null;
-
-        return new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(date);
-    }
-
-    public static String offsetToString(OffsetDateTime offsetDateTime) {
-        if (offsetDateTime == null)
-            return null;
-
-        return dateToString(new Date(offsetDateTime.toInstant().toEpochMilli()));
-    }
-
     public static boolean isURL(@NotNull String s) {
-        return s.toLowerCase(Locale.ROOT).startsWith("http");
+        try {
+            new URL(s).toURI();
+            return true;
+        } catch (Exception exception) {
+            return false;
+        }
     }
 
     public static boolean endsWithZero(int i) { //what an ugly way

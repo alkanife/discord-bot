@@ -2,8 +2,12 @@ package fr.alkanife.alkabot.lang;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -67,5 +71,13 @@ public class Lang {
      */
     public static TranslationHandler t(String key) {
         return new TranslationHandler(key);
+    }
+
+    public static String formatDate(@NotNull Date date) {
+        return new SimpleDateFormat(dateFormat, dateLocale).format(date);
+    }
+
+    public static String formatDate(@NotNull OffsetDateTime offsetDateTime) {
+        return formatDate(new Date(offsetDateTime.toInstant().toEpochMilli()));
     }
 }

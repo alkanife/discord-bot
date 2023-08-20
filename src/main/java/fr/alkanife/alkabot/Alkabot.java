@@ -8,13 +8,12 @@ import fr.alkanife.alkabot.command.AbstractCommand;
 import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.configuration.ConfigLoader;
 import fr.alkanife.alkabot.configuration.json.Configuration;
-import fr.alkanife.alkabot.lang.Lang;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
 import fr.alkanife.alkabot.listener.ListenerManager;
 import fr.alkanife.alkabot.music.data.MusicData;
 import fr.alkanife.alkabot.music.data.MusicDataLoader;
 import fr.alkanife.alkabot.music.MusicManager;
-import fr.alkanife.alkabot.music.Shortcut;
+import fr.alkanife.alkabot.music.data.Shortcut;
 import fr.alkanife.alkabot.notification.NotificationManager;
 import fr.alkanife.alkabot.token.TokenLoader;
 import fr.alkanife.alkabot.token.Tokens;
@@ -38,8 +37,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Alkabot {
 

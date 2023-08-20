@@ -6,6 +6,8 @@ import fr.alkanife.alkabot.music.AlkabotTrack;
 import fr.alkanife.alkabot.music.AlkabotTrackPlaylist;
 import fr.alkanife.alkabot.music.MusicManager;
 import fr.alkanife.alkabot.music.MusicUtils;
+import fr.alkanife.alkabot.music.data.MusicData;
+import fr.alkanife.alkabot.music.data.Shortcut;
 import fr.alkanife.alkabot.util.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -363,7 +365,24 @@ public class TranslationHandler {
                 .parse("queue_size", musicManager.getTrackScheduler().getQueue().size()+"");
     }
 
+    public TranslationHandler parseShortcut(@NotNull Shortcut shortcut) {
+        return parse("shortcut_name", shortcut.getName())
+                .parse("shortcut_clickable_name", shortcut.getClickableName())
+                .parse("shortcut_query", shortcut.getQuery())
+                .parse("shortcut_clickable_query", shortcut.getClickableQuery())
+                .parse("shortcut_added_by_mention", "<@" + shortcut.getCreatorId() + ">")
+                .parse("shortcut_added_by_id", shortcut.getCreatorId())
+                .parse("shortcut_creation_date", Lang.formatDate(shortcut.getCreationDate()));
+    }
+
+    public TranslationHandler parseShortcutCount(@NotNull MusicData musicData) {
+        return parse("shortcut_count", String.valueOf(musicData.getShortcutList().size()));
+    }
+
     public String getImage() {
+        if (value.equalsIgnoreCase("none"))
+            return null;
+
         try {
             new URL(value).toURI();
         } catch (Exception exception) {

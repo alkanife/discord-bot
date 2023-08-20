@@ -1,7 +1,6 @@
 package fr.alkanife.alkabot.music.data;
 
 import com.google.gson.annotations.SerializedName;
-import fr.alkanife.alkabot.music.Shortcut;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

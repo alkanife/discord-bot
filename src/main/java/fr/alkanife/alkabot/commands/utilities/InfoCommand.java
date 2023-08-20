@@ -97,7 +97,7 @@ public class InfoCommand extends AbstractCommand {
         if (guild.getOwner() != null)
             description.append(Lang.get("command.utilities.info.server.owner")).append(" ").append(guild.getOwner().getAsMention()).append("\n");
 
-        description.append(Lang.get("command.utilities.info.generic.creation_date")).append(" `").append(StringUtils.offsetToString(guild.getTimeCreated())).append("`\n");
+        description.append(Lang.get("command.utilities.info.generic.creation_date")).append(" `").append(Lang.formatDate(guild.getTimeCreated())).append("`\n");
         description.append("\n");
 
         if (guild.getIconUrl() != null) {
@@ -150,7 +150,7 @@ public class InfoCommand extends AbstractCommand {
         if (richCustomEmoji.getGuild() != null)
             stringBuilder.append(Lang.get("command.utilities.info.emote.guild")).append(" `").append(richCustomEmoji.getGuild().getName()).append("`\n");
 
-        stringBuilder.append(Lang.get("command.utilities.info.generic.creation_date")).append(" `").append(StringUtils.offsetToString(richCustomEmoji.getTimeCreated())).append("`\n");
+        stringBuilder.append(Lang.get("command.utilities.info.generic.creation_date")).append(" `").append(Lang.formatDate(richCustomEmoji.getTimeCreated())).append("`\n");
         stringBuilder.append("\n[URL](").append(richCustomEmoji.getImageUrl()).append(")");
 
         embedBuilder.setDescription(stringBuilder);
@@ -171,10 +171,10 @@ public class InfoCommand extends AbstractCommand {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(user.getAsMention()).append("\n\n");
-        stringBuilder.append(Lang.get("command.utilities.info.member.joined.discord")).append(" `").append(StringUtils.offsetToString(user.getTimeCreated())).append("`\n");
+        stringBuilder.append(Lang.get("command.utilities.info.member.joined.discord")).append(" `").append(Lang.formatDate(user.getTimeCreated())).append("`\n");
 
         if (member != null)
-            stringBuilder.append(Lang.get("command.utilities.info.member.joined.server")).append(" `").append(StringUtils.offsetToString(member.getTimeJoined())).append("`\n");
+            stringBuilder.append(Lang.get("command.utilities.info.member.joined.server")).append(" `").append(Lang.formatDate(member.getTimeJoined())).append("`\n");
 
         stringBuilder.append("\n");
 

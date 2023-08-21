@@ -418,20 +418,6 @@
       }
     },
     "music": {
-      "generic": {
-        "icon": "https://c.tenor.com/_OA-44hy1-4AAAAC/anime-music.gif",
-        "not_playing": "No music is playing.",
-        "not_enough": "There are not enough songs in the queue.",
-        "spotify_playlist": "Spotify Playlist",
-        "music_format": "<title> by <author>",
-        "added_by": "Added by: <member_mention>",
-        "origin": "Origin: <origin>",
-        "retrying": "I allowed myself to re-add this title to the queue, because the first attempt had failed.",
-        "alone": {
-          "title": "Someone there?",
-          "description": "I disconnected because there was no one in my voice channel."
-        }
-      },
       "clear": {
         "description": "🎶 Clear the queue",
         "message": "The queue has been reset."
@@ -442,105 +428,234 @@
       },
       "play": {
         "description": "🎶 Join a voice channel and start the jukebox",
-        "input_description": "A YouTube link, title, or playlist name",
-        "title": "Title added to queue",
-        "title_playlist": "Playlist added to queue",
-        "title_priority": "Title added to queue (priority)",
-        "title_playlist_priority": "Playlist added to queue (priority)",
-        "position": "Position in queue: <position>",
-        "new_duration": "New queue duration: <duration>",
-        "entries": "Entries: <entries>",
-        "source": {
-          "url": "Command (direct link)",
-          "url_playlist": "Command (direct link - playlist)",
-          "search": "Command (YouTube search - video)",
-          "search_shortcut": "Command (YouTube search - shortcut)",
-          "spotify": "Command (direct link - Spotify playlist)"
+        "input": {
+          "query": "A YouTube link, title, or playlist name",
+          "position": "Position in queue"
+        },
+        "added": {
+          "title": {
+            "track": "Title added to queue", // track
+            "playlist": "Playlist added to queue" // playlist
+          },
+          "color": "none",
+          "icon": {
+            "track": "<track_thumbnail>", // member avatars, guild avatar, bot avatars, track thumbnail
+            "playlist": "<playlist_thumbnail>" // member avatars, guild avatar, bot avatars, playlist thumbnail
+          },
+          "description": {
+            "track": "<track_click_title> by <track_click_artists> [<track_duration>]\n\nPosition in queue: `<position>`", // track, position, queue
+            "playlist": "<playlist_click_title> [<playlist_duration>]\n\nEntries: `<playlist_size>`\nPosition in queue: `<position>`" // playlist, queue, position
+          }
         },
         "error": {
           "generic": "Sorry, I can't play this track! (and yet I tried...)",
+          "invalid_query": "Invalid query",
           "no_matches": "Sorry, I couldn't find anything that matches your search.",
           "spotify": "Sorry, I had a problem trying to play this Spotify playlist.",
-          "no_spotify_support": "Sorry, but my current setup does not allow me to play Spotify playlists.",
-          "not_found": {
-            "title": "I couldn't find the following title",
-            "description": "Unfortunately, I couldn't find a video on YouTube that bore the title of the song present in the Spotify playlist.."
-          },
-          "fail": {
-            "title": "I couldn't play this track",
-            "message": "The link may not working, or its format is not readable for me. For YouTube please note that I cannot play restricted videos (YT Premium, YT Kids, sensitive content etc)."
-          }
+          "no_spotify_support": "Sorry, but my current setup does not allow me to play Spotify playlists."
         }
       },
       "forceplay": {
-        "description": "🎶 Replace the current music with the desired one"
+        "description": "🎶 Replace the current music with the desired one",
+        "input": {
+          "query": "{command.music.play.input.query}"
+        },
+        "added": {
+          "title": {
+            "track": "Now playing", // track
+            "playlist": "Now playing" // playlist
+          },
+          "color": "none",
+          "icon": {
+            "track": "{command.music.play.added.icon.track}", // member avatars, guild avatar, bot avatars, track thumbnail
+            "playlist": "{command.music.play.added.icon.playlist}" // member avatars, guild avatar, bot avatars, playlist thumbnail
+          },
+          "description": {
+            "track": "<track_click_title> by <track_click_artists> [<track_duration>]", // track, position, queue
+            "playlist": "<playlist_click_title> [<playlist_duration>]\n\nEntries: `<playlist_size>`" // playlist, queue, position
+          }
+        },
+        "error": {
+          "generic": "{command.music.play.error.generic}",
+          "invalid_query": "{command.music.play.error.invalid_query}",
+          "no_matches": "{command.music.play.error.no_matches}",
+          "spotify": "{command.music.play.error.spotify}",
+          "no_spotify_support": "{command.music.play.error.no_spotify_support}"
+        }
       },
       "playnext": {
-        "description": "🎶 Adds the entry to the very first position in the queue"
+        "description": "🎶 Adds the entry to the very first position in the queue",
+        "input": {
+          "query": "{command.music.play.input.query}"
+        },
+        "added": {
+          "title": {
+            "track": "Title added to the first position", // track
+            "playlist": "Playlist added to the first position" // playlist
+          },
+          "color": "none",
+          "icon": {
+            "track": "{command.music.play.added.icon.track}", // member avatars, guild avatar, bot avatars, track thumbnail
+            "playlist": "{command.music.play.added.icon.playlist}" // member avatars, guild avatar, bot avatars, playlist thumbnail
+          },
+          "description": {
+            "track": "{command.music.play.added.description.track}", // track, position, queue
+            "playlist": "{command.music.play.added.description.playlist}" // playlist, queue, position
+          }
+        },
+        "error": {
+          "generic": "{command.music.play.error.generic}",
+          "invalid_query": "{command.music.play.error.invalid_query}",
+          "no_matches": "{command.music.play.error.no_matches}",
+          "spotify": "{command.music.play.error.spotify}",
+          "no_spotify_support": "{command.music.play.error.no_spotify_support}"
+        }
       },
       "queue": {
-        "description": "🎶 View queue",
-        "input_description": "Page",
-        "out_of_range": "There is no music on this page.",
-        "one_now_playing": "Now playing",
-        "title": "Queue (<tracks> tracks)",
-        "now_playing": "Now playing:",
-        "incoming": "Following:",
-        "time_left": "Time left:"
+        "command": {
+          "description": "🎶 View queue",
+          "page": "Page number"
+        },
+        "title": "Queue (<queue_size> tracks)", // queue
+        "icon": "https://c.tenor.com/_OA-44hy1-4AAAAC/anime-music.gif", // bot avatars, member avatars, guild avatars
+        "color": "none",
+        "description": "__Now playing:__\n**<track_click_title>** [<track_duration>]\n\n__Following:__\n<following>\n__Time left:__ `<queue_duration>`\n\n**PAGE <page> / <page_count>**", // track (now playing track), following, queue, page, page_count
+        "following_track": "`<index>.` <track_click_title> [<track_duration>]", // track, index
+        "error": {
+          "not_playing": "There is no music playing.",
+          "out_of_range": "There is no music on this page."
+        }
       },
       "remove": {
         "description": "🎶 Remove track from queue",
-        "input_description": "Track position (/queue)",
-        "title": "Title removed from queue.",
-        "error": "I was unable to remove this track from the queue."
+        "track": "Track position (/queue)",
+        "success": {
+          "title": "Title removed from queue", // track
+          "icon": "<track_thumbnail>", // member avatars, guild avatar, bot avatars, track thumbnail
+          "color": "none",
+          "description": "<track_click_title> by <track_click_artists>" // track
+        },
+        "error": {
+          "no_track": "There is no track at this position!",
+          "generic": "I was unable to remove this track from the queue."
+        }
       },
       "shuffle": {
         "description": "🎶 Shuffle queue",
-        "done": "The queue was shuffled."
+        "message": "The queue was shuffled." //queue
       },
       "skip": {
         "description": "🎶 Skip one or more music",
-        "input_description": "Number of tracks to skip",
-        "one": "⏭👍🏻",
-        "mult": "Skipping `<tracks>` tracks."
+        "tracks": "Number of tracks to skip",
+        "success": {
+          "one": "⏭👍🏻",
+          "multiple": "Skipping `<tracks>` tracks." // tracks
+        },
+        "error": {
+          "not_playing": "There is no music playing!",
+          "invalid": "Invalid number!"
+        }
       },
       "stop": {
         "description": "🎶 Stop the jukebox",
-        "done": "Bye! 👋🏻"
+        "message": "Bye! 👋🏻"
+      },
+      "nowplaying": {
+        "description": "🎶 Now playing",
+        "error": {
+          "not_playing": "There is not music playing"
+        },
+        "success": {
+          "title": "Now playing", // track
+          "icon": "<track_thumbnail>", // member avatars, guild avatar, bot avatars, track thumbnail
+          "color": "none",
+          "description": "<track_click_title> by <track_click_artists> [<track_duration>]\n\nAdded by: <track_added_by_mention>" // track
+        }
       },
       "shortcut": {
         "description": "Shortcut management",
         "bind": {
-          "description": "Add a shortcut",
-          "name_description": "Shortcut name",
-          "query_description": "Shortcut query",
-          "nope": "This shortcut already exists in my database!",
-          "success": "The shortcut `<shortcut>` was successfully added to my database.",
-          "fail": "I failed to add this shortcut to my database. It will disappear on my next restart."
+          "description": "🎶 Add a shortcut",
+          "input": {
+            "name": "Shortcut name",
+            "query": "Shortcut query"
+          },
+          "error": {
+            "already_existing": "There is already a shortcut with this name!",
+            "failed": "I failed to create this shortcut, sorry :("
+          },
+          "success": "The shortcut `<shortcut_name>` was successfully added to my database." // shortcut
         },
         "unbind": {
-          "description": "Delete a shortcut",
-          "name_description": "Name of shortcut to delete",
-          "nope": "This shortcut does not exist in my database!",
-          "success": "The shortcut `<shortcut>` was successfully deleted from my database.",
-          "fail": "I was unable to delete this shortcut from my database. This will still be present on my next restart."
+          "description": "🎶 Delete a shortcut",
+          "input": {
+            "name": "Name of shortcut to delete"
+          },
+          "error": {
+            "not_existing": "This shortcut does not exists!",
+            "failed": "I failed to delete this shortcut, sorry :("
+          },
+          "success": "The shortcut `<shortcut_name>` was successfully deleted from my database." //shortcut
         },
         "list": {
-          "description": "List existing shortcuts",
-          "page_description": "Page",
-          "no_entries": "No shortcuts present in my database! Do '/shortcut add' to add one.",
-          "out_of_range": "There is no shortcuts at this page.",
-          "title": "<shortcuts> shortcuts"
+          "description": "🎶 List existing shortcuts",
+          "input": {
+            "page": "Page"
+          },
+          "error": {
+            "no_entries": "No shortcuts present in my database! Use '/shortcut bind' to add one.",
+            "out_of_range": "There is no shortcuts at this page!"
+          },
+          "success": {
+            "title": "<shortcut_count> shortcuts", // shortcut_count, guild name
+            "color": "none",
+            "icon": "none", // member avatars, bot avatars, guild avatars
+            "description": "<shortcuts>\n**PAGE <page> / <page_count>**", // shortcuts, shortcut_count, page, page count
+            "shortcuts": "`<index>.` <shortcut_clickable_name> [<shortcut_added_by_mention>]" // shortcut, index
+          }
         },
         "info": {
-          "description": "Gives all information about a shortcut",
-          "name_description": "Shortcut name",
-          "nope": "This shortcut does not exist.",
-          "creation_date": "Created the: <date>",
-          "by": "By: <member_mention>",
-          "query": "Query: <query>"
+          "description": "🎶 Gives all information about a shortcut",
+          "input": {
+            "name": "Shortcut name"
+          },
+          "error": {
+            "not_existing": "This shortcut does not exists!"
+          },
+          "success": {
+            "title": "<shortcut_name>", // shortcut, guild name
+            "color": "none",
+            "icon": "none", // member avatars, bot avatars, guild avatars
+            "description": "Added on <shortcut_creation_date>\nBy <shortcut_added_by_mention>\n\n__Query:__\n `<shortcut_query>`" // shortcut
+          }
         }
       }
+    }
+  },
+  "music": {
+    "spotify": {
+      "title": "Spotify playlist",
+      "thumbnail": "https://share.alkanife.fr/alkabot/spotify.png"
+    },
+    "stream": "live",
+    "link_query": "Link",
+    "auto_stop": {
+      "title": "Someone there?", // guild name, channel name
+      "color": "{colors.orange}",
+      "icon": "none", // guild avatars, bot avatars
+      "description": "I disconnected because there was no one in my voice channel." // channel, guild name, queue
+    },
+    "not_found_spotify": {
+      "title": "I couldn't find the following title", // guild name
+      "color": "{colors.red}",
+      "icon": "none", // guild avatars, bot avatars, track thumbnail
+      "description": "<track_click_title> by <track_click_artists> [<track_duration>]\n\nUnfortunately, I couldn't find a video on YouTube that bore the title of the song present in the Spotify playlist..." // guild name, queue, track
+    },
+    "play_failed": {
+      "title": "I couldn't play this track", // guild name
+      "color": "{colors.red}",
+      "icon": "none", // guild avatars, bot avatars, track thumbnail
+      "description": "<track_click_title> by <track_click_artists> [<track_duration>]\n\nThe link may not working, or its format is not readable for me. For YouTube please note that I cannot play restricted videos (YT Premium, YT Kids, sensitive content etc)." // guild name, queue, track
     }
   }
 }

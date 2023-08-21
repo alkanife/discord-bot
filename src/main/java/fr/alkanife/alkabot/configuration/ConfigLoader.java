@@ -8,6 +8,7 @@ import fr.alkanife.alkabot.configuration.json.commands.*;
 import fr.alkanife.alkabot.configuration.json.guild.GuildPresenceActivityConfig;
 import fr.alkanife.alkabot.configuration.json.guild.GuildPresenceConfig;
 import fr.alkanife.alkabot.configuration.json.notifications.*;
+import fr.alkanife.alkabot.log.Logs;
 import fr.alkanife.alkabot.util.tool.JsonLoader;
 import net.dv8tion.jda.api.OnlineStatus;
 
@@ -18,18 +19,13 @@ import java.util.ArrayList;
 public class ConfigLoader extends JsonLoader {
 
     public ConfigLoader(Alkabot alkabot) {
-        super(alkabot);
+        super(alkabot, new File(alkabot.getParameters().getConfigurationPath()));
     }
 
     @Override
-    public String getReloadMessage() {
-        return "Reloading configuration (are you crazy?)";
-    }
+    public void processLoad() throws Exception {
+        alkabot.getLogger().debug("Using config file at path '" + file.getPath() + "'");
 
-    @Override
-    public void processLoad(boolean reload) throws Exception {
-        File file = new File(alkabot.getParameters().getConfigurationPath());
-        alkabot.verbose(file.getPath());
         String content = Files.readString(file.toPath());
         Configuration config = new GsonBuilder().serializeNulls().create().fromJson(content, Configuration.class);
 
@@ -185,9 +181,8 @@ public class ConfigLoader extends JsonLoader {
             changingBecauseNoValue("notifications.voice.*", "false", "notifications.voice.channel_id");
         }
 
-        alkabot.verbose("parsed configuration: " + config.toString());
+        alkabot.getLogger().debug("Parsed configuration: " + config.toString());
 
-        success = true;
         alkabot.setConfig(config);
     }
 }

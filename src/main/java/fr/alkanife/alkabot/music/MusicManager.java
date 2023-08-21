@@ -88,7 +88,7 @@ public class MusicManager {
     }
 
     public void initialize() {
-        alkabot.getLogger().info("Initializing music...");
+        alkabot.getLogger().info("Initializing jukebox...");
 
         lavaplayerLoader = new LavaplayerLoader(this);
         spotifyLoader = new SpotifyLoader(this);

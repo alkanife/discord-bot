@@ -9,8 +9,6 @@ import java.io.InputStreamReader;
 public class BuildReader {
 
     public BuildReader(Alkabot alkabot) {
-        alkabot.verbose("Reading build information");
-
         String version = readResource("/version.txt");
         alkabot.setVersion(version);
 

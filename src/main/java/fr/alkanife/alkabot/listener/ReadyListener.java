@@ -35,7 +35,7 @@ public class ReadyListener extends ListenerAdapter {
 
             new Test(alkabot);
         } catch (Exception exception) {
-            exception.printStackTrace();
+            alkabot.getLogger().error("An unexpected error prevented the bot to start", exception);
             alkabot.shutdown();
         }
     }

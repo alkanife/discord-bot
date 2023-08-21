@@ -6,7 +6,7 @@
 
     <groupId>fr.alkanife</groupId>
     <artifactId>alkabot</artifactId>
-    <version>2.0.0-dev3</version>
+    <version>2.0.0-infdev</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

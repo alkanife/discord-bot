@@ -25,12 +25,28 @@ public class Parameters {
     private boolean version = false;
 
     @Parameter(
-            names = { "--verbose", "-V"},
-            description = "Enable verbose mode"
+            names = { "--debug", "-dev"},
+            description = "Enable debug mode"
     )
     @Getter
     @Setter
-    private boolean verbose = false;
+    private boolean debug = false;
+
+    @Parameter(
+            names = { "--debugjda", "-devjda"},
+            description = "Enable debug mode for JDA and lavaplayer"
+    )
+    @Getter
+    @Setter
+    private boolean debugJDA = false;
+
+    @Parameter(
+            names = { "--debugall", "-devall"},
+            description = "Enable debug mode for everything"
+    )
+    @Getter
+    @Setter
+    private boolean debugAll = false;
 
     @Parameter(
             names = { "--config", "-c"},

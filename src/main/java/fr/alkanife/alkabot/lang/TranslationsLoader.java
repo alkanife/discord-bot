@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.log.Logs;
 import fr.alkanife.alkabot.util.tool.JsonLoader;
 import lombok.Getter;
 
@@ -17,18 +18,12 @@ public class TranslationsLoader extends JsonLoader {
     private HashMap<String, Object> translations = new HashMap<>();
 
     public TranslationsLoader(Alkabot alkabot) {
-        super(alkabot);
+        super(alkabot, new File(alkabot.getParameters().getLangPath() + "/" + alkabot.getConfig().getLangFile() + ".json"));
     }
 
     @Override
-    public String getReloadMessage() {
-        return "Reloading translations";
-    }
-
-    @Override
-    public void processLoad(boolean reload) throws Exception {
-        File file = new File(alkabot.getParameters().getLangPath() + "/" + alkabot.getConfig().getLangFile() + ".json");
-        alkabot.verbose(file.getPath());
+    public void processLoad() throws Exception {
+        alkabot.getLogger().debug("Using language file at path '" + file.getPath() + "'");
 
         String content = Files.readString(file.toPath());
         Gson gson = new GsonBuilder().serializeNulls().create();
@@ -44,21 +39,20 @@ public class TranslationsLoader extends JsonLoader {
         } else {
             Lang.setDateFormat(translations.get("date.format").toString());
         }
-        alkabot.verbose("date format: "+Lang.getDateFormat());
+        alkabot.getLogger().debug("Using date format '" + Lang.getDateFormat() + "'");
 
         if (translations.get("date.locale") == null) {
             alkabot.getLogger().warn("No date locale provided, using ENGLISH");
         } else {
             Locale locale = Locale.forLanguageTag(translations.get("date.locale").toString());
             Lang.setDateLocale(locale);
-            alkabot.verbose("Using date locale " + locale.toString());
+            alkabot.getLogger().debug("Using date locale '" + locale.toString() + "'");
         }
 
         // Set translations
         Lang.setTranslations(translations);
 
-        alkabot.getLogger().info("Loaded " + translations.size() + " translations");
-        success = true;
+        alkabot.getLogger().info("Finished loading " + translations.size() + " values from " + file.getName());
     }
 
     public void readEntry(String address, LinkedTreeMap.Entry<?, ?> entry) {

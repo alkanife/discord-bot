@@ -44,7 +44,7 @@ public class TranslationHandler {
         // If not found, return a missing translation
         if (obj == null) {
             value = "{" + key + "}";
-            System.out.println("Missing translation: " + key); // todo: logging
+            Alkabot.getInstance().getLogger().warn("Missing translation: '" + key + "'");
             return;
         }
 
@@ -66,7 +66,7 @@ public class TranslationHandler {
             Object variableObject = Lang.getTranslations().get(variableKey);
 
             if (variableObject == null) {
-                System.out.println("Missing translation for '" + key + "': '" + variableKey + "'"); // todo: logging
+                Alkabot.getInstance().getLogger().warn("Missing translation for '" + key + "': '" + variableKey + "'");
             } else {
                 value = value.replaceAll("\\{"+variableKey+"}", variableObject.toString());
             }

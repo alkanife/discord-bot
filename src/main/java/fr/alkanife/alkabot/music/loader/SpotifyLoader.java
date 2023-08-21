@@ -29,9 +29,9 @@ public class SpotifyLoader extends AbstractMusic {
         if (!musicManager.getAlkabot().isSpotifySupport())
             return;
 
-        musicManager.getAlkabot().verbose("Loading spotify playlist from '" + query + "' (pos=" + position + ", skipCurrent=" + skipCurrent + ")");
+        musicManager.getAlkabot().getLogger().debug("Loading spotify playlist from '" + query + "' (pos=" + position + ", skipCurrent=" + skipCurrent + ")");
 
-        musicManager.getAlkabot().verbose("Requesting Spotify client credentials...");
+        musicManager.getAlkabot().getLogger().debug("Requesting Spotify client credentials...");
         SpotifyApi spotifyApi = new SpotifyApi.Builder()
                 .setClientId(musicManager.getAlkabot().getTokens().getSpotify().getClientId())
                 .setClientSecret(musicManager.getAlkabot().getTokens().getSpotify().getClientSecret())
@@ -53,7 +53,7 @@ public class SpotifyLoader extends AbstractMusic {
         }
         spotifyApi.setAccessToken(access);
 
-        musicManager.getAlkabot().verbose("Requesting Spotify playlist info...");
+        musicManager.getAlkabot().getLogger().debug("Requesting Spotify playlist info...");
         // tracks playlists
         String id = query.replaceAll("https://open.spotify.com/playlist/", "");
 
@@ -88,8 +88,8 @@ public class SpotifyLoader extends AbstractMusic {
             EmbedBuilder embed = MusicUtils.createPlaylistAddedEmbed(commandSource, event, alkabotTrackPlaylist, musicManager, pos);
             event.getHook().sendMessageEmbeds(embed.build()).queue();
 
-            musicManager.getAlkabot().verbose("Spotify playlist loaded! (" + alkabotTrackList.size() + " tracks)");
-            musicManager.getAlkabot().verbose("First track url: " + alkabotTrackList.get(0).getUrl());
+            musicManager.getAlkabot().getLogger().debug("Spotify playlist loaded! (" + alkabotTrackList.size() + " tracks)");
+            musicManager.getAlkabot().getLogger().debug("First track url: " + alkabotTrackList.get(0).getUrl());
         } catch (Exception e) {
             musicManager.getAlkabot().getLogger().error("Failed to get spotify playlist:", e);
             event.getHook().sendMessage(Lang.get("command.music." + commandSource + ".error.spotify")).queue();

@@ -42,7 +42,7 @@ public class NotificationManager {
 
         try {
             textChannel.sendMessageEmbeds(messageEmbed).queue();
-            alkabot.verbose("Successfully sent '" + notificationChannel.name() + "' notification titled '" + messageEmbed.getTitle() + "'");
+            alkabot.getLogger().debug("Successfully sent '" + notificationChannel.name() + "' notification titled '" + messageEmbed.getTitle() + "'");
         } catch (Exception exception) {
             alkabot.getLogger().error("Failed to send a notification titled '" + messageEmbed.getTitle() + "':");
             exception.printStackTrace();

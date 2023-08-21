@@ -1,5 +1,6 @@
 package fr.alkanife.alkabot;
 
+import ch.qos.logback.classic.Logger;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.google.gson.Gson;
@@ -10,6 +11,7 @@ import fr.alkanife.alkabot.configuration.ConfigLoader;
 import fr.alkanife.alkabot.configuration.json.Configuration;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
 import fr.alkanife.alkabot.listener.ListenerManager;
+import fr.alkanife.alkabot.log.Logs;
 import fr.alkanife.alkabot.music.data.MusicData;
 import fr.alkanife.alkabot.music.data.MusicDataLoader;
 import fr.alkanife.alkabot.music.MusicManager;
@@ -19,7 +21,6 @@ import fr.alkanife.alkabot.token.TokenLoader;
 import fr.alkanife.alkabot.token.Tokens;
 import fr.alkanife.alkabot.util.tool.BuildReader;
 import fr.alkanife.alkabot.util.tool.DefaultFilesGenerator;
-import fr.alkanife.alkabot.util.tool.LogsCleaner;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.JDA;
@@ -30,8 +31,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -39,6 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Alkabot {
+
+    @Getter
+    private static Alkabot instance;
 
     @Getter
     private final String github = "https://github.com/alkanife/alkabot";
@@ -79,88 +81,87 @@ public class Alkabot {
     private Guild guild;
 
     public Alkabot(String[] args) {
+        instance = this;
+
+        // Parse program arguments
+        parameters = new Parameters();
+        JCommander jCommander = JCommander.newBuilder().programName("alkabot").addObject(parameters).build();
+
         try {
-            // Parse program arguments
-            parameters = new Parameters();
-            JCommander jCommander = JCommander.newBuilder().programName("alkabot").addObject(parameters).build();
+            jCommander.parse(args);
+        } catch (ParameterException exception) {
+            System.out.println("Invalid arguments, see correct usage with '--help'");
+            return;
+        }
 
-            try {
-                jCommander.parse(args);
-            } catch (ParameterException exception) {
-                System.out.println("Invalid arguments, see correct usage with '--help'");
-                return;
-            }
+        if (parameters.isHelp()) {
+            jCommander.usage();
+            return;
+        }
 
-            if (parameters.isHelp()) {
-                jCommander.usage();
-                return;
-            }
+        if (parameters.isDebugAll()) {
+            parameters.setDebug(true);
+            parameters.setDebugJDA(true);
+        }
 
-            // Read build information
-            new BuildReader(this);
+        new BuildReader(this);
 
-            if (parameters.isVersion()) {
-                System.out.println("Alkabot version " + getVersion());
-                System.out.println("Build " + getBuild());
-                return;
-            }
+        if (parameters.isVersion()) {
+            System.out.println("Alkabot version " + getVersion());
+            System.out.println("Build " + getBuild());
+            System.out.println(getGithub());
+            return;
+        }
 
-            verbose("Provided parameters: " + parameters.toString());
-
+        try {
             // Validate folder paths
             parameters.setLogsPath(validateFolderPath(parameters.getLogsPath()));
             parameters.setDataPath(validateFolderPath(parameters.getDataPath()));
             parameters.setLangPath(validateFolderPath(parameters.getLangPath()));
 
+            Logs.setupRootLogger(parameters);
+
+            logger = Logs.createLogger(Alkabot.class);
+            logger.debug("DEBUG MODE ENABLED");
+            logger.debug("Please do not use the debug mode in production.");
+            logger.debug("---------");
+            logger.debug("Provided parameters: " + parameters.toString());
+
             // generate files
             if (parameters.isGenerateFiles()) {
-                new DefaultFilesGenerator(this);
+                logger.info("Generating default files...");
+                new DefaultFilesGenerator(parameters);
                 return;
             }
 
             // Splash text
-            System.out.println("           _ _         _           _");
-            System.out.println("     /\\   | | |       | |         | |");
-            System.out.println("    /  \\  | | | ____ _| |__   ___ | |_");
-            System.out.println("   / /\\ \\ | | |/ / _` | '_ \\ / _ \\| __|");
-            System.out.println("  / ____ \\| |   < (_| | |_) | (_) | |_ ");
-            System.out.println(" /_/    \\_\\_|_|\\_\\__,_|_.__/ \\___/ \\__|");
-            System.out.println();
-            System.out.println(" " + github);
-            System.out.println(" Version " + getFullVersion());
-            System.out.println();
+            logger.info("           _ _         _           _");
+            logger.info("     /\\   | | |       | |         | |");
+            logger.info("    /  \\  | | | ____ _| |__   ___ | |_");
+            logger.info("   / /\\ \\ | | |/ / _` | '_ \\ / _ \\| __|");
+            logger.info("  / ____ \\| |   < (_| | |_) | (_) | |_ ");
+            logger.info(" /_/    \\_\\_|_|\\_\\__,_|_.__/ \\___/ \\__|");
+            logger.info(" ");
+            logger.info(" " + github);
+            logger.info(" Version " + getFullVersion());
+            logger.info(" ");
 
-            if (snapshotBuild)
-                System.out.println("""
-                        ***                                                                                ***
-                        *** THIS VERSION IS A DEV BUILD AND SHOULD NOT BE USED IN A PRODUCTION ENVIRONMENT ***
-                        ***                                                                                ***
-                        """);
+            if (snapshotBuild) {
+                logger.warn("***                                                                                ***");
+                logger.warn("*** THIS VERSION IS A DEV BUILD AND SHOULD NOT BE USED IN A PRODUCTION ENVIRONMENT ***");
+                logger.warn("***                                                                                ***");
+            }
 
             if (version.equals("unknown"))
-                System.out.println("Unable to find the current Alkabot version, be careful...");
-
-            Thread.sleep(2000);
-
-            // Moving old latest.log file
-            try {
-                new LogsCleaner(this);
-            } catch (Exception exception) {
-                printJavaError("/i\\ Failed to clean logs", exception);
-            }
-
-            // Create logger
-            verbose("Switching to SLF4J logger");
-            logger = LoggerFactory.getLogger(Alkabot.class);
+                logger.warn("Unable to find the current Alkabot version, be careful...");
 
             // Initializing tokens
-            try {
-                logger.info("Loading tokens");
-                new TokenLoader(this).load();
-            } catch (Exception exception) {
-                printFileError("tokens", exception);
+            logger.info("Loading tokens...");
+            TokenLoader tokenLoader = new TokenLoader(this);
+            tokenLoader.load();
+
+            if (!tokenLoader.success)
                 return;
-            }
 
             if (tokens.getDiscordToken() == null) {
                 logger.error("No Discord token provided!");
@@ -168,28 +169,26 @@ public class Alkabot {
             }
 
             // Initializing configuration
-            try {
-                logger.info("Loading config");
-                new ConfigLoader(this).load();
-            } catch (Exception exception) {
-                printFileError("configuration", exception);
+            logger.info("Loading configuration...");
+            ConfigLoader configLoader = new ConfigLoader(this);
+            configLoader.load();
+
+            if (!configLoader.success)
                 return;
-            }
 
             // Initializing translations
-            try {
-                logger.info("Loading translations");
-                new TranslationsLoader(this).load();
-            } catch (Exception exception) {
-                printFileError("translations", exception);
+            logger.info("Loading language...");
+            TranslationsLoader translationsLoader = new TranslationsLoader(this);
+            translationsLoader.load();
+
+            if (!translationsLoader.success)
                 return;
-            }
 
             // Initializing commands
             // Always initialize command AFTER parsing the configuration
             commandManager = new CommandManager(this);
             commandManager.initialize();
-            logger.info(commandManager.getCommands().size() + " commands ready");
+            logger.info(commandManager.getCommands().size() + " commands enabled and ready");
 
             // Initializing music manager
             musicManager = new MusicManager(this);
@@ -198,19 +197,18 @@ public class Alkabot {
             notificationManager = new NotificationManager(this);
 
             // Initializing music data
-            try {
-                logger.info("Loading music data");
-                new MusicDataLoader(this).load();
-            } catch (Exception exception) {
-                printFileError("music data", exception);
+            logger.info("Loading jukebox data...");
+            MusicDataLoader musicDataLoader = new MusicDataLoader(this);
+            musicDataLoader.load();
+
+            if (!musicDataLoader.success)
                 return;
-            }
 
             // Initializing Listener Manager
             listenerManager = new ListenerManager(this);
 
             // Building JDA
-            logger.info("Building JDA...");
+            logger.debug("Creating JDA...");
 
             JDABuilder jdaBuilder = JDABuilder.createDefault(tokens.getDiscordToken());
             jdaBuilder.setRawEventsEnabled(true);
@@ -228,24 +226,15 @@ public class Alkabot {
 
             listenerManager.initialize(jdaBuilder);
 
-            logger.info("Starting JDA");
+            logger.info("Starting JDA...");
             jda = jdaBuilder.build();
         } catch (Exception exception) {
-            System.out.println("------------");
-            printJavaError("An unexpected error prevented the bot to start:", exception);
+            logger.error("An unexpected error prevented the bot to start", exception);
         }
     }
 
     public String getFullVersion() {
         return version + " (" + build + ")";
-    }
-
-    public void verbose(String s) {
-        if (parameters.isVerbose())
-            if (logger == null)
-                System.out.println("[verbose] " + s);
-            else
-                logger.info("[verbose] " + s);
     }
 
     public void shutdown() {
@@ -273,7 +262,7 @@ public class Alkabot {
             return false;
         }
 
-        verbose("Guild: " + guild.getName());
+        logger.debug("Guild: " + guild.getName());
         this.guild = guild;
 
         return true;
@@ -287,7 +276,7 @@ public class Alkabot {
                 config.getWelcomeMessageConfig().setEnable(false);
                 return false;
             } else {
-                verbose("Welcome message channel: " + textChannel.getName());
+                logger.debug("Welcome message channel: " + textChannel.getName());
                 welcomeMessageChannel = textChannel;
                 return true;
             }
@@ -303,7 +292,7 @@ public class Alkabot {
                 config.getAutoRoleConfig().setEnable(false);
                 return false;
             } else {
-                verbose("Auto-role: " + role.getName());
+                logger.debug("Auto-role: " + role.getName());
                 autoRole = role;
                 return true;
             }
@@ -323,24 +312,8 @@ public class Alkabot {
         guild.updateCommands().addCommands(commands).queue();
     }
 
-    public void printFileError(String file, Exception exception) {
-        logger.error("Unable to load " + file + " (" + exception.toString() + ")");
-        logger.error("Please make sure that this file exists, and that the bot has access to it.");
-        logger.error("To generate default files, use the --generateFiles flag.");
-        if (parameters.isVerbose())
-            logger.error("[verbose] Detailed error: ", exception);
-    }
-
-    public void printJavaError(String message, Exception exception) {
-        System.out.println(message + " (" + exception.toString() + ")");
-        if (parameters.isVerbose()) {
-            System.out.println("[verbose] Detailed error: ");
-            exception.printStackTrace();
-        }
-    }
-
     public Activity buildActivity() {
-        verbose("Building activity");
+        logger.debug("Building activity");
 
         Activity.ActivityType activityType = Activity.ActivityType.valueOf(config.getGuildConfig().getGuildPresenceConfig().getGuildActivityConfig().getType());
         return Activity.of(activityType, config.getGuildConfig().getGuildPresenceConfig().getGuildActivityConfig().getText());
@@ -357,8 +330,6 @@ public class Alkabot {
 
         if (string.endsWith("/"))
             string = string.substring(0, string.length() - 1);
-
-        verbose("Using folder path '" + string + "'");
 
         return string;
     }

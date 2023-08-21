@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.music.data;
 
 import com.google.gson.GsonBuilder;
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.log.Logs;
 import fr.alkanife.alkabot.util.tool.JsonLoader;
 
 import java.io.File;
@@ -11,18 +12,12 @@ import java.util.ArrayList;
 public class MusicDataLoader extends JsonLoader {
 
     public MusicDataLoader(Alkabot alkabot) {
-        super(alkabot);
+        super(alkabot, new File(alkabot.getParameters().getDataPath() + "/music.json"));
     }
 
     @Override
-    public String getReloadMessage() {
-        return "Reloading music data";
-    }
-
-    @Override
-    public void processLoad(boolean reload) throws Exception {
-        File file = new File(alkabot.getParameters().getDataPath() + "/music.json");
-        alkabot.verbose(file.getPath());
+    public void processLoad() throws Exception {
+        alkabot.getLogger().debug("Using music data at path '" + file.getPath() + "'");
         String content = Files.readString(file.toPath());
         MusicData musicData = new GsonBuilder().serializeNulls().create().fromJson(content, MusicData.class);
 
@@ -32,7 +27,6 @@ public class MusicDataLoader extends JsonLoader {
         if (musicData.getShortcutList() == null)
             musicData.setShortcutList(new ArrayList<>());
 
-        success = true;
         alkabot.setMusicData(musicData);
     }
 }

@@ -18,7 +18,7 @@ public class SlashCommandHandler extends AbstractCommandHandler {
             if (abstractCommand == null)
                 return;
 
-            alkabot.verbose("Invoking command '" + event.getFullCommandName() + "'");
+            alkabot.getLogger().debug("Invoking command '" + event.getFullCommandName() + "'");
             abstractCommand.execute(event);
             alkabot.getNotificationManager().getSelfNotification().notifyCommand(event, null);
         } catch (Exception exception) {

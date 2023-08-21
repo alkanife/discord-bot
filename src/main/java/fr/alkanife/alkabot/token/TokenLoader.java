@@ -2,6 +2,7 @@ package fr.alkanife.alkabot.token;
 
 import com.google.gson.GsonBuilder;
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.log.Logs;
 import fr.alkanife.alkabot.util.tool.JsonLoader;
 
 import java.io.File;
@@ -10,18 +11,13 @@ import java.nio.file.Files;
 public class TokenLoader extends JsonLoader {
 
     public TokenLoader(Alkabot alkabot) {
-        super(alkabot);
+        super(alkabot, new File(alkabot.getParameters().getTokensPath()));
     }
 
     @Override
-    public String getReloadMessage() {
-        return "Reloading tokens - Please note that the Discord token will not be reloaded";
-    }
+    public void processLoad() throws Exception {
+        alkabot.getLogger().debug("Using token file at path '" + file.getPath() + "'");
 
-    @Override
-    public void processLoad(boolean reload) throws Exception {
-        File file = new File(alkabot.getParameters().getTokensPath());
-        alkabot.verbose(file.getPath());
         String content = Files.readString(file.toPath());
         Tokens tokens = new GsonBuilder().serializeNulls().create().fromJson(content, Tokens.class);
 
@@ -38,7 +34,6 @@ public class TokenLoader extends JsonLoader {
             alkabot.setSpotifySupport(false);
         }
 
-        success = true;
         alkabot.setTokens(tokens);
     }
 }

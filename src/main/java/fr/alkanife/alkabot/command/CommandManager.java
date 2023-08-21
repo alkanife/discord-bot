@@ -34,9 +34,11 @@ public class CommandManager {
     }
 
     public void initialize() {
+        alkabot.getLogger().debug("Setting up terminal command thread");
         terminalCommandHandler = new TerminalCommandRunnable(alkabot);
         terminalCommandHandlerThread = new Thread(terminalCommandHandler, "Alkabot TCH");
 
+        alkabot.getLogger().info("Loading commands...");
         registerAdminCommands(new fr.alkanife.alkabot.commands.admin.StopCommand(this),
                 new StatusCommand(this),
                 new PingCommand(this),
@@ -55,7 +57,8 @@ public class CommandManager {
                 new ShuffleCommand(this),
                 new SkipCommand(this),
                 new fr.alkanife.alkabot.commands.music.StopCommand(this),
-                new NowplayingCommand(this));
+                new NowplayingCommand(this),
+                new VolumeCommand(this));
 
         registerCommands(new CopyCommand(this));/*,
                 new InfoCommand(this)); Info command disabled for now #TODO*/
@@ -68,7 +71,7 @@ public class CommandManager {
 
     public void registerCommand(AbstractCommand abstractCommand) {
         if (abstractCommand.isEnabled()) {
-            alkabot.verbose("Adding command " + abstractCommand.getClass().getName());
+            alkabot.getLogger().debug("Adding command " + abstractCommand.getClass().getName());
             commands.put(abstractCommand.getName(), abstractCommand);
         }
     }
@@ -79,7 +82,7 @@ public class CommandManager {
     }
 
     public void registerAdminCommand(AbstractAdminCommand abstractAdminCommand) {
-        alkabot.verbose("Adding ADMIN command " + abstractAdminCommand.getClass().getName());
+        alkabot.getLogger().debug("Adding command " + abstractAdminCommand.getClass().getName() + " (admin)");
         adminCommands.put(abstractAdminCommand.getName(), abstractAdminCommand);
     }
 

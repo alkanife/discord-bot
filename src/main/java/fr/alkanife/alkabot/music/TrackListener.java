@@ -34,16 +34,33 @@ public class TrackListener extends AudioEventAdapter {
             if (voiceChannel != null) {
                 if (voiceChannel.getMembers().size() == 1) {
                     if (!endReason.equals(AudioTrackEndReason.STOPPED)) {
-                        musicManager.getAlkabot().verbose("Stopping the music because I'm alone");
+                        musicManager.getAlkabot().getLogger().debug("Stopping the music because I'm alone");
                         musicManager.getAlkabot().getMusicManager().reset();
 
                         if (musicManager.getAlkabot().getMusicManager().getLastMusicCommandChannel() != null) {
-                            EmbedBuilder embedBuilder = new EmbedBuilder();
-                            embedBuilder.setTitle(Lang.get("command.music.generic.alone.title"));
-                            //embedBuilder.setColor(Colors.BIG_RED);
-                            embedBuilder.setDescription(Lang.get("command.music.generic.alone.description"));
+                            EmbedBuilder embed = new EmbedBuilder();
+                            embed.setTitle(
+                                    Lang.t("music.auto_stop.title")
+                                            .parseGuildName(musicManager.getAlkabot().getGuild())
+                                            .parseChannelName(musicManager.getAlkabot().getMusicManager().getLastMusicCommandChannel())
+                                            .getValue()
+                            );
+                            embed.setColor(Lang.getColor("music.auto_stop.color"));
+                            embed.setThumbnail(
+                                    Lang.t("music.auto_stop.icon")
+                                            .parseGuildAvatar(musicManager.getAlkabot().getGuild())
+                                            .parseBotAvatars(musicManager.getAlkabot())
+                                            .getImage()
+                            );
+                            embed.setDescription(
+                                    Lang.t("music.auto_stop.description")
+                                            .parseChannel(musicManager.getAlkabot().getMusicManager().getLastMusicCommandChannel())
+                                            .parseGuildName(musicManager.getAlkabot().getGuild())
+                                            .parseQueue(musicManager)
+                                            .getValue()
+                            );
 
-                            musicManager.getAlkabot().getMusicManager().getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                            musicManager.getAlkabot().getMusicManager().getLastMusicCommandChannel().sendMessageEmbeds(embed.build()).queue();
                         }
                         return;
                     }
@@ -58,20 +75,38 @@ public class TrackListener extends AudioEventAdapter {
     @Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         if (retriedTracks.contains(track.getInfo().title)) {
-            musicManager.getAlkabot().verbose("Failed to play '" + track.getInfo().title + "'");
+            musicManager.getAlkabot().getLogger().debug("Failed to play '" + track.getInfo().title + "'");
 
-            EmbedBuilder embedBuilder = new EmbedBuilder();
-            embedBuilder.setTitle(Lang.get("command.music.play.error.fail.title"));
-            //embedBuilder.setColor(Colors.BIG_RED);
-            embedBuilder.setDescription("[" + track.getInfo().title + "](" + track.getInfo().uri + ")"
-                    + " " + Lang.get("command.music.generic.by") + " [" + track.getInfo().author + "](" + track.getInfo().uri + ")\n\n" +
-                    Lang.get("command.music.play.error.fail.message"));
-            embedBuilder.setThumbnail("https://img.youtube.com/vi/" + track.getIdentifier() + "/0.jpg");
+            AlkabotTrack alkabotTrack = new AlkabotTrack(track, musicManager.getAlkabot().getJda().getSelfUser().getId());
 
-            if (musicManager != null)
-                musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.setTitle(
+                    Lang.t("music.play_failed.title")
+                            .parseGuildName(musicManager.getAlkabot().getGuild())
+                            .getValue()
+            );
+            embed.setColor(Lang.getColor("music.play_failed.color"));
+            embed.setThumbnail(
+                    Lang.t("music.play_failed.icon")
+                            .parseGuildAvatar(musicManager.getAlkabot().getGuild())
+                            .parseBotAvatars(musicManager.getAlkabot())
+                            .parseTrackThumbnail(alkabotTrack)
+                            .getValue()
+            );
+            embed.setDescription(
+                    Lang.t("music.play_failed.description")
+                            .parseGuildName(musicManager.getAlkabot().getGuild())
+                            .parseQueue(musicManager)
+                            .parseTrack(alkabotTrack)
+                            .getValue()
+            );
+
+            if (musicManager.getLastMusicCommandChannel() != null)
+                musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embed.build()).queue();
+
+            retriedTracks.remove(track.getInfo().title);
         } else {
-            musicManager.getAlkabot().verbose("Retrying to play '" + track.getInfo().title + "'...");
+            musicManager.getAlkabot().getLogger().debug("Retrying to play '" + track.getInfo().title + "'...");
             retriedTracks.add(track.getInfo().title);
 
             musicManager.getTrackScheduler().queue(new AlkabotTrack(track, musicManager.getAlkabot().getJda().getSelfUser().getId()), 0, false);

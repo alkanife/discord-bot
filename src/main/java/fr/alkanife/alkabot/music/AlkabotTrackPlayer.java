@@ -19,16 +19,18 @@ public class AlkabotTrackPlayer {
     }
 
     public void play(AlkabotTrack alkabotTrack) {
-        if (alkabotTrack == null)
-            throw new NullPointerException("The track cannot be null!");
+        if (alkabotTrack == null) {
+            musicManager.getAlkabot().getLogger().debug("End of queue");
+            return;
+        }
 
-        musicManager.getAlkabot().verbose("Trying to play '" + alkabotTrack.getTitle() + "' by '" + alkabotTrack.getArtists() + "' (" + alkabotTrack.getUrl() + ")...");
+        musicManager.getAlkabot().getLogger().debug("Trying to play '" + alkabotTrack.getTitle() + "' by '" + alkabotTrack.getArtists() + "' (" + alkabotTrack.getUrl() + ")...");
 
         musicManager.getAudioPlayerManager().loadItemOrdered(musicManager.getPlayer(), alkabotTrack.getQuery(), new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 retrying = false;
-                musicManager.getAlkabot().verbose("Now playing: " + track.getInfo().uri);
+                musicManager.getAlkabot().getLogger().debug("Now playing: " + track.getInfo().uri);
                 musicManager.getPlayer().startTrack(track, false);
                 musicManager.getTrackScheduler().setNowPlaying(alkabotTrack);
             }
@@ -44,7 +46,7 @@ public class AlkabotTrackPlayer {
                     firstTrack = playlist.getTracks().get(0);
 
                 if (alkabotTrack.getQuery().startsWith("ytsearch")) {
-                    musicManager.getAlkabot().verbose("Now playing (from spotify query): " + firstTrack.getInfo().uri);
+                    musicManager.getAlkabot().getLogger().debug("Now playing (from spotify query): " + firstTrack.getInfo().uri);
                     musicManager.getPlayer().startTrack(firstTrack, false);
                     musicManager.getTrackScheduler().setNowPlaying(alkabotTrack);
                 }
@@ -53,20 +55,32 @@ public class AlkabotTrackPlayer {
             @Override
             public void noMatches() {
                 retrying = false;
-                musicManager.getAlkabot().verbose("No matches!");
+                musicManager.getAlkabot().getLogger().debug("No matches!");
 
                 if (musicManager.getLastMusicCommandChannel() != null) {
-                    EmbedBuilder embedBuilder = new EmbedBuilder();
-                    embedBuilder.setTitle(Lang.get("command.music.play.error.not_found.title"));
-                    //embedBuilder.setColor(Colors.BIG_RED);
-                    embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ")"
-                            + " " + Lang.get("command.music.generic.by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
-                            Lang.get("command.music.generic.added_by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
-                            //Lang.get("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
-                            Lang.get("command.music.play.error.not_found.description"));
-                    embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
+                    EmbedBuilder embed = new EmbedBuilder();
+                    embed.setTitle(
+                            Lang.t("music.not_found_spotify.title")
+                                    .parseGuildName(musicManager.getAlkabot().getGuild())
+                                    .getValue()
+                    );
+                    embed.setColor(Lang.getColor("music.not_found_spotify.color"));
+                    embed.setThumbnail(
+                            Lang.t("music.not_found_spotify.icon")
+                                    .parseGuildAvatar(musicManager.getAlkabot().getGuild())
+                                    .parseBotAvatars(musicManager.getAlkabot())
+                                    .parseTrackThumbnail(alkabotTrack)
+                                    .getValue()
+                    );
+                    embed.setDescription(
+                            Lang.t("music.not_found_spotify.description")
+                                    .parseGuildName(musicManager.getAlkabot().getGuild())
+                                    .parseQueue(musicManager)
+                                    .parseTrack(alkabotTrack)
+                                    .getValue()
+                    );
 
-                    musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                    musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embed.build()).queue();
                 }
 
                 play(musicManager.getTrackScheduler().getQueue().poll());
@@ -76,24 +90,36 @@ public class AlkabotTrackPlayer {
             public void loadFailed(FriendlyException exception) {
                 if (retrying) {
                     if (musicManager.getLastMusicCommandChannel() != null) {
-                        EmbedBuilder embedBuilder = new EmbedBuilder();
-                        embedBuilder.setTitle(Lang.get("command.music.play.error.fail.title"));
-                        //embedBuilder.setColor(Colors.BIG_RED);
-                        embedBuilder.setDescription("[" + alkabotTrack.getTitle() + "](" + alkabotTrack.getUrl() + ")"
-                                + " " + Lang.get("command.music.generic.by") + " [" + alkabotTrack.getArtists() + "](" + alkabotTrack.getUrl() + ")\n\n" +
-                                Lang.get("command.music.generic.added_by") + " <@" + alkabotTrack.getAddedByID() + ">" + "\n" +
-                                //Lang.get("command.music.generic.origin") + " " + alkabotTrack.getTrackSource() + "\n\n" +
-                                Lang.get("command.music.play.error.fail.message"));
-                        embedBuilder.setThumbnail(alkabotTrack.getThumbUrl());
+                        EmbedBuilder embed = new EmbedBuilder();
+                        embed.setTitle(
+                                Lang.t("music.play_failed.title")
+                                        .parseGuildName(musicManager.getAlkabot().getGuild())
+                                        .getValue()
+                        );
+                        embed.setColor(Lang.getColor("music.play_failed.color"));
+                        embed.setThumbnail(
+                                Lang.t("music.play_failed.icon")
+                                        .parseGuildAvatar(musicManager.getAlkabot().getGuild())
+                                        .parseBotAvatars(musicManager.getAlkabot())
+                                        .parseTrackThumbnail(alkabotTrack)
+                                        .getValue()
+                        );
+                        embed.setDescription(
+                                Lang.t("music.play_failed.description")
+                                        .parseGuildName(musicManager.getAlkabot().getGuild())
+                                        .parseQueue(musicManager)
+                                        .parseTrack(alkabotTrack)
+                                        .getValue()
+                        );
 
-                        musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embedBuilder.build()).queue();
+                        musicManager.getLastMusicCommandChannel().sendMessageEmbeds(embed.build()).queue();
                     }
 
                     retrying = false;
                     play(musicManager.getTrackScheduler().getQueue().poll());
-                    musicManager.getAlkabot().verbose("Failed to play this track! Skipping...");
+                    musicManager.getAlkabot().getLogger().debug("Failed to play this track! Skipping...");
                 } else {
-                    musicManager.getAlkabot().verbose("Failed to play this track! Retrying...");
+                    musicManager.getAlkabot().getLogger().debug("Failed to play this track! Retrying...");
                     retrying = true;
                     play(alkabotTrack);
                 }

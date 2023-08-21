@@ -1,8 +1,10 @@
 package fr.alkanife.alkabot.util.tool;
 
+import ch.qos.logback.classic.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.alkanife.alkabot.Alkabot;
+import fr.alkanife.alkabot.Parameters;
 import fr.alkanife.alkabot.configuration.json.AutoRoleConfig;
 import fr.alkanife.alkabot.configuration.json.Configuration;
 import fr.alkanife.alkabot.configuration.json.MusicConfig;
@@ -12,6 +14,7 @@ import fr.alkanife.alkabot.configuration.json.guild.GuildConfig;
 import fr.alkanife.alkabot.configuration.json.guild.GuildPresenceActivityConfig;
 import fr.alkanife.alkabot.configuration.json.guild.GuildPresenceConfig;
 import fr.alkanife.alkabot.configuration.json.notifications.*;
+import fr.alkanife.alkabot.log.Logs;
 import fr.alkanife.alkabot.music.data.MusicData;
 import fr.alkanife.alkabot.token.Tokens;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -23,27 +26,28 @@ import java.util.ArrayList;
 
 public class DefaultFilesGenerator {
 
-    private final Alkabot alkabot;
+    private final Parameters parameters;
+    private final Logger logger;
     private final Gson gson;
 
-    public DefaultFilesGenerator(Alkabot alkabot) {
-        this.alkabot = alkabot;
+    public DefaultFilesGenerator(Parameters parameters) {
+        this.parameters = parameters;
+        this.logger = Logs.createLogger(DefaultFilesGenerator.class);
         this.gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
-        System.out.println("Generating default files...");
-        System.out.println("This operation will not replace already existing files.");
+        logger.info("This operation will not replace already existing files.");
 
         try {
             generateTokens();
         } catch (Exception exception) {
-            alkabot.printJavaError("Failed to generate tokens", exception);
+            logger.error("Failed to generate tokens at path '" + parameters.getTokensPath() + "'", exception);
             return;
         }
 
         try {
             generateConfig();
         } catch (Exception exception) {
-            alkabot.printJavaError("Failed to generate configuration", exception);
+            logger.error("Failed to generate configuration at path '" + parameters.getConfigurationPath() + "'", exception);
             return;
         }
 
@@ -53,35 +57,35 @@ public class DefaultFilesGenerator {
         if (!generateLangs())
             return;
 
-        System.out.println("Generation complete");
+        logger.info("Generation complete");
     }
 
     private void generateTokens() throws Exception {
-        File file = new File(alkabot.getParameters().getTokensPath());
+        File file = new File(parameters.getTokensPath());
 
         if (file.exists()) {
-            System.out.println("[1/4] Skipping tokens");
+            logger.info("[1/4] Skipping tokens");
             return;
         }
 
-        System.out.println("[1/4] Generating tokens");
+        logger.info("[1/4] Generating tokens");
 
         Tokens tokens = new Tokens(null, new Tokens.Spotify(null, null));
 
-        alkabot.verbose(tokens.toString());
+        logger.debug(tokens.toString());
 
         Files.writeString(file.toPath(), gson.toJson(tokens, Tokens.class));
     }
 
     private void generateConfig() throws Exception {
-        File file = new File(alkabot.getParameters().getConfigurationPath());
+        File file = new File(parameters.getConfigurationPath());
 
         if (file.exists()) {
-            System.out.println("[2/4] Skipping configuration");
+            logger.info("[2/4] Skipping configuration");
             return;
         }
 
-        System.out.println("[2/4] Generating configuration");
+        logger.info("[2/4] Generating configuration");
 
         Configuration configuration = new Configuration();
         configuration.setLangFile("en_US");
@@ -114,28 +118,28 @@ public class DefaultFilesGenerator {
 
         configuration.setNotifConfig(new NotifConfig(selfNotifConfig, messageNotifConfig, memberNotifConfig, modNotifConfig, voiceNotifConfig));
 
-        alkabot.verbose(configuration.toString());
+        logger.debug(configuration.toString());
 
         Files.writeString(file.toPath(), gson.toJson(configuration, Configuration.class));
     }
 
     private boolean generateData() {
-        File file = new File(alkabot.getParameters().getDataPath());
+        File file = new File(parameters.getDataPath());
 
         try {
             if (!file.exists()) {
-                System.out.println("[3/4] Generating data folder");
+                logger.info("[3/4] Generating data folder");
                 file.mkdirs();
             }
         } catch (Exception exception) {
-            alkabot.printJavaError("Failed to generate data folder", exception);
+            logger.error("Failed to generate data folder at path '" + parameters.getDataPath() + "'", exception);
             return false;
         }
 
         try {
             generateMusicData();
         } catch (Exception exception) {
-            alkabot.printJavaError("Failed to generate music data", exception);
+            logger.error("Failed to generate music data at path '" + parameters.getDataPath() + "'", exception);
             return false;
         }
 
@@ -143,32 +147,32 @@ public class DefaultFilesGenerator {
     }
 
     private void generateMusicData() throws Exception {
-        File music = new File(alkabot.getParameters().getDataPath() + "/music.json");
+        File music = new File(parameters.getDataPath() + "/music.json");
 
         if (music.exists()) {
-            System.out.println("[3/4] Skipping music data");
+            logger.info("[3/4] Skipping music data");
             return;
         }
 
-        System.out.println("[3/4] Generating music data");
+        logger.info("[3/4] Generating music data");
 
         MusicData musicData = new MusicData(100, new ArrayList<>());
 
-        alkabot.verbose(musicData.toString());
+        logger.debug(musicData.toString());
 
         Files.writeString(music.toPath(), gson.toJson(musicData, MusicData.class));
     }
 
     private boolean generateLangs() {
-        File file = new File(alkabot.getParameters().getLangPath());
+        File file = new File(parameters.getLangPath());
 
         try {
             if (!file.exists()) {
-                System.out.println("[4/4] Generating lang folder");
+                logger.info("[4/4] Generating lang folder");
                 file.mkdirs();
             }
         } catch (Exception exception) {
-            alkabot.printJavaError("Failed to generate lang folder", exception);
+            logger.error("Failed to generate the lang folder at path '" + parameters.getLangPath() + "'", exception);
             return false;
         }
 
@@ -178,7 +182,7 @@ public class DefaultFilesGenerator {
             try {
                 generateLang(lang);
             } catch (Exception exception) {
-                alkabot.printJavaError("Failed to export lang " + lang, exception);
+                logger.error("Failed to export '" + lang + "' to the lang folder", exception);
                 return false;
             }
         }
@@ -187,14 +191,14 @@ public class DefaultFilesGenerator {
     }
 
     private void generateLang(String lang) throws Exception {
-        File file = new File(alkabot.getParameters().getLangPath() + "/" + lang + ".json");
+        File file = new File(parameters.getLangPath() + "/" + lang + ".json");
 
         if (file.exists()) {
-            System.out.println("[4/4] Skipping " + lang + ".json");
+            logger.info("[4/4] Skipping " + lang + ".json");
             return;
         }
 
-        System.out.println("[4/4] Exporting " + lang + ".json");
+        logger.info("[4/4] Exporting " + lang + ".json");
 
         InputStream inputStream = getClass().getResourceAsStream("/lang/" + lang + ".json");
 

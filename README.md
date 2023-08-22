@@ -1,4 +1,4 @@
-<img align="right" src="https://share.alkanife.fr/alkabot.png" height="200" width="200">
+<img align="right" src="https://shared.alkanife.dev/alkabot.png" height="200" width="200">
 <h1 align="center">
   Alkabot
   <br>
@@ -12,18 +12,16 @@
     <img src="https://img.shields.io/github/license/alkanife/alkabot" alt="LICENSE">
   </a>
   <a href="https://github.com/alkanife/alkabot/releases/tag/2.0.0-dev2">
-    <img src="https://img.shields.io/badge/version-2.0.0--dev2-blue" alt="version">
+    <img src="https://img.shields.io/badge/version-2.0.0--infdev-blue" alt="version">
   </a>
 </h1>
 
 <p align="center">
   <b><a href="#overview">Overview</a></b>
   •
-  <a href="https://github.com/alkanife/alkabot/blob/main/doc/commands.md">Commands</a>
+  <a href="#usage">Usage</a>
   •
-  <a href="#useinstallation">Use/Installation</a>
-  •
-  <a href="https://github.com/alkanife/alkabot/blob/main/doc/config.md">Configuration</a>
+  <a href="https://github.com/alkanife/alkabot/wiki">Wiki</a>
   •
   <a href="#project-dependencies">Project dependencies</a>
   •
@@ -44,45 +42,55 @@ This project is currently in its development phase for version 2.0.0, some featu
   - Support for [all lavaplayer supported formats](https://github.com/sedmelluq/lavaplayer#supported-formats)
   - Support for reading Spotify playlists (the bot will use the title of the music present in the Spotify playlist to search for it on YouTube.)
   - Shortcut system
-- **[Work in Progress]** Logging system (called "notifications")
+- Logging system (called "notifications")
 
-A list of commands is [available here](https://github.com/alkanife/alkabot/blob/main/doc/commands.md)!
+A list of commands is [available here](https://github.com/alkanife/alkabot/wiki/Commands)!
 
-## Use/Installation
-You need **Java 17** or above to use Alkabot.
+## Usage
+You need **Java 17** or above to use Alkabot. Once downloaded, you need to generate default files with the `-generateFiles` flag.
 
-### Installation
-Download the [latest release](https://github.com/alkanife/alkabot/releases) and the `template_folder.zip`, place Alkabot in a new folder with the content of the template folder, [configure it](https://github.com/alkanife/alkabot/blob/main/doc/config.md), and you are good to go.
+See the wiki for [Configuration](https://github.com/alkanife/alkabot/wiki/Configuration) & [Tokens](https://github.com/alkanife/alkabot/wiki/Tokens).
 
-Your folder should look like this:
 ```
-Alkabot/
-├─ logs/
-├─ Alkabot-<version>.jar
-├─ configuration.json
-├─ tokens.json
-├─ lang-en.json
-├─ lang-fr.json
-├─ start.bat
-├─ start.sh
-```
-
-### Usage
-```
-java -jar Alkabot.jar help
-java -jar alkabot.jar [debug/prod] [tokens file path] [configuration file path]
-
-Default: java -jar Alkabot.jar prod tokens.json configuration.json
+Usage: java -jar alkabot.jar [options]
+  Options:
+    --config, -c
+      Configuration file path
+      Default: config.json
+    --data, -d
+      Data folder path
+      Default: data
+    --debug, -dev
+      Enable debug mode
+      Default: false
+    --debugall, -devall
+      Enable debug mode for everything
+      Default: false
+    --debugjda, -devjda
+      Enable debug mode for JDA and lavaplayer
+      Default: false
+    --generateFiles, -gf
+      Generate default files
+      Default: false
+    --help, -h
+      Print usage
+      Default: false
+    --langs, -L
+      Lang folder path
+      Default: lang
+    --logs, -l
+      Logs folder path
+      Default: logs
+    --tokens, -t
+      Tokens file path
+      Default: tokens.json
+    --version, -v
+      Print build version
+      Default: false
 ```
 
 ## Project dependencies
-This project requires **Java 17+**.
-
-- [DV8FromTheWorld/**JDA**](https://github.com/DV8FromTheWorld/JDA)
-- [sedmelluq/**lavaplayer**](https://github.com/sedmelluq/lavaplayer)
-- [google/**gson**](https://github.com/google/gson)
-- [qos-ch/**logback**](https://github.com/qos-ch/logback)
-- [**spotify-web-api-java**](https://github.com/spotify-web-api-java/spotify-web-api-java)
+See [Maven dependencies](https://github.com/alkanife/alkabot/blob/main/pom.xml).
 
 ## License
 Under the [Mozilla Public License 2.0](https://github.com/alkanife/alkabot/blob/main/LICENSE) license.

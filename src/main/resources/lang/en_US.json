@@ -572,6 +572,14 @@
           "description": "<track_click_title> by <track_click_artists> [<track_duration>]\n\nAdded by: <track_added_by_mention>" // track
         }
       },
+      "volume": {
+        "description": "🎶 Set jukebox volume",
+        "input": "Volume (0-100)",
+        "error": "Please use a number between 0 and 100.",
+        "message": "The current volume is set to `<volume>`%.", // volume
+        "set": "The volume is now set to `<volume>`%.", // volume
+        "failed": "I failed to set the volume at this value, sorry :(" // volume
+      },
       "shortcut": {
         "description": "Shortcut management",
         "bind": {

@@ -47,7 +47,7 @@ This project is currently in its development phase for version 2.0.0, some featu
 A list of commands is [available here](https://github.com/alkanife/alkabot/wiki/Commands)!
 
 ## Usage
-You need **Java 17** or above to use Alkabot. Once downloaded, you need to generate default files with the `-generateFiles` flag.
+You need **Java 17** or above to use Alkabot. Once downloaded, you need to generate default files with the `--generateFiles` flag.
 
 See the wiki for [Configuration](https://github.com/alkanife/alkabot/wiki/Configuration) & [Tokens](https://github.com/alkanife/alkabot/wiki/Tokens).
 

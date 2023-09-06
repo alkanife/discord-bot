@@ -1,4 +1,4 @@
-<img align="right" src="https://shared.alkanife.dev/alkabot.png" height="200" width="200">
+<img align="right" src="https://share.alkanife.dev/alkabot.png" height="200" width="200">
 <h1 align="center">
   Alkabot
   <br>

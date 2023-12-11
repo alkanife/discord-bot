@@ -42,8 +42,4 @@ public abstract class JsonLoader {
     public void changeNull(String field, String newValue) {
         alkabot.getLogger().debug("'" + field + "' is null, changing it to '" + newValue + "'");
     }
-
-    public void cantContinue(String field) {
-        alkabot.getLogger().error("Can't continue because the '" + field + "' field is empty");
-    }
 }

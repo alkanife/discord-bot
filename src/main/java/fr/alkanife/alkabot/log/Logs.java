@@ -53,6 +53,6 @@ public class Logs {
     }
 
     public static String invalidFileMessage(String path) {
-        return "Unable to load the file at path '" + path + "'. Please make sure that this file exists, and that the bot has access to it. If it's a JSON file, please verify the syntax. To generate default files, use the --generateFiles flag.";
+        return "Unable to load the file at path '" + path + "'. Please make sure that this file exists, and that the bot has access to it. If it's a JSON file, please verify the syntax. To generate default files, use the --generateFiles flag. See error below.";
     }
 }

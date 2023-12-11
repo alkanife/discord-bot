@@ -33,21 +33,18 @@ public class ConfigLoader extends JsonLoader {
         // CAN'T START WITHOUT IT
         //
         if (config.getLangFile() == null) {
-            cantContinue("lang");
-            return;
+            throw new Exception("Can't continue: the 'lang' field is empty");
         } else {
             if (config.getLangFile().endsWith(".json"))
                 config.setLangFile(config.getLangFile().replaceAll(".json", ""));
         }
 
         if (config.getGuildConfig() == null) {
-            cantContinue("guild");
-            return;
+            throw new Exception("Can't continue: the 'guild' field is empty");
         }
 
         if (config.getGuildConfig().getGuildId() == null) {
-            cantContinue("guild.guild_id");
-            return;
+            throw new Exception("Can't continue: the 'guild.guild_id' field is empty");
         }
 
         //

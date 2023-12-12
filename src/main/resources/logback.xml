@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <contextListener class="fr.alkanife.alkabot.log.LoggerStartupListener"/>
+    <contextListener class="dev.alkanife.alkabot.log.LoggerStartupListener"/>
 
     <appender name="FILEOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>latest.log</file>

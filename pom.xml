@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>fr.alkanife</groupId>
+    <groupId>dev.alkanife</groupId>
     <artifactId>alkabot</artifactId>
     <version>2.0.0-infdev</version>
 
@@ -20,12 +20,12 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
-                    <outputDirectory>${project.basedir}/dev</outputDirectory>
+                    <outputDirectory>${project.basedir}/build</outputDirectory>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <finalName>ALKABOT-${project.version}</finalName>
+                    <finalName>Alkabot-${project.version}</finalName>
                     <archive>
                         <manifest>
-                            <mainClass>fr.alkanife.alkabot.Main</mainClass>
+                            <mainClass>dev.alkanife.alkabot.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -115,7 +115,6 @@
         </dependency>
         <!-- / / / / / / / / / / / / / / / / / /-->
 
-        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
@@ -143,7 +142,5 @@
             <version>1.18.30</version>
             <scope>compile</scope>
         </dependency>
-
     </dependencies>
-
 </project>

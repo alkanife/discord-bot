@@ -6,9 +6,9 @@ import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.lang.Lang;
 import net.dv8tion.jda.api.EmbedBuilder;
 
-public class StopCommand extends AbstractAdminCommand {
+public class StopbotCommand extends AbstractAdminCommand {
 
-    public StopCommand(CommandManager commandManager) {
+    public StopbotCommand(CommandManager commandManager) {
         super(commandManager);
     }
 

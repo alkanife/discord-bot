@@ -7,6 +7,7 @@ import fr.alkanife.alkabot.lang.Lang;
 import fr.alkanife.alkabot.music.AlkabotTrack;
 import fr.alkanife.alkabot.music.MusicManager;
 import fr.alkanife.alkabot.music.MusicUtils;
+import fr.alkanife.alkabot.util.PagedList;
 import fr.alkanife.alkabot.util.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -62,29 +63,13 @@ public class QueueCommand extends AbstractCommand {
 
         List<AlkabotTrack> tracks = new ArrayList<>(musicManager.getTrackScheduler().getQueue());
         int tracksSize = tracks.size();
-        int pages;
-        if (!StringUtils.endsWithZero(tracksSize)) {
-            for (int i = 0; i < 11; i++) {
-                if (StringUtils.endsWithZero(tracksSize))
-                    break;
 
-                tracksSize++;
-            }
-        }
-        pages = tracksSize / 10;
-        OptionMapping pageOption = event.getOption("page");
-        int page = 0;
-        if (pageOption != null)
-            page = ((int) pageOption.getAsLong()) - 1;
-        if (page < 0)
-            page = 0;
-        if ((page - 1) > pages) {
-            event.getHook().sendMessage(Lang.get("command.music.queue.error.out_of_range")).queue();
+        PagedList pagedList = new PagedList();
+
+        if (!pagedList.parsePage(event, tracksSize, Lang.get("command.music.queue.error.out_of_range")))
             return;
-        }
 
-
-        if (tracks.size() == 0) {
+        if (tracks.isEmpty()) {
             alkabot.getMusicManager().nowPlaying(event);
         } else {
             EmbedBuilder embed = new EmbedBuilder();
@@ -102,27 +87,18 @@ public class QueueCommand extends AbstractCommand {
                             .getImage()
             );
 
-            StringBuilder followingTracks = new StringBuilder();
-            for (int i = (page * 10); i < ((page * 10) + 10); i++) {
-                try {
-                    followingTracks.append(
-                            Lang.t("command.music.queue.following_track")
-                                    .parse("index", String.valueOf(i + 1))
-                                    .parseTrack(tracks.get(i))
-                                    .getValue()
-                    ).append("\n");
-                } catch (Exception ignored) {
-                    break;
-                }
-            }
+            String followingTracks = pagedList.toStringList(index -> Lang.t("command.music.queue.following_track")
+                    .parse("index", String.valueOf(index + 1))
+                    .parseTrack(tracks.get(index))
+                    .getValue());
 
             embed.setDescription(
                     Lang.t("command.music.queue.description")
                             .parseTrack(alkabot.getMusicManager().getTrackScheduler().getNowPlaying())
-                            .parse("following", followingTracks.toString())
+                            .parse("following", followingTracks)
                             .parseQueue(alkabot.getMusicManager())
-                            .parse("page", String.valueOf(page + 1))
-                            .parse("page_count", String.valueOf(pages))
+                            .parse("page", String.valueOf(pagedList.getPage() + 1))
+                            .parse("page_count", String.valueOf(pagedList.getPages()))
                             .getValue()
             );
 

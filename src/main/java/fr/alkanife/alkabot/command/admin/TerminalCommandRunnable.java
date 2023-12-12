@@ -13,7 +13,7 @@ public class TerminalCommandRunnable implements Runnable {
     @Getter @Setter
     private boolean running;
     @Getter
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public TerminalCommandRunnable(Alkabot alkabot) {
         this.alkabot = alkabot;
@@ -27,7 +27,7 @@ public class TerminalCommandRunnable implements Runnable {
             if (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 if (line != null) {
-                    if (!line.equals(""))
+                    if (!line.isEmpty())
                         if (!line.equals("\n"))
                             new AdminCommandHandler(alkabot, new AdminCommandExecution(alkabot, line.toLowerCase(), null));
                 }

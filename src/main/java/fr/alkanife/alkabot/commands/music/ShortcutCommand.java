@@ -4,6 +4,7 @@ import fr.alkanife.alkabot.command.AbstractCommand;
 import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.lang.Lang;
 import fr.alkanife.alkabot.music.data.Shortcut;
+import fr.alkanife.alkabot.util.PagedList;
 import fr.alkanife.alkabot.util.StringUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -16,6 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class ShortcutCommand extends AbstractCommand {
 
@@ -64,7 +66,7 @@ public class ShortcutCommand extends AbstractCommand {
             subs.add(new SubcommandData("list", Lang.get("command.music.shortcut.list.description"))
                     .addOption(OptionType.INTEGER, "page", Lang.get("command.music.shortcut.list.input.page"), false));
 
-        if (subs.size() > 0)
+        if (!subs.isEmpty())
             commandData.addSubcommands(subs);
 
         return commandData;
@@ -76,10 +78,10 @@ public class ShortcutCommand extends AbstractCommand {
 
         event.deferReply().queue();
 
-        switch (subCommand) {
+        switch (Objects.requireNonNull(subCommand)) {
             case "bind" -> {
-                String name = event.getOption("name").getAsString();
-                String query = event.getOption("query").getAsString();
+                String name = Objects.requireNonNull(event.getOption("name")).getAsString();
+                String query = Objects.requireNonNull(event.getOption("query")).getAsString();
 
                 Shortcut shortcut = alkabot.getShortcut(name);
 
@@ -106,7 +108,7 @@ public class ShortcutCommand extends AbstractCommand {
             }
 
             case "unbind" -> {
-                String name = event.getOption("name").getAsString();
+                String name = Objects.requireNonNull(event.getOption("name")).getAsString();
 
                 Shortcut shortcut = alkabot.getShortcut(name);
 
@@ -131,32 +133,17 @@ public class ShortcutCommand extends AbstractCommand {
             }
 
             case "list" -> {
-                if (alkabot.getMusicData().getShortcutList().size() == 0) {
+                if (alkabot.getMusicData().getShortcutList().isEmpty()) {
                     event.getHook().sendMessage(Lang.get("command.music.shortcut.list.error.no_entries")).queue();
                     return;
                 }
 
                 int shortcutsSize = alkabot.getMusicData().getShortcutList().size();
-                int pages;
-                if (!StringUtils.endsWithZero(shortcutsSize)) {
-                    for (int i = 0; i < 11; i++) {
-                        if (StringUtils.endsWithZero(shortcutsSize))
-                            break;
 
-                        shortcutsSize++;
-                    }
-                }
-                pages = shortcutsSize / 10;
-                OptionMapping pageOption = event.getOption("page");
-                int page = 0;
-                if (pageOption != null)
-                    page = ((int) pageOption.getAsLong()) - 1;
-                if (page < 0)
-                    page = 0;
-                if ((page - 1) > pages) {
-                    event.getHook().sendMessage(Lang.get("command.music.shortcut.list.error.out_of_range")).queue();
+                PagedList pagedList = new PagedList();
+
+                if (!pagedList.parsePage(event, shortcutsSize, Lang.get("command.music.shortcut.list.error.out_of_range")))
                     return;
-                }
 
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.setTitle(
@@ -174,29 +161,21 @@ public class ShortcutCommand extends AbstractCommand {
                                 .getImage()
                 );
 
-                StringBuilder shortcuts = new StringBuilder();
+                String shortcuts = pagedList.toStringList(index -> {
+                    Shortcut shortcut = alkabot.getMusicData().getShortcutList().get(index);
 
-                for (int i = (page * 10); i < ((page * 10) + 10); i++) {
-                    try {
-                        Shortcut shortcut = alkabot.getMusicData().getShortcutList().get(i);
-
-                        shortcuts.append(
-                                Lang.t("command.music.shortcut.list.success.shortcuts")
-                                        .parseShortcut(shortcut)
-                                        .parse("index", String.valueOf(i+1))
-                                        .getValue()
-                        ).append("\n");
-                    } catch (Exception e) {
-                        break;
-                    }
-                }
+                    return Lang.t("command.music.shortcut.list.success.shortcuts")
+                            .parseShortcut(shortcut)
+                            .parse("index", String.valueOf(index+1))
+                            .getValue();
+                });
 
                 embed.setDescription(
                         Lang.t("command.music.shortcut.list.success.description")
-                                .parse("shortcuts", shortcuts.toString())
+                                .parse("shortcuts", shortcuts)
                                 .parseShortcutCount(alkabot.getMusicData())
-                                .parse("page", String.valueOf(page+1))
-                                .parse("page_count", String.valueOf(pages))
+                                .parse("page", String.valueOf(pagedList.getPage()+1))
+                                .parse("page_count", String.valueOf(pagedList.getPages()))
                                 .getValue()
                 );
 
@@ -204,7 +183,7 @@ public class ShortcutCommand extends AbstractCommand {
             }
 
             case "info" -> {
-                String name = event.getOption("name").getAsString();
+                String name = Objects.requireNonNull(event.getOption("name")).getAsString();
 
                 Shortcut shortcut = alkabot.getShortcut(name);
 

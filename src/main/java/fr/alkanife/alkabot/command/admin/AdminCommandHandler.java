@@ -34,7 +34,7 @@ public class AdminCommandHandler extends AbstractCommandHandler {
             abstractAdminCommand.execute(execution);
         } catch (Exception exception) {
             execution.reply("An error prevented me from processing your command.");
-            alkabot.getLogger().error("Failed to handle an admin command:", exception);
+            alkabot.getLogger().error("Failed to handle an admin command '" + execution.command() + "'", exception);
         }
     }
 

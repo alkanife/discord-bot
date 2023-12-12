@@ -1,12 +1,10 @@
 package fr.alkanife.alkabot.commands.admin;
 
-import fr.alkanife.alkabot.Alkabot;
 import fr.alkanife.alkabot.command.admin.AbstractAdminCommand;
 import fr.alkanife.alkabot.command.admin.AdminCommandExecution;
 import fr.alkanife.alkabot.command.CommandManager;
 import fr.alkanife.alkabot.configuration.ConfigLoader;
 import fr.alkanife.alkabot.lang.TranslationsLoader;
-import fr.alkanife.alkabot.log.Logs;
 import fr.alkanife.alkabot.music.data.MusicDataLoader;
 import fr.alkanife.alkabot.music.MusicManager;
 import fr.alkanife.alkabot.token.TokenLoader;
@@ -43,7 +41,7 @@ public class ReloadCommand extends AbstractAdminCommand {
         String[] command = execution.command().split(" ");
 
         if (command.length <= 1) {
-            execution.reply("Usage: reload <lang,config,music,musicdata,tokens>");
+            execution.reply("Usage: reload <lang, config, music, musicdata, tokens>");
             return;
         }
 

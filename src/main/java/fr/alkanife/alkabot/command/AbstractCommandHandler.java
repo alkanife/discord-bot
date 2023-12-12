@@ -6,7 +6,7 @@ import lombok.Getter;
 public abstract class AbstractCommandHandler {
 
     @Getter
-    private Alkabot alkabot;
+    private final Alkabot alkabot;
 
     public AbstractCommandHandler(Alkabot alkabot) {
         this.alkabot = alkabot;

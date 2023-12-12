@@ -59,7 +59,7 @@ public class InfoCommand extends AbstractCommand {
             subs.add(new SubcommandData("emote", Lang.get("command.utilities.info.emote.description"))
                     .addOption(OptionType.STRING, "input", Lang.get("command.utilities.info.emote.input_description"), true));
 
-        if (subs.size() > 0)
+        if (!subs.isEmpty())
             commandData.addSubcommands(subs);
 
         return commandData;

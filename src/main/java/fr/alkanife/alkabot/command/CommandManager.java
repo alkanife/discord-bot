@@ -7,6 +7,7 @@ import fr.alkanife.alkabot.commands.AboutCommand;
 import fr.alkanife.alkabot.commands.admin.PingCommand;
 import fr.alkanife.alkabot.commands.admin.ReloadCommand;
 import fr.alkanife.alkabot.commands.admin.StatusCommand;
+import fr.alkanife.alkabot.commands.admin.StopbotCommand;
 import fr.alkanife.alkabot.commands.music.*;
 import fr.alkanife.alkabot.commands.utilities.CopyCommand;
 import lombok.Getter;
@@ -14,19 +15,19 @@ import lombok.Setter;
 
 import java.util.*;
 
+@Getter
 public class CommandManager {
 
-    @Getter
-    private Alkabot alkabot;
+    private final Alkabot alkabot;
 
-    @Getter @Setter
+    @Setter
     private Map<String, AbstractCommand> commands = new HashMap<>();
-    @Getter @Setter
+    @Setter
     private Map<String, AbstractAdminCommand> adminCommands = new HashMap<>();
 
-    @Getter @Setter
+    @Setter
     private TerminalCommandRunnable terminalCommandHandler;
-    @Getter @Setter
+    @Setter
     private Thread terminalCommandHandlerThread;
 
     public CommandManager(Alkabot alkabot) {
@@ -39,7 +40,7 @@ public class CommandManager {
         terminalCommandHandlerThread = new Thread(terminalCommandHandler, "Alkabot TCH");
 
         alkabot.getLogger().info("Loading commands...");
-        registerAdminCommands(new fr.alkanife.alkabot.commands.admin.StopCommand(this),
+        registerAdminCommands(new StopbotCommand(this),
                 new StatusCommand(this),
                 new PingCommand(this),
                 new ReloadCommand(this));
@@ -56,7 +57,7 @@ public class CommandManager {
                 new RemoveCommand(this),
                 new ShuffleCommand(this),
                 new SkipCommand(this),
-                new fr.alkanife.alkabot.commands.music.StopCommand(this),
+                new StopCommand(this),
                 new NowplayingCommand(this),
                 new VolumeCommand(this));
 

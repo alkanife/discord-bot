@@ -171,28 +171,28 @@ public class TranslationHandler {
     }
 
     public TranslationHandler parseAdmins(@NotNull Alkabot alkabot) {
-        String admins = "";
+        StringBuilder admins = new StringBuilder();
         if (!alkabot.getConfig().getAdminIds().isEmpty()) {
             int i = 0;
 
             for (String admin : alkabot.getConfig().getAdminIds()) {
                 if (i != 0)
-                    admins += ",";
+                    admins.append(", ");
 
-                admins += "<@" + admin + ">";
+                admins.append("<@").append(admin).append(">");
 
                 if (i == 4) {
-                    admins += "...";
+                    admins.append("...");
                     break;
                 }
 
                 i++;
             }
         } else {
-            admins = Lang.get("notification.generic.none");
+            admins = new StringBuilder(Lang.get("notification.generic.none"));
         }
 
-        return parse("admins", admins).parse("admin_count", alkabot.getConfig().getAdminIds().size()+"");
+        return parse("admins", admins.toString()).parse("admin_count", alkabot.getConfig().getAdminIds().size()+"");
     }
 
     public TranslationHandler parseAdmin(@NotNull AdminCommandExecution execution, @NotNull String adminPath) {

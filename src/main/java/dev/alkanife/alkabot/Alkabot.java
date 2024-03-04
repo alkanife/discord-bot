@@ -15,7 +15,9 @@ import dev.alkanife.alkabot.lang.LangFilesManager;
 import dev.alkanife.alkabot.discord.event.EventListenerManager;
 import dev.alkanife.alkabot.music.MusicManager;
 import dev.alkanife.alkabot.notification.NotificationManager;
-import dev.alkanife.alkabot.token.TokenManager;
+import dev.alkanife.alkabot.secrets.SecretsManager;
+import dev.alkanife.alkabot.secrets.json.Secrets;
+import dev.alkanife.alkabot.secrets.json.SpotifySecrets;
 import dev.alkanife.alkabot.util.Logs;
 import dev.alkanife.alkabot.util.StringUtils;
 import dev.alkanife.alkabot.util.BuildReader;
@@ -53,7 +55,7 @@ public class Alkabot {
     private boolean spotifySupport = false;
 
     @Getter @Setter
-    private TokenManager tokenManager;
+    private SecretsManager secretsManager;
     @Getter @Setter
     private ConfigManager configManager;
     @Getter @Setter
@@ -128,7 +130,10 @@ public class Alkabot {
             TimeTracker.start("total-load-time");
 
             splashText();
-            load();
+
+            if (!load())
+                return;
+
             createAndBuildJDA();
         } catch (Exception exception) {
             logger.error("Fatal: an unexpected error prevented the bot to start", exception);
@@ -159,11 +164,11 @@ public class Alkabot {
             logger.warn("Unable to find the current Alkabot version, be careful...");
     }
 
-    private void load() {
+    private boolean load() {
         TimeTracker.start("alkabot-load-time");
 
         // Create managers
-        tokenManager = new TokenManager(this, new File(getArgs().getTokensFilePath()));
+        secretsManager = new SecretsManager(this, new File(getArgs().getSecretFilePath()));
         configManager = new ConfigManager(this, new File(getArgs().getConfigFilePath()));
         langFilesManager = new LangFilesManager(this);
         eventListenerManager = new EventListenerManager(this);
@@ -175,23 +180,28 @@ public class Alkabot {
         autoroleManager = new AutoroleManager(this);
 
         // Read and create files before loading
-        if (!tokenManager.readFile()
-                || !configManager.readFile()
-                || !langFilesManager.handleDirectory()) {
-            return;
+        if (args.isSkipSecretFile()) {
+            logger.info("Skipping secret file");
+            secretsManager.cleanData();
+        } else {
+            if (!secretsManager.readFile())
+                return false;
+        }
+
+        if (!configManager.readFile() || !langFilesManager.handleDirectory()) {
+            return false;
         }
 
         // Loading
-        if (!tokenManager.load()
-                || !configManager.load()
-                || !langFilesManager.load()) {
-            return;
+        if (!secretsManager.load() || !configManager.load() || !langFilesManager.load()) {
+            return false;
         }
 
         commandManager.load();
         notificationManager.load();
 
         TimeTracker.end("alkabot-load-time");
+        return true;
     }
 
     private void createAndBuildJDA() {
@@ -199,7 +209,7 @@ public class Alkabot {
 
         logger.debug("Creating JDA");
 
-        JDABuilder jdaBuilder = JDABuilder.createDefault(getTokenManager().getTokens().getDiscordToken());
+        JDABuilder jdaBuilder = JDABuilder.createDefault(getSecretsManager().getSecrets().getDiscordToken());
         jdaBuilder.setRawEventsEnabled(true);
         jdaBuilder.setStatus(OnlineStatus.valueOf(getConfig().getGuildConfig().getGuildPresenceConfig().getStatus()));
         if (getConfig().getGuildConfig().getGuildPresenceConfig().getGuildActivityConfig().isShowing())

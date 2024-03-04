@@ -96,11 +96,11 @@ public class CLIArguments {
     private String configFilePath = "config/config.json";
 
     @Parameter(
-            names = { "-tokens-file-path" },
-            description = "Path to the token file, with extension",
+            names = { "-secret-file-path" },
+            description = "Path to the secret file, with extension",
             order = 13
     )
-    private String tokensFilePath = "config/tokens.json";
+    private String secretFilePath = "config/secrets.json";
 
     @Parameter(
             names = { "-data-directory-path" },
@@ -124,30 +124,37 @@ public class CLIArguments {
     private String logsDirectoryPath = "logs/";
 
     @Parameter(
+            names = { "-skip-secret-file" },
+            description = "Skip secret file loading",
+            order = 17
+    )
+    private boolean skipSecretFile = false;
+
+    @Parameter(
             names = { "-override-discord-token" },
             description = "Override the Discord token",
-            order = 17
+            order = 18
     )
     private String overrideDiscordToken = null;
 
     @Parameter(
             names = { "-override-spotify-client-id" },
             description = "Override the Spotify client ID",
-            order = 18
+            order = 19
     )
     private String overrideSpotifyClientId = null;
 
     @Parameter(
             names = { "-override-spotify-client-secret" },
             description = "Override the Spotify client secret",
-            order = 19
+            order = 20
     )
     private String overrideSpotifyClientSecret = null;
 
     @Parameter(
             names = { "-override-lang" },
             description = "Override the language specified in the configuration",
-            order = 20
+            order = 21
     )
     private String overrideLang = null;
 }

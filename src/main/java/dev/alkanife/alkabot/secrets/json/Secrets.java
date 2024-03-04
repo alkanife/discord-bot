@@ -1,4 +1,4 @@
-package dev.alkanife.alkabot.token.json;
+package dev.alkanife.alkabot.secrets.json;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Tokens {
+public class Secrets {
 
     @SerializedName("discord_token")
     private String discordToken;
-    @SerializedName("spotify_tokens")
-    private SpotifyTokens spotifyTokens;
+    @SerializedName("spotify")
+    private SpotifySecrets spotifySecrets;
 
 }

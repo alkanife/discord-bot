@@ -1,12 +1,12 @@
 package dev.alkanife.alkabot.notification;
 
-import dev.alkanife.alkabot.configuration.json.Configuration;
+import dev.alkanife.alkabot.configuration.json.AlkabotConfig;
 
 public enum NotificationChannel {
 
     SELF, MESSAGE, MEMBER, MODERATOR, VOICE;
 
-    public String getChannelID(Configuration configuration) {
+    public String getChannelID(AlkabotConfig configuration) {
         String channelID = "";
         switch (this) {
             case SELF -> channelID = configuration.getNotifConfig().getSelfNotifConfig().getChannelId();

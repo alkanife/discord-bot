@@ -2,7 +2,7 @@ package dev.alkanife.alkabot.notification.notifier;
 
 import dev.alkanife.alkabot.configuration.json.notifications.MessageNotifConfig;
 import dev.alkanife.alkabot.lang.Lang;
-import dev.alkanife.alkabot.listener.MessageListener;
+import dev.alkanife.alkabot.discord.event.MessageListener;
 import dev.alkanife.alkabot.notification.CachedMessage;
 import dev.alkanife.alkabot.notification.NotificationChannel;
 import dev.alkanife.alkabot.notification.NotificationManager;

@@ -6,25 +6,22 @@ import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
+@Getter
 public class NotificationManager {
 
-    @Getter
     private final Alkabot alkabot;
 
-    @Getter
-    private final SelfNotifier selfNotification;
-    @Getter
-    private final MessageNotifier messageNotification;
-    @Getter
-    private final MemberNotifier memberNotification;
-    @Getter
-    private final ModeratorNotifier moderatorNotification;
-    @Getter
-    private final VoiceNotifier voiceNotification;
+    private SelfNotifier selfNotification;
+    private MessageNotifier messageNotification;
+    private MemberNotifier memberNotification;
+    private ModeratorNotifier moderatorNotification;
+    private VoiceNotifier voiceNotification;
 
     public NotificationManager(Alkabot alkabot) {
         this.alkabot = alkabot;
+    }
 
+    public void load() {
         selfNotification = new SelfNotifier(this);
         messageNotification = new MessageNotifier(this);
         memberNotification = new MemberNotifier(this);
@@ -44,8 +41,7 @@ public class NotificationManager {
             textChannel.sendMessageEmbeds(messageEmbed).queue();
             alkabot.getLogger().debug("Successfully sent '" + notificationChannel.name() + "' notification titled '" + messageEmbed.getTitle() + "'");
         } catch (Exception exception) {
-            alkabot.getLogger().error("Failed to send a notification titled '" + messageEmbed.getTitle() + "':");
-            exception.printStackTrace();
+            alkabot.getLogger().error("Failed to send a notification titled '" + messageEmbed.getTitle() + "':", exception);
         }
     }
 }

@@ -88,8 +88,6 @@ public class MusicManager {
     }
 
     public void initialize() {
-        alkabot.getLogger().info("Initializing jukebox...");
-
         lavaplayerLoader = new LavaplayerLoader(this);
         spotifyLoader = new SpotifyLoader(this);
         alkabotTrackPlayer = new AlkabotTrackPlayer(this);
@@ -102,7 +100,7 @@ public class MusicManager {
         trackScheduler = new TrackScheduler(this);
         trackListener = new TrackListener(this);
         player.addListener(trackListener);
-        player.setVolume(alkabot.getMusicData().getVolume());
+        //player.setVolume(alkabot.getMusicData().getVolume()); TODO
     }
 
     public void nowPlaying(SlashCommandInteractionEvent event) {
@@ -161,7 +159,7 @@ public class MusicManager {
             }
         } else {
             if (!StringUtils.isURL(query)) {
-                Shortcut shortcut = alkabot.getShortcut(query);
+                /*Shortcut shortcut = alkabot.getShortcut(query); TODO
 
                 if (shortcut == null) {
                     query = "ytsearch: " + query;
@@ -170,11 +168,21 @@ public class MusicManager {
                         query = shortcut.getQuery();
                     else
                         query = "ytsearch: " + shortcut.getQuery();
-                }
+                }*/
             }
 
             event.deferReply().queue();
             alkabot.getMusicManager().getLavaplayerLoader().load(event, commandSource, query, position, skipCurrent);
         }
     }
+
+        /*public Shortcut getShortcut(String name) {
+        Shortcut shortcut = null;
+
+        for (Shortcut s : musicData.getShortcutList())
+            if (s.getName().equalsIgnoreCase(name))
+                shortcut = s;
+
+        return shortcut;
+    }*/
 }

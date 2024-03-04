@@ -1,27 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <contextListener class="dev.alkanife.alkabot.log.LoggerStartupListener"/>
-
-    <appender name="FILEOUT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>latest.log</file>
-        <append>true</append>
-
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${ALKABOT_LOGPATH}/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxFileSize>10MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>1GB</totalSizeCap>
-        </rollingPolicy>
-
-        <encoder>
-            <pattern>%date{dd MMM HH:mm:ss.SSS} | %thread | %logger | %level | %msg%n</pattern>
-            <outputPatternAsHeader>true</outputPatternAsHeader>
-            <charset>UTF-8</charset>
-        </encoder>
-    </appender>
-
     <root level="info">
-        <!--<appender-ref ref="STDOUT" />-->
-        <appender-ref ref="FILEOUT" />
     </root>
 </configuration>

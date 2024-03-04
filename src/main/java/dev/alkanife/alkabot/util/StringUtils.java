@@ -8,7 +8,7 @@ public class StringUtils {
 
     /**
      * Reduce a string's length, and add ... at the end
-     *
+     * <p>
      * Example:
      * It's a beautiful day outside -> It's a beautiful day ou`...`
      *
@@ -35,7 +35,13 @@ public class StringUtils {
         }
     }
 
-    public static boolean endsWithZero(int i) { //what an ugly way
-        return Integer.toString(i).endsWith("0");
+    public static String removeStartEndSlash(String string) {
+        if (string.startsWith("/"))
+            string = string.substring(1);
+
+        if (string.endsWith("/"))
+            string = string.substring(0, string.length() - 1);
+
+        return string;
     }
 }

@@ -32,8 +32,8 @@ public class SpotifyLoader extends AbstractMusic {
 
         musicManager.getAlkabot().getLogger().debug("Requesting Spotify client credentials...");
         SpotifyApi spotifyApi = new SpotifyApi.Builder()
-                .setClientId(musicManager.getAlkabot().getTokens().getSpotify().getClientId())
-                .setClientSecret(musicManager.getAlkabot().getTokens().getSpotify().getClientSecret())
+                .setClientId(musicManager.getAlkabot().getTokenManager().getTokens().getSpotifyTokens().getClientId())
+                .setClientSecret(musicManager.getAlkabot().getTokenManager().getTokens().getSpotifyTokens().getClientSecret())
                 .build();
 
         // access token

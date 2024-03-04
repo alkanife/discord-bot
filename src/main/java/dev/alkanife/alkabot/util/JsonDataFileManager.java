@@ -3,11 +3,11 @@ package dev.alkanife.alkabot.util;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.alkanife.alkabot.Alkabot;
+import dev.alkanife.alkabot.util.timetracker.TimeTracker;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 
 public abstract class JsonDataFileManager {
@@ -40,6 +40,7 @@ public abstract class JsonDataFileManager {
 
         if (file.exists()) {
             alkabot.getLogger().info(readMessage);
+            String tracking = TimeTracker.startUnique("json-read-file");
 
             String content;
 
@@ -48,6 +49,7 @@ public abstract class JsonDataFileManager {
             } catch (Exception exception) {
                 alkabot.getLogger().error("Failed to read or access file '" + file.getAbsolutePath() + "'. The file format may not be valid, or the bot may not have access to it. To view the full error, enable the debug mode.");
                 alkabot.getLogger().debug("Full trace:", exception);
+                TimeTracker.kill(tracking);
                 return false;
             }
 
@@ -56,9 +58,11 @@ public abstract class JsonDataFileManager {
             } catch (Exception exception) {
                 alkabot.getLogger().error("Failed to read JSON from file '" + file.getAbsolutePath() + "'. Please check the syntax of your file before reporting this error. To view the full error, enable the debug mode.");
                 alkabot.getLogger().debug("Full trace:", exception);
+                TimeTracker.kill(tracking);
                 return false;
             }
 
+            TimeTracker.end(tracking);
             return true;
         } else {
             cleanData();
@@ -80,6 +84,8 @@ public abstract class JsonDataFileManager {
         if (data == null)
             return false;
 
+        String tracking = TimeTracker.startUnique("json-read-file");
+
         try {
             if (file.getParentFile() != null) {
                 file.getParentFile().mkdirs();
@@ -87,6 +93,7 @@ public abstract class JsonDataFileManager {
         } catch (Exception exception) {
             alkabot.getLogger().error("Failed to create parent directories for '" + file.getAbsolutePath() + "'. The bot does not have either read or write privileges for the path you specified. To view the full error, enable the debug mode.");
             alkabot.getLogger().debug("Full trace:", exception);
+            TimeTracker.kill(tracking);
             return false;
         }
 
@@ -96,9 +103,11 @@ public abstract class JsonDataFileManager {
         } catch (Exception exception) {
             alkabot.getLogger().error("Failed to create '" + file.getAbsolutePath() + "'. This error may occur if the bot does not have write or read privileges on the path you specified. To view the full error, enable the debug mode.");
             alkabot.getLogger().debug("Full trace:", exception);
+            TimeTracker.kill(tracking);
             return false;
         }
 
+        TimeTracker.end(tracking);
         return true;
     }
 
@@ -117,7 +126,11 @@ public abstract class JsonDataFileManager {
             return false;
         }
 
+        String tracking = TimeTracker.startUnique("json-load");
+
         boolean loadSuccess = onLoad(reloading);
+
+        TimeTracker.end(tracking);
 
         if (loadSuccess)
             data = null;

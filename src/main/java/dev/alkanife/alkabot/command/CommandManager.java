@@ -9,6 +9,7 @@ import dev.alkanife.alkabot.command.admin.StatusCommand;
 import dev.alkanife.alkabot.command.admin.StopbotCommand;
 import dev.alkanife.alkabot.command.music.*;
 import dev.alkanife.alkabot.command.utilities.CopyCommand;
+import dev.alkanife.alkabot.util.timetracker.TimeTracker;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -35,6 +36,7 @@ public class CommandManager {
     }
 
     public void load() {
+        TimeTracker.start("load-commands");
         alkabot.getLogger().debug("Setting up terminal command thread");
         terminalCommandHandler = new TerminalCommandRunnable(alkabot);
         terminalCommandHandlerThread = new Thread(terminalCommandHandler, "Alkabot TCH");
@@ -65,6 +67,7 @@ public class CommandManager {
                 new InfoCommand(this)); Info command disabled for now #TODO*/
 
         alkabot.getLogger().info(commands.size() + " commands enabled");
+        TimeTracker.end("load-commands");
     }
 
     public void registerCommands(AbstractCommand... abstractCommands) {

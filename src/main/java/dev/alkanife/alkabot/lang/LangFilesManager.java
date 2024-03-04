@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import dev.alkanife.alkabot.Alkabot;
+import dev.alkanife.alkabot.util.timetracker.TimeTracker;
 import lombok.Getter;
 
 import java.io.File;
@@ -35,25 +36,30 @@ public class LangFilesManager {
     public boolean handleDirectory() {
         alkabot.getLogger().info("Preparing language files");
 
+        TimeTracker.start("handle-lang-directory");
+
         if (langDirectory.exists()) {
             if (!langDirectory.isDirectory()) {
                 alkabot.getLogger().error("The path to the language files must be to a directory. (Found a file at " + langDirectory.getAbsolutePath() + ")");
+                TimeTracker.kill("handle-lang-directory");
                 return false;
             }
 
             try {
                 if (isDirectoryEmpty(langDirectory.toPath())) {
                     alkabot.getLogger().info("The language directory is empty!");
+                    TimeTracker.end("handle-lang-directory");
                     return exportDefaultLangFiles();
                 } else {
+                    TimeTracker.end("handle-lang-directory");
                     return true;
                 }
             } catch (Exception exception) {
                 alkabot.getLogger().error("The bot is not able to see the contents of the language directory at '" + langDirectory.getAbsolutePath() + "'. Alkabot does not have either read or write privileges for the path you specified. To view the full error, enable the debug mode.");
                 alkabot.getLogger().debug("Full trace:", exception);
+                TimeTracker.kill("handle-lang-directory");
+                return false;
             }
-
-            return false;
         } else {
             alkabot.getLogger().info("The language directory was not found at the specified path. Creating a new one at '" + langDirectory.getAbsolutePath() + "'");
 
@@ -62,15 +68,18 @@ public class LangFilesManager {
             } catch (Exception exception) {
                 alkabot.getLogger().error("Failed to create directory for language files at specified path: " + langDirectory.getAbsolutePath() + ". The bot does not have either read or write privileges for the path you specified. To view the full error, enable the debug mode.");
                 alkabot.getLogger().debug("Full trace:", exception);
+                TimeTracker.kill("handle-lang-directory");
                 return false;
             }
 
+            TimeTracker.end("handle-lang-directory");
             return exportDefaultLangFiles();
         }
     }
 
     public boolean exportDefaultLangFiles() {
         alkabot.getLogger().info("Exporting default lang files to '" + langDirectory.getAbsolutePath() + "'");
+        TimeTracker.start("export-lang-files");
 
         String[] langs = {"en_US", "fr_FR"};
 
@@ -87,21 +96,26 @@ public class LangFilesManager {
 
                 InputStream inputStream = getClass().getResourceAsStream("/lang/" + lang + ".json");
 
-                if (inputStream == null)
+                if (inputStream == null) {
+                    TimeTracker.kill("export-lang-files");
                     throw new NullPointerException("Invalid resource call");
+                }
 
                 Files.copy(inputStream, file.toPath());
             } catch (Exception exception) {
                 alkabot.getLogger().error("Internal error: failed to export '" + lang + ".json' to the language directory. To view the full error, enable the debug mode.");
                 alkabot.getLogger().debug("Full trace:", exception);
+                TimeTracker.kill("export-lang-files");
                 return false;
             }
         }
 
+        TimeTracker.end("export-lang-files");
         return true;
     }
 
     public boolean load() {
+        TimeTracker.start("read-language");
         String langFileName = alkabot.getConfig().getLangFile();
 
         if (alkabot.getArgs().getOverrideLang() != null) {
@@ -116,11 +130,13 @@ public class LangFilesManager {
 
         if (!file.exists()) {
             alkabot.getLogger().error("No language file was found at path '" + file.getAbsolutePath() + "'");
+            TimeTracker.kill("read-language");
             return false;
         }
 
         if (file.isDirectory()) {
             alkabot.getLogger().error("The language file at path '" + file.getAbsolutePath() + "' is a directory.");
+            TimeTracker.kill("read-language");
             return false;
         }
 
@@ -131,9 +147,12 @@ public class LangFilesManager {
         } catch (Exception exception) {
             alkabot.getLogger().error("Failed to read or access language file '" + file.getAbsolutePath() + "'. The file format may not be valid, or the bot may not have access to it. To view the full error, enable the debug mode.");
             alkabot.getLogger().debug("Full trace:", exception);
+            TimeTracker.kill("read-language");
             return false;
         }
 
+        TimeTracker.end("read-language");
+        TimeTracker.start("load-language");
         alkabot.getLogger().info("Loading language pack");
 
         // Read values
@@ -146,6 +165,7 @@ public class LangFilesManager {
         } catch (Exception exception) {
             alkabot.getLogger().error("Failed to read JSON from file '" + file.getAbsolutePath() + "'. Please check the syntax of your file before reporting this error. To view the full error, enable the debug mode.");
             alkabot.getLogger().debug("Full trace:", exception);
+            TimeTracker.kill("load-language");
             return false;
         }
 
@@ -170,6 +190,7 @@ public class LangFilesManager {
 
         alkabot.getLogger().info("Finished loading " + Lang.getTranslations().size() + " values from '" + file.getName() + "'");
 
+        TimeTracker.end("load-language");
         return true;
     }
 

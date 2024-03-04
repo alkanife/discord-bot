@@ -2,9 +2,12 @@ package dev.alkanife.alkabot.notification;
 
 import dev.alkanife.alkabot.Alkabot;
 import dev.alkanife.alkabot.notification.notifier.*;
+import dev.alkanife.alkabot.util.timetracker.TimeTracker;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+
+import java.util.UUID;
 
 @Getter
 public class NotificationManager {
@@ -37,11 +40,15 @@ public class NotificationManager {
             return;
         }
 
+        String tracking = TimeTracker.startUnique("send-notification");
+
         try {
             textChannel.sendMessageEmbeds(messageEmbed).queue();
+            TimeTracker.end(tracking);
             alkabot.getLogger().debug("Successfully sent '" + notificationChannel.name() + "' notification titled '" + messageEmbed.getTitle() + "'");
         } catch (Exception exception) {
             alkabot.getLogger().error("Failed to send a notification titled '" + messageEmbed.getTitle() + "':", exception);
+            TimeTracker.kill(tracking);
         }
     }
 }

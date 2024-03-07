@@ -1,73 +1,64 @@
 package dev.alkanife.alkabot.secrets;
 
 import dev.alkanife.alkabot.Alkabot;
-import dev.alkanife.alkabot.secrets.json.SpotifySecrets;
+import dev.alkanife.alkabot.file.JsonFileManipulation;
 import dev.alkanife.alkabot.secrets.json.Secrets;
-import dev.alkanife.alkabot.util.JsonDataFileManager;
+import dev.alkanife.alkabot.secrets.json.SpotifySecrets;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-public class SecretsManager extends JsonDataFileManager {
+public class SecretsManager extends JsonFileManipulation {
 
     @Getter
     private Secrets secrets;
 
-    public SecretsManager(Alkabot alkabot, File file) {
-        super(alkabot, file, Secrets.class);
+    public SecretsManager(Alkabot alkabot) {
+        super(alkabot, new File(alkabot.getArgs().getSecretFilePath()), Secrets.class);
 
-        readMessage = "Reading secrets from '" + file.getName() + "'";
-        createMessage = "The secret file was not found at the specified path. Creating a new one at '" + file.getAbsolutePath() + "'";
-        updateMessage = "Updating secrets of '" + file.getName() + "'. Note that a restart of the bot is necessary when changing the Discord token.";
-        loadMessage = "Loading secrets";
-    }
-
-    @Override
-    public void cleanData() {
-        if (getData() == null)
-            setData(new Secrets(null, new SpotifySecrets()));
-
-        Secrets fileSecrets = (Secrets) getData();
-
-        if (fileSecrets.getSpotifySecrets() == null) {
-            fileSecrets.setSpotifySecrets(new SpotifySecrets(null, null));
+        if (alkabot.getArgs().getOverrideSecrets() != null) {
+            alkabot.getLogger().info("Overriding secrets");
+            setOverride(alkabot.getArgs().getOverrideSecrets());
         }
-
-        setData(fileSecrets);
     }
 
     @Override
-    public boolean onLoad(boolean reloading) {
-        secrets = (Secrets) getData();
+    public boolean validateLoad(@NotNull Object data, boolean reload) {
+        Secrets loadedSecrets = (Secrets) data;
 
-        if (!reloading) {
-            if (getAlkabot().getArgs().getOverrideDiscordToken() == null) {
-                if (secrets.getDiscordToken() == null) {
-                    getAlkabot().getLogger().error("No Discord token provided!");
-                    return false;
-                }
-            } else {
-                getAlkabot().getLogger().info("Overriding Discord token");
-                secrets.setDiscordToken(getAlkabot().getArgs().getOverrideDiscordToken());
+        if (!reload) {
+            if (loadedSecrets.getDiscordToken() == null) {
+                getAlkabot().getLogger().error("No Discord token provided!");
+                return false;
             }
         }
 
         // TODO put spotify support in the configuration
-
-        if (getAlkabot().getArgs().getOverrideSpotifyClientSecret() != null) {
-            getAlkabot().getLogger().info("Overriding Spotify client secret");
-            secrets.getSpotifySecrets().setClientSecret(getAlkabot().getArgs().getOverrideSpotifyClientSecret());
-        }
-
-        if (getAlkabot().getArgs().getOverrideSpotifyClientId() != null) {
-            getAlkabot().getLogger().info("Overriding Spotify client ID");
-            secrets.getSpotifySecrets().setClientId(getAlkabot().getArgs().getOverrideSpotifyClientId());
-        }
-
-        if (secrets.getSpotifySecrets().getClientSecret() == null || secrets.getSpotifySecrets().getClientId() == null) {
+        if (loadedSecrets.getSpotifySecrets().getClientSecret() == null || loadedSecrets.getSpotifySecrets().getClientId() == null) {
             getAlkabot().setSpotifySupport(false);
         }
 
+        secrets = loadedSecrets;
         return true;
+    }
+
+    @Override
+    public @NotNull Object cleanData(@Nullable Object object) {
+        Secrets secretObject = (Secrets) object;
+
+        if (secretObject == null)
+            secretObject = new Secrets();
+
+        if (secretObject.getSpotifySecrets() == null)
+            secretObject.setSpotifySecrets(new SpotifySecrets());
+
+        return secretObject;
+    }
+
+    @Override
+    public @Nullable Object getDataObject() {
+        return secrets;
     }
 }

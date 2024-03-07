@@ -41,7 +41,7 @@ public class CLIArguments {
 
     @Parameter(
             names = { "-track-time" },
-            description = "Track Alkabot loading times",
+            description = "Track loading times (for debug purposes)",
             order = 5
     )
     private boolean trackTime = false;
@@ -54,18 +54,18 @@ public class CLIArguments {
     private boolean disableFileLogging = false;
 
     @Parameter(
-            names = { "-latest-log-file-name" },
-            description = "The name of the latest log file, with extension",
+            names = { "-latest-log-file-path" },
+            description = "Path to the latest log file, with extension",
             order = 7
     )
-    private String latestLogFileName = "latest.log";
+    private String latestLogFilePath = "latest.log";
 
     @Parameter(
-            names = { "-log-file-name-pattern" },
-            description = "Name pattern for log files, with extension",
+            names = { "-archive-log-file-path" },
+            description = "Path to the log archive, with name pattern",
             order = 8
     )
-    private String logFileNamePattern = "%d{yyyy-MM-dd}.%i.log";
+    private String archiveLogFilePath = "logs/%d{yyyy-MM-dd}.%i.log";
 
     @Parameter(
             names = { "-log-file-max-size" },
@@ -82,79 +82,44 @@ public class CLIArguments {
     private String logFileTotalSizeCap = "1GB";
 
     @Parameter(
-            names = { "-log-file-max-history" },
+            names = { "-log-archive-max-history" },
             description = "Maximum number of log files to keep",
             order = 11
     )
-    private int logFileMaxHistory = 10;
-
-    @Parameter(
-            names = { "-config-file-path" },
-            description = "Path to the configuration file, with extension",
-            order = 12
-    )
-    private String configFilePath = "config/config.json";
+    private int logArchiveMaxHistory = 10;
 
     @Parameter(
             names = { "-secret-file-path" },
             description = "Path to the secret file, with extension",
-            order = 13
+            order = 12
     )
     private String secretFilePath = "config/secrets.json";
 
     @Parameter(
-            names = { "-data-directory-path" },
-            description = "Path to the data directory",
+            names = { "-config-file-path" },
+            description = "Path to the configuration file, with extension",
+            order = 13
+    )
+    private String configFilePath = "config/config.json";
+
+    @Parameter(
+            names = { "-music-data-file-path" },
+            description = "Path to the music data, with extension",
             order = 14
     )
-    private String dataDirectoryPath = "data/";
+    private String musicDataFilePath = "data/music.json";
 
     @Parameter(
-            names = { "-lang-directory-path" },
-            description = "Path to the language directory",
+            names = { "-override-lang-file-path" },
+            description = "Override the language file path (ignore configuration)",
             order = 15
     )
-    private String langDirectoryPath = "lang/";
+    private String overrideLangFilePath = null;
 
     @Parameter(
-            names = { "-logs-directory-path" },
-            description = "Path to the log directory",
+            names = { "-override-secrets" },
+            description = "Override secrets",
             order = 16
     )
-    private String logsDirectoryPath = "logs/";
-
-    @Parameter(
-            names = { "-skip-secret-file" },
-            description = "Skip secret file loading",
-            order = 17
-    )
-    private boolean skipSecretFile = false;
-
-    @Parameter(
-            names = { "-override-discord-token" },
-            description = "Override the Discord token",
-            order = 18
-    )
-    private String overrideDiscordToken = null;
-
-    @Parameter(
-            names = { "-override-spotify-client-id" },
-            description = "Override the Spotify client ID",
-            order = 19
-    )
-    private String overrideSpotifyClientId = null;
-
-    @Parameter(
-            names = { "-override-spotify-client-secret" },
-            description = "Override the Spotify client secret",
-            order = 20
-    )
-    private String overrideSpotifyClientSecret = null;
-
-    @Parameter(
-            names = { "-override-lang" },
-            description = "Override the language specified in the configuration",
-            order = 21
-    )
-    private String overrideLang = null;
+    private String overrideSecrets = null;
 }

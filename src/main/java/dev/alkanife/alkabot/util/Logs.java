@@ -29,10 +29,7 @@ public class Logs {
         if (!args.isDisableFileLogging())
             root.addAppender(createFileAppender(args, root));
 
-        if (args.isDebugJDA())
-            root.setLevel(Level.DEBUG);
-        else
-            root.setLevel(Level.INFO);
+        root.setLevel(args.isDebugJDA() ? Level.DEBUG : Level.INFO);
     }
 
     private static ConsoleAppender<ILoggingEvent> createConsoleAppender(CLIArguments args, Logger root) {
@@ -61,15 +58,15 @@ public class Logs {
         RollingFileAppender<ILoggingEvent> rollingFileAppender = new RollingFileAppender<>();
         rollingFileAppender.setContext(root.getLoggerContext());
         rollingFileAppender.setEncoder(fileEncoder);
-        rollingFileAppender.setFile(args.getLogsDirectoryPath() + "/" + args.getLatestLogFileName());
+        rollingFileAppender.setFile(args.getLatestLogFilePath());
         rollingFileAppender.setAppend(true);
 
         SizeAndTimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
         rollingPolicy.setParent(rollingFileAppender);
         rollingPolicy.setContext(root.getLoggerContext());
-        rollingPolicy.setFileNamePattern(args.getLogsDirectoryPath() + "/" + args.getLogFileNamePattern());
+        rollingPolicy.setFileNamePattern(args.getArchiveLogFilePath());
         rollingPolicy.setMaxFileSize(FileSize.valueOf(args.getLogFileMaxSize()));
-        rollingPolicy.setMaxHistory(30);
+        rollingPolicy.setMaxHistory(args.getLogArchiveMaxHistory());
         rollingPolicy.setTotalSizeCap(FileSize.valueOf(args.getLogFileTotalSizeCap()));
         rollingPolicy.start();
 
@@ -82,10 +79,7 @@ public class Logs {
     public static Logger createLogger(CLIArguments args, Class<?> clazz) {
         Logger logger = (Logger) LoggerFactory.getLogger(clazz);
 
-        if (args.isDebug())
-            logger.setLevel(Level.DEBUG);
-        else
-            logger.setLevel(Level.INFO);
+        logger.setLevel(args.isDebug() ? Level.DEBUG : Level.INFO);
 
         return logger;
     }

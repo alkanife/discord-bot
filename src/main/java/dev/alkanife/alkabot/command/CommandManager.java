@@ -41,7 +41,7 @@ public class CommandManager {
         terminalCommandHandler = new TerminalCommandRunnable(alkabot);
         terminalCommandHandlerThread = new Thread(terminalCommandHandler, "Alkabot TCH");
 
-        alkabot.getLogger().info("Loading commands");
+        alkabot.getLogger().debug("Loading commands");
         registerAdminCommands(new StopbotCommand(this),
                 new StatusCommand(this),
                 new PingCommand(this),
@@ -66,7 +66,7 @@ public class CommandManager {
         registerCommands(new CopyCommand(this));/*,
                 new InfoCommand(this)); Info command disabled for now #TODO*/
 
-        alkabot.getLogger().info(commands.size() + " commands enabled");
+        alkabot.getLogger().debug(commands.size() + " commands enabled");
         TimeTracker.end("load-commands");
     }
 
@@ -101,7 +101,7 @@ public class CommandManager {
     }
 
     public void updateCommandsToDiscord() {
-        alkabot.getLogger().info("Updating commands to Discord");
+        alkabot.getLogger().debug("Updating commands to Discord");
 
         List<SlashCommandData> commands = new ArrayList<>();
 

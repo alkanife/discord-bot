@@ -104,23 +104,17 @@ public class Alkabot {
         new BuildReader(this);
 
         if (getArgs().isVersion()) {
-            System.out.println("Alkabot version " + getVersion());
-            System.out.println("Build " + getBuild());
+            System.out.println("Alkabot version " + getVersion() + " (" + getBuild() + ")");
             System.out.println(getGithub());
             return;
         }
-
-        // Validate folder paths
-        getArgs().setDataDirectoryPath(StringUtils.removeStartEndSlash(getArgs().getDataDirectoryPath()));
-        getArgs().setLangDirectoryPath(StringUtils.removeStartEndSlash(getArgs().getLangDirectoryPath()));
-        getArgs().setLogsDirectoryPath(StringUtils.removeStartEndSlash(getArgs().getLogsDirectoryPath()));
 
         // Setup logger
         try {
             Logs.setupRootLogger(getArgs());
             logger = Logs.createLogger(getArgs(), Alkabot.class);
         } catch (Exception exception) {
-            System.out.println("Failed to create Alkabot's logger:");
+            System.out.println("An error occurred while creating the logger.\nIf you have modified the logger configuration, please check the options used and the error below.\n");
             exception.printStackTrace();
             return;
         }
@@ -167,10 +161,19 @@ public class Alkabot {
     private boolean load() {
         TimeTracker.start("alkabot-load-time");
 
-        // Create managers
-        secretsManager = new SecretsManager(this, new File(getArgs().getSecretFilePath()));
-        configManager = new ConfigManager(this, new File(getArgs().getConfigFilePath()));
+        logger.info("Loading modules...");
+
+        secretsManager = new SecretsManager(this);
+        configManager = new ConfigManager(this);
+
+        if (!secretsManager.load() || !configManager.load())
+            return false;
+
         langFilesManager = new LangFilesManager(this);
+
+        if (!langFilesManager.load())
+            return false;
+
         eventListenerManager = new EventListenerManager(this);
         commandManager = new CommandManager(this);
         musicManager = new MusicManager(this);
@@ -178,24 +181,6 @@ public class Alkabot {
         guildManager = new GuildManager(this);
         welcomeMessageManager = new WelcomeMessageManager(this);
         autoroleManager = new AutoroleManager(this);
-
-        // Read and create files before loading
-        if (args.isSkipSecretFile()) {
-            logger.info("Skipping secret file");
-            secretsManager.cleanData();
-        } else {
-            if (!secretsManager.readFile())
-                return false;
-        }
-
-        if (!configManager.readFile() || !langFilesManager.handleDirectory()) {
-            return false;
-        }
-
-        // Loading
-        if (!secretsManager.load() || !configManager.load() || !langFilesManager.load()) {
-            return false;
-        }
 
         commandManager.load();
         notificationManager.load();

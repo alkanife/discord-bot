@@ -2,201 +2,56 @@ package dev.alkanife.alkabot.lang;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import dev.alkanife.alkabot.Alkabot;
+import dev.alkanife.alkabot.file.FileManipulation;
+import dev.alkanife.alkabot.file.ManipulationState;
 import dev.alkanife.alkabot.util.timetracker.TimeTracker;
-import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Stream;
 
-public class LangFilesManager {
-
-    @Getter
-    private final Alkabot alkabot;
-    @Getter
-    private final File langDirectory;
+public class LangFilesManager extends FileManipulation {
 
     private HashMap<String, Object> translations = new HashMap<>();
 
-    public LangFilesManager(Alkabot alkabot) {
-        this.alkabot = alkabot;
-        this.langDirectory = new File(alkabot.getArgs().getLangDirectoryPath());
-
-        alkabot.getLogger().debug("Using lang directory at absolute path: " + langDirectory.getAbsolutePath());
+    public LangFilesManager(@NotNull Alkabot alkabot) {
+        super(alkabot, new File(alkabot.getConfig().getLangFilePath()));
     }
 
-    public boolean handleDirectory() {
-        alkabot.getLogger().info("Preparing language files");
+    public boolean createNewFile() {
+        InputStream inputStream = getClass().getResourceAsStream("/lang/" + getFile().getName());
 
-        TimeTracker.start("handle-lang-directory");
-
-        if (langDirectory.exists()) {
-            if (!langDirectory.isDirectory()) {
-                alkabot.getLogger().error("The path to the language files must be to a directory. (Found a file at " + langDirectory.getAbsolutePath() + ")");
-                TimeTracker.kill("handle-lang-directory");
-                return false;
-            }
-
-            try {
-                if (isDirectoryEmpty(langDirectory.toPath())) {
-                    alkabot.getLogger().info("The language directory is empty!");
-                    TimeTracker.end("handle-lang-directory");
-                    return exportDefaultLangFiles();
-                } else {
-                    TimeTracker.end("handle-lang-directory");
-                    return true;
-                }
-            } catch (Exception exception) {
-                alkabot.getLogger().error("The bot is not able to see the contents of the language directory at '" + langDirectory.getAbsolutePath() + "'. Alkabot does not have either read or write privileges for the path you specified. To view the full error, enable the debug mode.");
-                alkabot.getLogger().debug("Full trace:", exception);
-                TimeTracker.kill("handle-lang-directory");
-                return false;
-            }
-        } else {
-            alkabot.getLogger().info("The language directory was not found at the specified path. Creating a new one at '" + langDirectory.getAbsolutePath() + "'");
-
-            try {
-                langDirectory.mkdirs();
-            } catch (Exception exception) {
-                alkabot.getLogger().error("Failed to create directory for language files at specified path: " + langDirectory.getAbsolutePath() + ". The bot does not have either read or write privileges for the path you specified. To view the full error, enable the debug mode.");
-                alkabot.getLogger().debug("Full trace:", exception);
-                TimeTracker.kill("handle-lang-directory");
-                return false;
-            }
-
-            TimeTracker.end("handle-lang-directory");
-            return exportDefaultLangFiles();
-        }
-    }
-
-    public boolean exportDefaultLangFiles() {
-        alkabot.getLogger().info("Exporting default lang files to '" + langDirectory.getAbsolutePath() + "'");
-        TimeTracker.start("export-lang-files");
-
-        String[] langs = {"en_US", "fr_FR"};
-
-        for (String lang : langs) {
-            try {
-                File file = new File(alkabot.getArgs().getLangDirectoryPath() + "/" + lang + ".json");
-
-                if (file.exists()) {
-                    alkabot.getLogger().debug("Skipping " + file.getName() + " (already exists)");
-                    continue;
-                }
-
-                alkabot.getLogger().debug("Exporting " + file.getName());
-
-                InputStream inputStream = getClass().getResourceAsStream("/lang/" + lang + ".json");
-
-                if (inputStream == null) {
-                    TimeTracker.kill("export-lang-files");
-                    throw new NullPointerException("Invalid resource call");
-                }
-
-                Files.copy(inputStream, file.toPath());
-            } catch (Exception exception) {
-                alkabot.getLogger().error("Internal error: failed to export '" + lang + ".json' to the language directory. To view the full error, enable the debug mode.");
-                alkabot.getLogger().debug("Full trace:", exception);
-                TimeTracker.kill("export-lang-files");
-                return false;
-            }
-        }
-
-        TimeTracker.end("export-lang-files");
-        return true;
-    }
-
-    public boolean load() {
-        TimeTracker.start("read-language");
-        String langFileName = alkabot.getConfig().getLangFile();
-
-        if (alkabot.getArgs().getOverrideLang() != null) {
-            langFileName = alkabot.getArgs().getOverrideLang();
-            alkabot.getLogger().info("(override) Using language file '" + langFileName + ".json'");
-        }
-
-        File file = new File(alkabot.getArgs().getLangDirectoryPath() + "/" + langFileName + ".json");
-
-        alkabot.getLogger().info("Reading language from '" + file.getName() + "'");
-        alkabot.getLogger().debug("Absolute language file path: " + file.getAbsolutePath());
-
-        if (!file.exists()) {
-            alkabot.getLogger().error("No language file was found at path '" + file.getAbsolutePath() + "'");
-            TimeTracker.kill("read-language");
+        if (inputStream == null) {
+            getAlkabot().getLogger().error("No language pack was found at '" + getFile().getAbsolutePath() + "'");
             return false;
         }
 
-        if (file.isDirectory()) {
-            alkabot.getLogger().error("The language file at path '" + file.getAbsolutePath() + "' is a directory.");
-            TimeTracker.kill("read-language");
-            return false;
-        }
-
-        String content;
+        getAlkabot().getLogger().info("Exporting a new language pack to '" + getFile().getAbsolutePath() + "'");
 
         try {
-            content = Files.readString(file.toPath());
+            if (getFile().getParentFile() != null)
+                getFile().getParentFile().mkdirs();
+
+            Files.copy(inputStream, getFile().toPath());
         } catch (Exception exception) {
-            alkabot.getLogger().error("Failed to read or access language file '" + file.getAbsolutePath() + "'. The file format may not be valid, or the bot may not have access to it. To view the full error, enable the debug mode.");
-            alkabot.getLogger().debug("Full trace:", exception);
-            TimeTracker.kill("read-language");
+            getAlkabot().getLogger().error("An error occurred while exporting a language pack", exception);
             return false;
         }
 
-        TimeTracker.end("read-language");
-        TimeTracker.start("load-language");
-        alkabot.getLogger().info("Loading language pack");
-
-        // Read values
         try {
-            Gson gson = new GsonBuilder().serializeNulls().create();
-
-            Map<?, LinkedTreeMap<? , ?>> map = gson.fromJson(content, Map.class);
-            for (Map.Entry<?, LinkedTreeMap<? , ?>> entry : map.entrySet())
-                readEntry(entry.getKey()+"", entry);
+            String content = Files.readString(getFile().toPath());
+            setFileContent(content);
+            return true;
         } catch (Exception exception) {
-            alkabot.getLogger().error("Failed to read JSON from file '" + file.getAbsolutePath() + "'. Please check the syntax of your file before reporting this error. To view the full error, enable the debug mode.");
-            alkabot.getLogger().debug("Full trace:", exception);
-            TimeTracker.kill("load-language");
+            getAlkabot().getLogger().error("Internal error: failed to read the new language pack", exception);
             return false;
-        }
-
-        // Setup dates
-        if (translations.get("date.format") == null) {
-            alkabot.getLogger().warn("No date format provided, using default");
-        } else {
-            Lang.setDateFormat(translations.get("date.format").toString());
-        }
-        alkabot.getLogger().debug("Using date format '" + Lang.getDateFormat() + "'");
-
-        if (translations.get("date.locale") == null) {
-            alkabot.getLogger().warn("No date locale provided, using english");
-        } else {
-            Locale locale = Locale.forLanguageTag(translations.get("date.locale").toString());
-            Lang.setDateLocale(locale);
-            alkabot.getLogger().debug("Using date locale '" + locale.toString() + "'");
-        }
-
-        Lang.setTranslations(translations);
-        translations = null;
-
-        alkabot.getLogger().info("Finished loading " + Lang.getTranslations().size() + " values from '" + file.getName() + "'");
-
-        TimeTracker.end("load-language");
-        return true;
-    }
-
-    public boolean isDirectoryEmpty(Path path) throws IOException {
-        try (Stream<Path> entries = Files.list(path)) {
-            return entries.findFirst().isEmpty();
         }
     }
 
@@ -209,4 +64,83 @@ public class LangFilesManager {
             //alkabot.getLogger().debug(address + " = " + entry.getValue().toString());
         }
     }
+
+    public boolean load(boolean reload) {
+        getAlkabot().getLogger().debug((reload ? "(Re)" : "") + "Loading language pack from '" + getFile().getAbsolutePath() + "'");
+        String tracking = TimeTracker.startUnique("lang-load");
+
+        ManipulationState readState = readFile();
+
+        if (readState.equals(ManipulationState.FILE_DONT_EXISTS)) {
+            if (!createNewFile()) {
+                TimeTracker.kill(tracking);
+                return false;
+            }
+        } else {
+            if (readState.failed()) {
+                TimeTracker.kill(tracking);
+                return false;
+            }
+        }
+
+        try {
+            Gson gson = new GsonBuilder().serializeNulls().create();
+
+            Map<?, LinkedTreeMap<?, ?>> map = gson.fromJson(getFileContent(), Map.class);
+
+            if (map == null) {
+                getAlkabot().getLogger().error("The language pack at '" + getFile().getAbsolutePath() + "' is empty!");
+                TimeTracker.kill(tracking);
+                return false;
+            }
+
+            for (Map.Entry<?, LinkedTreeMap<?, ?>> entry : map.entrySet())
+                readEntry(entry.getKey() + "", entry);
+        } catch (JsonSyntaxException exception) {
+            getAlkabot().getLogger().error("Invalid JSON syntax in the language pack at '" + getFile().getAbsolutePath() + "'");
+            getAlkabot().getLogger().error("Caused by " + exception.getMessage());
+            TimeTracker.kill(tracking);
+            return false;
+        } catch (Exception exception) {
+            getAlkabot().getLogger().error("An error occurred while loading the language pack at '" + getFile().getAbsolutePath() + "'", exception);
+            TimeTracker.kill(tracking);
+            return false;
+        }
+
+        // Setup dates
+        if (translations.get("date.format") == null) {
+            getAlkabot().getLogger().warn("No date format provided by the language pack, using default");
+        } else {
+            Lang.setDateFormat(translations.get("date.format").toString());
+        }
+        getAlkabot().getLogger().debug("Using date format '" + Lang.getDateFormat() + "'");
+
+        if (translations.get("date.locale") == null) {
+            getAlkabot().getLogger().warn("No date locale provided by the language pack, using english");
+        } else {
+            Locale locale = Locale.forLanguageTag(translations.get("date.locale").toString());
+            Lang.setDateLocale(locale);
+            getAlkabot().getLogger().debug("Using date locale '" + locale.toString() + "'");
+        }
+
+        Lang.setTranslations(translations);
+        translations = null;
+
+        getAlkabot().getLogger().debug("Finished loading " + Lang.getTranslations().size() + " values from the language pack");
+        TimeTracker.end(tracking);
+        return true;
+    }
+
+    public boolean load() {
+        return load(false);
+    }
+
+    public boolean reload() {
+        return load(true);
+    }
+
+    // TODO
+    /*public boolean save() {
+        return true;
+    }*/
 }

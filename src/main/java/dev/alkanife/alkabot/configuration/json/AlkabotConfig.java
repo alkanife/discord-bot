@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 public class AlkabotConfig {
 
-    @SerializedName("lang")
-    private String langFile;
+    @SerializedName("lang_file_path")
+    private String langFilePath;
 
     @SerializedName("administrator_ids")
     private List<String> adminIds;

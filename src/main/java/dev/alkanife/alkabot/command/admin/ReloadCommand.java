@@ -1,9 +1,7 @@
 package dev.alkanife.alkabot.command.admin;
 
-import dev.alkanife.alkabot.command.admin.AbstractAdminCommand;
-import dev.alkanife.alkabot.command.admin.AdminCommandExecution;
 import dev.alkanife.alkabot.command.CommandManager;
-import dev.alkanife.alkabot.util.JsonDataFileManager;
+import dev.alkanife.alkabot.file.FileManipulation;
 
 public class ReloadCommand extends AbstractAdminCommand {
 
@@ -97,7 +95,7 @@ public class ReloadCommand extends AbstractAdminCommand {
 
     }
 
-    public void sendResponse(AdminCommandExecution execution, JsonDataFileManager jsonLoader) {
+    public void sendResponse(AdminCommandExecution execution, FileManipulation jsonLoader) {
         /*if (jsonLoader.success)
             execution.reply("Reload complete!");
         else

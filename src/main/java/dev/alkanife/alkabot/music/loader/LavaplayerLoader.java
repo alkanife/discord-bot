@@ -100,13 +100,17 @@ public class LavaplayerLoader extends AbstractMusic {
                 musicManager.getAlkabot().getLogger().warn("Load fail - retry = " + retrying);
                 if (retrying) {
                     event.getHook().sendMessage(Lang.get("command.music." + commandSource + ".error.generic")).queue();
-                    musicManager.getAlkabot().getLogger().debug("Failed to load!");
                     retrying = false;
                 } else {
                     retrying = true;
                     load(event, commandSource, query, position, skipCurrent);
                     musicManager.getAlkabot().getLogger().debug("Failed to load! Retrying...");
                 }
+
+                musicManager.getAlkabot().getLogger().debug("Failed to LOAD (loader)!");
+                musicManager.getAlkabot().getLogger().error("vvvvvvvvvvvvvvv----------------------");
+                musicManager.getAlkabot().getLogger().error("error:", exception);
+                musicManager.getAlkabot().getLogger().error("^^^^^^^^^^^^^^^----------------------");
             }
         });
     }

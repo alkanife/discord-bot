@@ -102,6 +102,11 @@ public class AlkabotTrackPlayer {
                     retrying = true;
                     play(alkabotTrack);
                 }
+
+                musicManager.getAlkabot().getLogger().debug("Failed to LOAD (player)!");
+                musicManager.getAlkabot().getLogger().error("vvvvvvvvvvvvvvv----------------------");
+                musicManager.getAlkabot().getLogger().error("error:", exception);
+                musicManager.getAlkabot().getLogger().error("^^^^^^^^^^^^^^^----------------------");
             }
         });
     }

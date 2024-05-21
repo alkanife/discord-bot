@@ -1,8 +1,14 @@
 package dev.alkanife.alkabot.command.music;
 
+import dev.alkanife.alkabot.Alkabot;
 import dev.alkanife.alkabot.command.AbstractCommand;
 import dev.alkanife.alkabot.command.CommandManager;
+import dev.alkanife.alkabot.data.MusicDataManager;
+import dev.alkanife.alkabot.data.music.MusicData;
+import dev.alkanife.alkabot.data.music.Shortcut;
 import dev.alkanife.alkabot.lang.Lang;
+import dev.alkanife.alkabot.util.PagedList;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -10,7 +16,9 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class ShortcutCommand extends AbstractCommand {
 
@@ -71,23 +79,25 @@ public class ShortcutCommand extends AbstractCommand {
 
         event.deferReply().queue();
 
-        /*switch (Objects.requireNonNull(subCommand)) { TODO
+        MusicDataManager musicDataManager = alkabot.getDataManager().getMusicDataManager();
+
+        switch (Objects.requireNonNull(subCommand)) {
             case "bind" -> {
                 String name = Objects.requireNonNull(event.getOption("name")).getAsString();
                 String query = Objects.requireNonNull(event.getOption("query")).getAsString();
 
-                Shortcut shortcut = alkabot.getShortcut(name);
+                Shortcut shortcut = musicDataManager.getShortcutByName(name);
 
                 if (shortcut != null) {
                     event.getHook().sendMessage(Lang.get("command.music.shortcut.bind.error.already_existing")).queue();
                     return;
                 }
 
-                shortcut = new Shortcut(name, query, event.getUser().getId(), new Date());
+                shortcut = new Shortcut(name, query, event.getUser().getId(), new Date().getTime());
 
                 try {
-                    alkabot.getMusicData().getShortcutList().add(shortcut);
-                    alkabot.updateMusicData();
+                    musicDataManager.getMusicData().getShortcutList().add(shortcut);
+                    musicDataManager.save();
 
                     event.getHook().sendMessage(
                             Lang.t("command.music.shortcut.bind.success")
@@ -96,14 +106,14 @@ public class ShortcutCommand extends AbstractCommand {
                     ).queue();
                 } catch (Exception e) {
                     event.getHook().sendMessage(Lang.get("command.music.shortcut.bind.error.failed")).queue();
-                    alkabot.getLogger().error("Failed to bind a shortcut " + name + " to " + query + ":", e);
+                    alkabot.getLogger().error("Failed to bind a shortcut {} to {}:", name, query, e);
                 }
             }
 
             case "unbind" -> {
                 String name = Objects.requireNonNull(event.getOption("name")).getAsString();
 
-                Shortcut shortcut = alkabot.getShortcut(name);
+                Shortcut shortcut = musicDataManager.getShortcutByName(name);
 
                 if (shortcut == null) {
                     event.getHook().sendMessage(Lang.get("command.music.shortcut.unbind.error.not_existing")).queue();
@@ -111,8 +121,8 @@ public class ShortcutCommand extends AbstractCommand {
                 }
 
                 try {
-                    alkabot.getMusicData().getShortcutList().remove(shortcut);
-                    alkabot.updateMusicData();
+                    musicDataManager.getMusicData().getShortcutList().remove(shortcut);
+                    musicDataManager.save();
 
                     event.getHook().sendMessage(
                             Lang.t("command.music.shortcut.unbind.success")
@@ -121,17 +131,17 @@ public class ShortcutCommand extends AbstractCommand {
                     ).queue();
                 } catch (Exception e) {
                     event.getHook().sendMessage(Lang.get("command.music.shortcut.unbind.error.failed")).queue();
-                    alkabot.getLogger().error("Failed to remove a shortcut " + name + ":", e);
+                    alkabot.getLogger().error("Failed to remove a shortcut {}:", name, e);
                 }
             }
 
             case "list" -> {
-                if (alkabot.getMusicData().getShortcutList().isEmpty()) {
+                if (musicDataManager.getMusicData().getShortcutList().isEmpty()) {
                     event.getHook().sendMessage(Lang.get("command.music.shortcut.list.error.no_entries")).queue();
                     return;
                 }
 
-                int shortcutsSize = alkabot.getMusicData().getShortcutList().size();
+                int shortcutsSize = musicDataManager.getMusicData().getShortcutList().size();
 
                 PagedList pagedList = new PagedList();
 
@@ -141,7 +151,7 @@ public class ShortcutCommand extends AbstractCommand {
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.setTitle(
                         Lang.t("command.music.shortcut.list.success.title")
-                                .parseShortcutCount(alkabot.getMusicData())
+                                .parseShortcutCount(musicDataManager.getMusicData())
                                 .parseGuildName(alkabot.getGuild())
                                 .getValue()
                 );
@@ -155,7 +165,7 @@ public class ShortcutCommand extends AbstractCommand {
                 );
 
                 String shortcuts = pagedList.toStringList(index -> {
-                    Shortcut shortcut = alkabot.getMusicData().getShortcutList().get(index);
+                    Shortcut shortcut = musicDataManager.getMusicData().getShortcutList().get(index);
 
                     return Lang.t("command.music.shortcut.list.success.shortcuts")
                             .parseShortcut(shortcut)
@@ -166,7 +176,7 @@ public class ShortcutCommand extends AbstractCommand {
                 embed.setDescription(
                         Lang.t("command.music.shortcut.list.success.description")
                                 .parse("shortcuts", shortcuts)
-                                .parseShortcutCount(alkabot.getMusicData())
+                                .parseShortcutCount(musicDataManager.getMusicData())
                                 .parse("page", String.valueOf(pagedList.getPage()+1))
                                 .parse("page_count", String.valueOf(pagedList.getPages()))
                                 .getValue()
@@ -178,7 +188,7 @@ public class ShortcutCommand extends AbstractCommand {
             case "info" -> {
                 String name = Objects.requireNonNull(event.getOption("name")).getAsString();
 
-                Shortcut shortcut = alkabot.getShortcut(name);
+                Shortcut shortcut = musicDataManager.getShortcutByName(name);
 
                 if (shortcut == null) {
                     event.getHook().sendMessage(Lang.get("command.music.shortcut.info.error.not_existing")).queue();
@@ -208,6 +218,6 @@ public class ShortcutCommand extends AbstractCommand {
 
                 event.getHook().sendMessageEmbeds(embed.build()).queue();
             }
-        }*/
+        }
     }
 }

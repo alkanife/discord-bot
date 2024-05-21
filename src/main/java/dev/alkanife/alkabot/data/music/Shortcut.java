@@ -1,4 +1,4 @@
-package dev.alkanife.alkabot.music.data;
+package dev.alkanife.alkabot.data.music;
 
 import com.google.gson.annotations.SerializedName;
 import dev.alkanife.alkabot.lang.Lang;
@@ -17,8 +17,8 @@ public class Shortcut {
     private String name, query;
     @SerializedName("creator_id")
     private String creatorId;
-    @SerializedName("creation_date")
-    private Date creationDate;
+    @SerializedName("creation_time")
+    private long creationTime;
 
     public String getClickableName() {
         if (isUrlQuery())

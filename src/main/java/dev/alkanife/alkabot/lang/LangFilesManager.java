@@ -29,11 +29,11 @@ public class LangFilesManager extends FileManipulation {
         InputStream inputStream = getClass().getResourceAsStream("/lang/" + getFile().getName());
 
         if (inputStream == null) {
-            getAlkabot().getLogger().error("No language pack was found at '" + getFile().getAbsolutePath() + "'");
+            getAlkabot().getLogger().error("No language pack was found at '{}'", getFile().getAbsolutePath());
             return false;
         }
 
-        getAlkabot().getLogger().info("Exporting a new language pack to '" + getFile().getAbsolutePath() + "'");
+        getAlkabot().getLogger().info("Exporting a new language pack to '{}'", getFile().getAbsolutePath());
 
         try {
             if (getFile().getParentFile() != null)
@@ -66,7 +66,7 @@ public class LangFilesManager extends FileManipulation {
     }
 
     public boolean load(boolean reload) {
-        getAlkabot().getLogger().debug((reload ? "(Re)" : "") + "Loading language pack from '" + getFile().getAbsolutePath() + "'");
+        getAlkabot().getLogger().debug("{}Loading language pack from '{}'", reload ? "(Re)" : "", getFile().getAbsolutePath());
         String tracking = TimeTracker.startUnique("lang-load");
 
         ManipulationState readState = readFile();
@@ -89,7 +89,7 @@ public class LangFilesManager extends FileManipulation {
             Map<?, LinkedTreeMap<?, ?>> map = gson.fromJson(getFileContent(), Map.class);
 
             if (map == null) {
-                getAlkabot().getLogger().error("The language pack at '" + getFile().getAbsolutePath() + "' is empty!");
+                getAlkabot().getLogger().error("The language pack at '{}' is empty!", getFile().getAbsolutePath());
                 TimeTracker.kill(tracking);
                 return false;
             }
@@ -97,12 +97,12 @@ public class LangFilesManager extends FileManipulation {
             for (Map.Entry<?, LinkedTreeMap<?, ?>> entry : map.entrySet())
                 readEntry(entry.getKey() + "", entry);
         } catch (JsonSyntaxException exception) {
-            getAlkabot().getLogger().error("Invalid JSON syntax in the language pack at '" + getFile().getAbsolutePath() + "'");
-            getAlkabot().getLogger().error("Caused by " + exception.getMessage());
+            getAlkabot().getLogger().error("Invalid JSON syntax in the language pack at '{}'", getFile().getAbsolutePath());
+            getAlkabot().getLogger().error("Caused by {}", exception.getMessage());
             TimeTracker.kill(tracking);
             return false;
         } catch (Exception exception) {
-            getAlkabot().getLogger().error("An error occurred while loading the language pack at '" + getFile().getAbsolutePath() + "'", exception);
+            getAlkabot().getLogger().error("An error occurred while loading the language pack at '{}'", getFile().getAbsolutePath(), exception);
             TimeTracker.kill(tracking);
             return false;
         }
@@ -113,20 +113,20 @@ public class LangFilesManager extends FileManipulation {
         } else {
             Lang.setDateFormat(translations.get("date.format").toString());
         }
-        getAlkabot().getLogger().debug("Using date format '" + Lang.getDateFormat() + "'");
+        getAlkabot().getLogger().debug("Using date format '{}'", Lang.getDateFormat());
 
         if (translations.get("date.locale") == null) {
             getAlkabot().getLogger().warn("No date locale provided by the language pack, using english");
         } else {
             Locale locale = Locale.forLanguageTag(translations.get("date.locale").toString());
             Lang.setDateLocale(locale);
-            getAlkabot().getLogger().debug("Using date locale '" + locale.toString() + "'");
+            getAlkabot().getLogger().debug("Using date locale '{}'", locale.toString());
         }
 
         Lang.setTranslations(translations);
         translations = null;
 
-        getAlkabot().getLogger().debug("Finished loading " + Lang.getTranslations().size() + " values from the language pack");
+        getAlkabot().getLogger().debug("Finished loading {} values from the language pack", Lang.getTranslations().size());
         TimeTracker.end(tracking);
         return true;
     }

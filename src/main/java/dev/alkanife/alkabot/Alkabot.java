@@ -8,6 +8,7 @@ import dev.alkanife.alkabot.cli.UsageFormatter;
 import dev.alkanife.alkabot.command.CommandManager;
 import dev.alkanife.alkabot.configuration.ConfigManager;
 import dev.alkanife.alkabot.configuration.json.AlkabotConfig;
+import dev.alkanife.alkabot.data.DataManager;
 import dev.alkanife.alkabot.discord.AutoroleManager;
 import dev.alkanife.alkabot.discord.GuildManager;
 import dev.alkanife.alkabot.discord.WelcomeMessageManager;
@@ -54,12 +55,14 @@ public class Alkabot {
     @Getter @Setter
     private boolean spotifySupport = false;
 
-    @Getter @Setter
+    @Getter
     private SecretsManager secretsManager;
-    @Getter @Setter
+    @Getter
     private ConfigManager configManager;
-    @Getter @Setter
+    @Getter
     private LangFilesManager langFilesManager;
+    @Getter
+    private DataManager dataManager;
     @Getter
     private EventListenerManager eventListenerManager;
     @Getter
@@ -114,7 +117,7 @@ public class Alkabot {
             Logs.setupRootLogger(getArgs());
             logger = Logs.createLogger(getArgs(), Alkabot.class);
         } catch (Exception exception) {
-            System.out.println("An error occurred while creating the logger.\nIf you have modified the logger configuration, please check the options used and the error below.\n");
+            System.out.println("An error occurred while creating the logger.\nIf you edited the logger configuration, please check the options used and the error below.\n");
             exception.printStackTrace();
             return;
         }
@@ -138,7 +141,7 @@ public class Alkabot {
         logger.debug("DEBUG MODE ENABLED");
         logger.debug("Please do not use the debug mode in production.");
         logger.debug("---------");
-        logger.debug("Arguments: " + getArgs().toString());
+        logger.debug("Arguments: {}", getArgs().toString());
 
         logger.info("           _ _         _           _");
         logger.info("     /\\   | | |       | |         | |");
@@ -147,8 +150,8 @@ public class Alkabot {
         logger.info("  / ____ \\| |   < (_| | |_) | (_) | |_ ");
         logger.info(" /_/    \\_\\_|_|\\_\\__,_|_.__/ \\___/ \\__|");
         logger.info(" ");
+        logger.info(" Version {}", getFullVersion());
         logger.info(" " + github);
-        logger.info(" Version " + getFullVersion());
         logger.info(" ");
 
         if (snapshotBuild)
@@ -174,6 +177,7 @@ public class Alkabot {
         if (!langFilesManager.load())
             return false;
 
+        dataManager = new DataManager(this);
         eventListenerManager = new EventListenerManager(this);
         commandManager = new CommandManager(this);
         musicManager = new MusicManager(this);
@@ -182,6 +186,7 @@ public class Alkabot {
         welcomeMessageManager = new WelcomeMessageManager(this);
         autoroleManager = new AutoroleManager(this);
 
+        dataManager.getMusicDataManager().load();
         commandManager.load();
         notificationManager.load();
 

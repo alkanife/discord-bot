@@ -32,7 +32,7 @@ public class PagedList {
         if (page < 0)
             page = 0;
 
-        if ((page+1) >= pages) {
+        if ((page+1) > pages) {
             event.getHook().sendMessage(outOfRangeMessage).queue();
             return false;
         }

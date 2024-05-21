@@ -27,7 +27,7 @@ public class WelcomeMessageManager {
                 alkabot.getLogger().warn("The welcome message channel was not found!");
                 return false;
             } else {
-                alkabot.getLogger().debug("Welcome message channel: " + textChannel.getName());
+                alkabot.getLogger().debug("Welcome message channel: {}", textChannel.getName());
                 return true;
             }
         }
@@ -39,7 +39,7 @@ public class WelcomeMessageManager {
         try {
             if (alkabot.getConfig().getWelcomeMessageConfig().isEnable()) {
                 if (textChannel == null) {
-                    alkabot.getLogger().warn("Could not to send welcome message for " + member.getEffectiveName() + ": the channel was not found!");
+                    alkabot.getLogger().warn("Could not to send welcome message for {}: the channel was not found!", member.getEffectiveName());
                     return false;
                 } else {
                     textChannel.sendMessage(
@@ -53,7 +53,7 @@ public class WelcomeMessageManager {
 
             return true;
         } catch (Exception exception) {
-            alkabot.getLogger().error("Failed to send welcome message for " + member.getEffectiveName());
+            alkabot.getLogger().error("Failed to send welcome message for {}", member.getEffectiveName());
             alkabot.getLogger().debug("Full trace:", exception);
             return false;
         }

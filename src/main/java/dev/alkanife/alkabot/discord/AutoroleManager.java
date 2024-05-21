@@ -26,7 +26,7 @@ public class AutoroleManager {
                 alkabot.getLogger().warn("The Discord role for the auto-role was not found!");
                 return false;
             } else {
-                alkabot.getLogger().debug("Auto-role: " + autoRole.getName());
+                alkabot.getLogger().debug("Auto-role: {}", autoRole.getName());
                 return true;
             }
         }
@@ -38,7 +38,7 @@ public class AutoroleManager {
         try {
             if (alkabot.getConfig().getAutoRoleConfig().isEnable()) {
                 if (autoRole == null) {
-                    alkabot.getLogger().warn("Could not apply auto-role for " + member.getEffectiveName() + ": the Discord role was not found!");
+                    alkabot.getLogger().warn("Could not apply auto-role for {}: the Discord role was not found!", member.getEffectiveName());
                     return false;
                 } else {
                     member.getGuild().modifyMemberRoles(member, autoRole).queue();
@@ -47,7 +47,7 @@ public class AutoroleManager {
 
             return true;
         } catch (Exception exception) {
-            alkabot.getLogger().error("Failed to auto-role " + member.getEffectiveName() + "!");
+            alkabot.getLogger().error("Failed to auto-role {}!", member.getEffectiveName());
             alkabot.getLogger().debug("Full trace:", exception);
             return false;
         }

@@ -53,7 +53,7 @@ public class CommandManager {
                 new DestroyCommand(this),
                 new ForceplayCommand(this),
                 new PlayCommand(this),
-                //new ShortcutCommand(this), TODO
+                new ShortcutCommand(this),
                 new PlaynextCommand(this),
                 new QueueCommand(this),
                 new RemoveCommand(this),
@@ -66,7 +66,7 @@ public class CommandManager {
         registerCommands(new CopyCommand(this));/*,
                 new InfoCommand(this)); Info command disabled for now #TODO*/
 
-        alkabot.getLogger().debug(commands.size() + " commands enabled");
+        alkabot.getLogger().debug("{} commands enabled", commands.size());
         TimeTracker.end("load-commands");
     }
 
@@ -77,7 +77,7 @@ public class CommandManager {
 
     public void registerCommand(AbstractCommand abstractCommand) {
         if (abstractCommand.isEnabled()) {
-            alkabot.getLogger().debug("Adding command " + abstractCommand.getClass().getName());
+            alkabot.getLogger().debug("Adding command {}", abstractCommand.getClass().getName());
             commands.put(abstractCommand.getName(), abstractCommand);
         }
     }
@@ -88,7 +88,7 @@ public class CommandManager {
     }
 
     public void registerAdminCommand(AbstractAdminCommand abstractAdminCommand) {
-        alkabot.getLogger().debug("Adding command " + abstractAdminCommand.getClass().getName() + " (admin)");
+        alkabot.getLogger().debug("Adding command {} (admin)", abstractAdminCommand.getClass().getName());
         adminCommands.put(abstractAdminCommand.getName(), abstractAdminCommand);
     }
 

@@ -31,7 +31,7 @@ public class ReadyListener extends ListenerAdapter {
 
             alkabot.getCommandManager().getTerminalCommandHandlerThread().start();
 
-            alkabot.getLogger().info("Guild: " + alkabot.getGuild().getName());
+            alkabot.getLogger().info("Guild: {}", alkabot.getGuild().getName());
             alkabot.getLogger().info("To see a list of admin commands, type 'help'");
 
             TimeTracker.end("alkabot-ready-time");

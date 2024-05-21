@@ -22,7 +22,7 @@ public class GuildManager {
             Guild guild = alkabot.getJda().getGuildById(alkabot.getConfig().getGuildConfig().getGuildId());
 
             if (guild == null) {
-                alkabot.getLogger().error("The Discord guild '" + alkabot.getConfig().getGuildConfig().getGuildId() + "' was not found");
+                alkabot.getLogger().error("The Discord guild '{}' was not found", alkabot.getConfig().getGuildConfig().getGuildId());
                 return false;
             }
 

@@ -1,4 +1,4 @@
-package dev.alkanife.alkabot.music.data;
+package dev.alkanife.alkabot.data.music;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;

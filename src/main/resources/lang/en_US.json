@@ -9,7 +9,8 @@
     "cyan": "#3D8D84",
     "orange": "#EC6F21",
     "red": "#8D3D3D",
-    "big_red": "#C10000"
+    "big_red": "#C10000",
+    "shortcut": "#bde9f2"
   },
   "welcome_messages": "Welcome to the server <member_mention>!", // member mention, member names
   "notification": {
@@ -615,10 +616,10 @@
             "out_of_range": "There is no shortcuts at this page!"
           },
           "success": {
-            "title": "<shortcut_count> shortcuts", // shortcut_count, guild name
-            "color": "none",
+            "title": "Jukebox shortcuts (<shortcut_count>)", // shortcut_count, guild name
+            "color": "{colors.shortcut}",
             "icon": "none", // member avatars, bot avatars, guild avatars
-            "description": "<shortcuts>\n**PAGE <page> / <page_count>**", // shortcuts, shortcut_count, page, page count
+            "description": "<shortcuts>\nTo see all details about one shortcut,\nuse '/shortcut info'.\n\n**PAGE <page> / <page_count>**", // shortcuts, shortcut_count, page, page count
             "shortcuts": "`<index>.` <shortcut_clickable_name> [<shortcut_added_by_mention>]" // shortcut, index
           }
         },
@@ -631,10 +632,10 @@
             "not_existing": "This shortcut does not exists!"
           },
           "success": {
-            "title": "<shortcut_name>", // shortcut, guild name
-            "color": "none",
+            "title": "About a shortcut", // shortcut, guild name
+            "color": "{colors.shortcut}",
             "icon": "none", // member avatars, bot avatars, guild avatars
-            "description": "Added on <shortcut_creation_date>\nBy <shortcut_added_by_mention>\n\n__Query:__\n `<shortcut_query>`" // shortcut
+            "description": "Name: <shortcut_name>\nAdded on: <shortcut_creation_date>\nBy: <shortcut_added_by_mention>\n\nQuery: <shortcut_clickable_query>" // shortcut
           }
         }
       }
@@ -643,7 +644,7 @@
   "music": {
     "spotify": {
       "title": "Spotify playlist",
-      "thumbnail": "https://share.alkanife.fr/alkabot/spotify.png"
+      "thumbnail": "https://share.alkanife.dev/alkabot/spotify.png"
     },
     "stream": "live",
     "link_query": "Link",

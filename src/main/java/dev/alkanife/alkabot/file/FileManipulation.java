@@ -36,7 +36,7 @@ public abstract class FileManipulation {
             return ManipulationState.FILE_IS_DIRECTORY;
         }
 
-        alkabot.getLogger().debug("Reading content of '" + file.getAbsolutePath() + "'");
+        alkabot.getLogger().debug("Reading content of '{}'", file.getAbsolutePath());
 
         String tracking = TimeTracker.startUnique("read-file");
 
@@ -54,7 +54,7 @@ public abstract class FileManipulation {
     }
 
     public @NotNull ManipulationState writeFile(boolean isNew, @Nullable String content) {
-        alkabot.getLogger().debug((isNew ? "Creating new file to '" : "Writing to '") + file.getAbsolutePath() + "'");
+        alkabot.getLogger().debug("{}{}'", isNew ? "Creating new file to '" : "Writing to '", file.getAbsolutePath());
 
         if (content == null)
             return ManipulationState.NO_CONTENT_GIVEN;
@@ -83,7 +83,7 @@ public abstract class FileManipulation {
     }
 
     public @NotNull ManipulationState deleteFile() {
-        alkabot.getLogger().debug("Deleting file at '" + file.getAbsolutePath() + "'");
+        alkabot.getLogger().debug("Deleting file at '{}'", file.getAbsolutePath());
 
         String tracking = TimeTracker.startUnique("delete-file");
 

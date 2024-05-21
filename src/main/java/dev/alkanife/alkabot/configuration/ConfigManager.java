@@ -33,11 +33,11 @@ public class ConfigManager extends JsonFileManipulation {
     public boolean validateLoad(@NotNull Object data, boolean reload) {
         AlkabotConfig loadedConfig = (AlkabotConfig) data;
 
-        getAlkabot().getLogger().debug("Loaded configuration: " + loadedConfig);
+        getAlkabot().getLogger().debug("Loaded configuration: {}", loadedConfig);
 
         if (getAlkabot().getArgs().getOverrideLangFilePath() != null) {
             loadedConfig.setLangFilePath(getAlkabot().getArgs().getOverrideLangFilePath());
-            getAlkabot().getLogger().info("Overriding language pack to '" + getAlkabot().getArgs().getOverrideLangFilePath() + "'");
+            getAlkabot().getLogger().info("Overriding language pack to '{}'", getAlkabot().getArgs().getOverrideLangFilePath());
         }
 
         if (!reload) {

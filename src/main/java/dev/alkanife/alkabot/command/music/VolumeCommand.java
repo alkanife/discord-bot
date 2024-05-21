@@ -2,6 +2,7 @@ package dev.alkanife.alkabot.command.music;
 
 import dev.alkanife.alkabot.command.AbstractCommand;
 import dev.alkanife.alkabot.command.CommandManager;
+import dev.alkanife.alkabot.data.MusicDataManager;
 import dev.alkanife.alkabot.lang.Lang;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -40,10 +41,12 @@ public class VolumeCommand extends AbstractCommand {
     public void execute(SlashCommandInteractionEvent event) {
         OptionMapping volumeOption = event.getOption("volume");
 
-        /*if (volumeOption == null) { TODO
+        MusicDataManager musicDataManager = alkabot.getDataManager().getMusicDataManager();
+
+        if (volumeOption == null) {
             event.reply(
                     Lang.t("command.music.volume.message")
-                            .parse("volume", String.valueOf(alkabot.getMusicData().getVolume()))
+                            .parse("volume", String.valueOf(musicDataManager.getMusicData().getVolume()))
                             .getValue()
             ).queue();
             return;
@@ -57,9 +60,9 @@ public class VolumeCommand extends AbstractCommand {
         }
 
         try {
-            alkabot.getMusicData().setVolume(volume);
+            musicDataManager.getMusicData().setVolume(volume);
             alkabot.getMusicManager().getPlayer().setVolume(volume);
-            alkabot.updateMusicData();
+            musicDataManager.save();
 
             event.reply(
                     Lang.t("command.music.volume.message")
@@ -73,6 +76,6 @@ public class VolumeCommand extends AbstractCommand {
                             .parse("volume", String.valueOf(volume))
                             .getValue()
             ).queue();
-        }*/
+        }
     }
 }

@@ -6,8 +6,8 @@ import dev.alkanife.alkabot.music.AlkabotTrack;
 import dev.alkanife.alkabot.music.AlkabotTrackPlaylist;
 import dev.alkanife.alkabot.music.MusicManager;
 import dev.alkanife.alkabot.music.MusicUtils;
-import dev.alkanife.alkabot.music.data.MusicData;
-import dev.alkanife.alkabot.music.data.Shortcut;
+import dev.alkanife.alkabot.data.music.MusicData;
+import dev.alkanife.alkabot.data.music.Shortcut;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -364,7 +365,7 @@ public class TranslationHandler {
                 .parse("shortcut_clickable_query", shortcut.getClickableQuery())
                 .parse("shortcut_added_by_mention", "<@" + shortcut.getCreatorId() + ">")
                 .parse("shortcut_added_by_id", shortcut.getCreatorId())
-                .parse("shortcut_creation_date", Lang.formatDate(shortcut.getCreationDate()));
+                .parse("shortcut_creation_date", Lang.formatDate(new Date(shortcut.getCreationTime())));
     }
 
     public TranslationHandler parseShortcutCount(@NotNull MusicData musicData) {

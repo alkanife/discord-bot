@@ -44,17 +44,17 @@ public abstract class JsonFileManipulation extends FileManipulation {
             return new GsonBuilder().serializeNulls().create().fromJson(json, dataType);
         } catch (JsonSyntaxException exception) {
             if (override == null) {
-                getAlkabot().getLogger().error("Invalid JSON syntax from '" + getFile().getAbsolutePath() + "'");
+                getAlkabot().getLogger().error("Invalid JSON syntax from '{}'", getFile().getAbsolutePath());
             } else {
                 getAlkabot().getLogger().error("Invalid JSON syntax from '[override]'");
             }
 
-            getAlkabot().getLogger().error("Caused by " + exception.getMessage());
+            getAlkabot().getLogger().error("Caused by {}", exception.getMessage());
 
             return null;
         } catch (Exception exception) {
             if (override == null) {
-                getAlkabot().getLogger().error("Internal error while reading JSON from '" + getFile().getAbsolutePath() + "'", exception);
+                getAlkabot().getLogger().error("Internal error while reading JSON from '{}'", getFile().getAbsolutePath(), exception);
             } else {
                 getAlkabot().getLogger().error("Internal error while reading JSON override", exception);
             }
@@ -76,7 +76,7 @@ public abstract class JsonFileManipulation extends FileManipulation {
             if (json == null)
                 return null;
 
-            getAlkabot().getLogger().info("No file named '" + getFile().getName() + "' was found at the specified path. Creating a new one...");
+            getAlkabot().getLogger().info("No file named '{}' was found at the specified path. Creating a new one...", getFile().getName());
 
             if (writeFile(true, json).failed())
                 return null;
@@ -94,7 +94,7 @@ public abstract class JsonFileManipulation extends FileManipulation {
     }
 
     public boolean load(boolean reload) {
-        getAlkabot().getLogger().debug((reload ? "(Re)" : "") + "Loading data from '" + getDataSourceName() + "'");
+        getAlkabot().getLogger().debug("{}Loading data from '{}'", reload ? "(Re)" : "", getDataSourceName());
         String tracking = TimeTracker.startUnique("json-load");
 
         Object data = getDataFromFile();
@@ -120,7 +120,7 @@ public abstract class JsonFileManipulation extends FileManipulation {
     }
 
     public boolean save() {
-        getAlkabot().getLogger().debug("Saving data to '" + getFile().getName() + "'");
+        getAlkabot().getLogger().debug("Saving data to '{}'", getFile().getName());
 
         String tracking = TimeTracker.startUnique("json-save");
         Object object = getDataObject();

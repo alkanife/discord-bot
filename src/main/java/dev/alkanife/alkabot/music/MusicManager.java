@@ -1,15 +1,25 @@
 package dev.alkanife.alkabot.music;
 
+import com.sedmelluq.discord.lavaplayer.container.MediaContainerRegistry;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.getyarn.GetyarnAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.nico.NicoAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import dev.alkanife.alkabot.Alkabot;
+import dev.alkanife.alkabot.data.music.Shortcut;
 import dev.alkanife.alkabot.lang.Lang;
-import dev.alkanife.alkabot.music.data.Shortcut;
 import dev.alkanife.alkabot.music.loader.LavaplayerLoader;
 import dev.alkanife.alkabot.music.loader.SpotifyLoader;
 import dev.alkanife.alkabot.util.StringUtils;
+import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -92,7 +102,20 @@ public class MusicManager {
         spotifyLoader = new SpotifyLoader(this);
         alkabotTrackPlayer = new AlkabotTrackPlayer(this);
 
+        YoutubeAudioSourceManager youtubeSource = new YoutubeAudioSourceManager(true);
+        youtubeSource.setPlaylistPageCount(10);
+
         audioPlayerManager = new DefaultAudioPlayerManager();
+        audioPlayerManager.registerSourceManager(youtubeSource);
+        audioPlayerManager.registerSourceManager(SoundCloudAudioSourceManager.createDefault());
+        audioPlayerManager.registerSourceManager(new BandcampAudioSourceManager());
+        audioPlayerManager.registerSourceManager(new VimeoAudioSourceManager());
+        audioPlayerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
+        audioPlayerManager.registerSourceManager(new BeamAudioSourceManager());
+        audioPlayerManager.registerSourceManager(new GetyarnAudioSourceManager());
+        audioPlayerManager.registerSourceManager(new NicoAudioSourceManager());
+        audioPlayerManager.registerSourceManager(new HttpAudioSourceManager(MediaContainerRegistry.DEFAULT_REGISTRY));
+
         AudioSourceManagers.registerRemoteSources(audioPlayerManager);
         AudioSourceManagers.registerLocalSource(audioPlayerManager);
 
@@ -100,7 +123,7 @@ public class MusicManager {
         trackScheduler = new TrackScheduler(this);
         trackListener = new TrackListener(this);
         player.addListener(trackListener);
-        //player.setVolume(alkabot.getMusicData().getVolume()); TODO
+        player.setVolume(alkabot.getDataManager().getMusicDataManager().getMusicData().getVolume());
     }
 
     public void nowPlaying(SlashCommandInteractionEvent event) {
@@ -159,7 +182,7 @@ public class MusicManager {
             }
         } else {
             if (!StringUtils.isURL(query)) {
-                /*Shortcut shortcut = alkabot.getShortcut(query); TODO
+                Shortcut shortcut = alkabot.getDataManager().getMusicDataManager().getShortcutByName(query);
 
                 if (shortcut == null) {
                     query = "ytsearch: " + query;
@@ -168,21 +191,11 @@ public class MusicManager {
                         query = shortcut.getQuery();
                     else
                         query = "ytsearch: " + shortcut.getQuery();
-                }*/
+                }
             }
 
             event.deferReply().queue();
             alkabot.getMusicManager().getLavaplayerLoader().load(event, commandSource, query, position, skipCurrent);
         }
     }
-
-        /*public Shortcut getShortcut(String name) {
-        Shortcut shortcut = null;
-
-        for (Shortcut s : musicData.getShortcutList())
-            if (s.getName().equalsIgnoreCase(name))
-                shortcut = s;
-
-        return shortcut;
-    }*/
 }

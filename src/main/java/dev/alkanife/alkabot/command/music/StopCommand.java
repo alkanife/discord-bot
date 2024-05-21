@@ -37,6 +37,5 @@ public class StopCommand extends AbstractCommand {
     public void execute(SlashCommandInteractionEvent event) {
         event.reply(Lang.get("command.music.stop.message")).queue();
         alkabot.getGuild().getAudioManager().closeAudioConnection();
-        //Music.reset(); Disabled, it's not a bug it's a F E A T U R E
     }
 }

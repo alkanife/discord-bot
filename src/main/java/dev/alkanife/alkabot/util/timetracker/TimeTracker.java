@@ -35,7 +35,7 @@ public class TimeTracker {
                     displayKey = key.substring(39);
 
                 // The Yellow color used here may not completely work with some terminals. #TODO
-                Alkabot.getInstance().getLogger().info("\u001B[0;33m" + displayKey + " = " + (System.currentTimeMillis() - startTime) + "ms\u001B[0m");
+                Alkabot.getInstance().getLogger().info("\u001B[0;33m{} = {}ms\u001B[0m", displayKey, System.currentTimeMillis() - startTime);
                 trackLog.remove(key);
             }
         }

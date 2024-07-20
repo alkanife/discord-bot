@@ -12,7 +12,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -21,29 +23,51 @@ public class LangFilesManager extends FileManipulation {
 
     private HashMap<String, Object> translations = new HashMap<>();
 
+    public enum defaultLanguages {
+        en_US, fr_FR
+    }
+
     public LangFilesManager(@NotNull Alkabot alkabot) {
         super(alkabot, new File(alkabot.getConfig().getLangFilePath()));
     }
 
-    public boolean createNewFile() {
-        InputStream inputStream = getClass().getResourceAsStream("/lang/" + getFile().getName());
+    public boolean exportLanguage(File file) {
+        InputStream inputStream = getClass().getResourceAsStream("/lang/" + file.getName());
 
         if (inputStream == null) {
-            getAlkabot().getLogger().error("No language pack was found at '{}'", getFile().getAbsolutePath());
+            getAlkabot().getLogger().error("Internal error: there is no '{}' language pack available", file.getName());
             return false;
         }
 
-        getAlkabot().getLogger().info("Exporting a new language pack to '{}'", getFile().getAbsolutePath());
+        getAlkabot().getLogger().debug("Exporting a new language pack to '{}'", file.getAbsolutePath());
 
         try {
             if (getFile().getParentFile() != null)
                 getFile().getParentFile().mkdirs();
 
-            Files.copy(inputStream, getFile().toPath());
+            Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (Exception exception) {
             getAlkabot().getLogger().error("An error occurred while exporting a language pack", exception);
             return false;
         }
+
+        return true;
+    }
+
+    public boolean exportDefaultLanguages() {
+        for (defaultLanguages defaultLanguage : defaultLanguages.values()) {
+            File file = new File("lang/" + defaultLanguage.name() + ".json");
+
+            if (!exportLanguage(file)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean createNewFile() {
+        if (!exportLanguage(getFile()))
+            return false;
 
         try {
             String content = Files.readString(getFile().toPath());

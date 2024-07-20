@@ -12,6 +12,7 @@ import dev.alkanife.alkabot.configuration.json.guild.GuildPresenceConfig;
 import dev.alkanife.alkabot.configuration.json.notifications.*;
 import dev.alkanife.alkabot.file.FileManipulation;
 import dev.alkanife.alkabot.file.JsonFileManipulation;
+import dev.alkanife.alkabot.secrets.json.Secrets;
 import lombok.Getter;
 import net.dv8tion.jda.api.OnlineStatus;
 import org.jetbrains.annotations.NotNull;
@@ -27,6 +28,13 @@ public class ConfigManager extends JsonFileManipulation {
 
     public ConfigManager(@NotNull Alkabot alkabot) {
         super(alkabot, new File(alkabot.getArgs().getConfigFilePath()), AlkabotConfig.class);
+    }
+
+    @Override
+    public boolean setup() {
+        config = (AlkabotConfig) cleanData(new AlkabotConfig());
+        save();
+        return true;
     }
 
     @Override

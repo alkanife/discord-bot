@@ -144,6 +144,7 @@ public abstract class JsonFileManipulation extends FileManipulation {
         return writeState.succeed();
     }
 
+    public abstract boolean setup();
     public abstract boolean validateLoad(@NotNull Object data, boolean reload);
     public abstract @NotNull Object cleanData(@Nullable Object object);
     public abstract @Nullable Object getDataObject();

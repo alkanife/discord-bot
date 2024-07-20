@@ -22,6 +22,13 @@ public class MusicDataManager extends JsonFileManipulation {
     }
 
     @Override
+    public boolean setup() {
+        musicData = (MusicData) cleanData(new MusicData());
+        save();
+        return true;
+    }
+
+    @Override
     public boolean validateLoad(@NotNull Object data, boolean reload) {
         musicData = (MusicData) data;
         return true;
@@ -34,6 +41,9 @@ public class MusicDataManager extends JsonFileManipulation {
 
         if (musicDataObject == null)
             musicDataObject = new MusicData(100, new ArrayList<>());
+
+        //TODO revoir ça c'était bizarre
+        musicDataObject.setVolume(100);
 
         if (musicDataObject.getShortcutList() == null)
             musicDataObject.setShortcutList(new ArrayList<>());

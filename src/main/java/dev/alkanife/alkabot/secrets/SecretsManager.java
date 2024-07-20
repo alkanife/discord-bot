@@ -25,6 +25,13 @@ public class SecretsManager extends JsonFileManipulation {
     }
 
     @Override
+    public boolean setup() {
+        secrets = (Secrets) cleanData(new Secrets());
+        save();
+        return true;
+    }
+
+    @Override
     public boolean validateLoad(@NotNull Object data, boolean reload) {
         Secrets loadedSecrets = (Secrets) data;
 

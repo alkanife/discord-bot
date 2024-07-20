@@ -7,6 +7,7 @@ import dev.alkanife.alkabot.notification.NotificationManager;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRemoveEvent;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 public class MemberNotifier extends Notifier {
 
@@ -59,7 +60,7 @@ public class MemberNotifier extends Notifier {
 
         embed.setDescription(stringBuilder.toString());
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyLeave(GuildMemberRemoveEvent event) {
@@ -89,7 +90,7 @@ public class MemberNotifier extends Notifier {
                         .getValue()
         );
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 }
 

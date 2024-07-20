@@ -36,15 +36,15 @@
         "title": "Successfully connected", // bot client names, guild name
         "color": "{colors.green}",
         "icon": "<bot_avatar_url>", // bot avatars, guild avatar
-        "description": "Alkabot version <bot_version>\n\n\uD83D\uDD27 Administrators (<admin_count>) : <admins>\n\nFor more details on the current configuration of the bot, go to my DMs." // bot, admins
+        "description": "Version: Alkabot<bot_version>\n\n\uD83D\uDD27 Administrators (<admin_count>) : <admins>\n\nFor more details on the current configuration of the bot, go to my DMs." // bot, admins
       },
       "power_off": {
-        "title": "Stopping", // bot client names, guild name
+        "title": "Shutting down", // bot client names, guild name
         "color": "{colors.orange}",
         "icon": "<bot_avatar_url>", // bot avatars, guild avatar
-        "description": "<admin> requested my shutdown.", // admin_name, admin_mention, bot, guild name
+        "description": "Requested by: <admin>", // admin_name, admin_mention, bot, guild name
         "admin": {
-          "system": "`CLI`",
+          "system": "`Terminal`",
           "admin": "<admin_mention> (<admin_name>)"
         }
       },
@@ -373,7 +373,7 @@
     "error": "Sorry, an error occurred while executing your command.",
     "about": {
       "description": "❔ Who am I?",
-      "content": "I am a bot running on Alkabot version <bot_version>.\n<bot_github>" // bot
+      "content": "I am a bot running on Alkabot!\nMore about me over there: <bot_github>" // bot
     },
     "utilities": {
       "copy": {

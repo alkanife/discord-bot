@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 public class MessageNotifier extends Notifier {
 
@@ -66,7 +67,7 @@ public class MessageNotifier extends Notifier {
 
         embed.addField(Lang.t("notification.message.edit.after").getValue(), after, false);
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyDelete(MessageDeleteEvent event) { // todo: detect moderator
@@ -115,6 +116,6 @@ public class MessageNotifier extends Notifier {
         embed.addField(NotificationUtils.createUserField("notification.message.delete", author, true));
         embed.addField(Lang.t("notification.message.delete.message").getValue(), message, false);
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 }

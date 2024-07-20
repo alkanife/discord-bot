@@ -19,7 +19,15 @@ public class UsageFormatter {
     private final JCommander jCommander;
 
     public void printUsage() {
-        System.out.println("Usage: java -jar Alkabot.jar [options]");
+        System.out.println("Usage....: java -jar Alkabot.jar [options...]");
+        System.out.println("           java -jar Alkabot.jar options.txt");
+        System.out.println();
+        System.out.println("Example..: java -jar Alkabot.jar -setup");
+        System.out.println("           java -jar Alkabot.jar -start -debug ...");
+        System.out.println();
+        System.out.println("If you just have placed the bot JAR inside this directory, you must make a setup.");
+        System.out.println("To do so, use the option '-setup', it will create all the files the bot needs.");
+        System.out.println("However, some default values (like the secrets) must be filled be you.");
         System.out.println();
         System.out.println("Options:");
 

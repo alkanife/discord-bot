@@ -19,6 +19,7 @@ import dev.alkanife.alkabot.notification.NotificationManager;
 import dev.alkanife.alkabot.secrets.SecretsManager;
 import dev.alkanife.alkabot.secrets.json.Secrets;
 import dev.alkanife.alkabot.secrets.json.SpotifySecrets;
+import dev.alkanife.alkabot.util.AlkabotSetup;
 import dev.alkanife.alkabot.util.Logs;
 import dev.alkanife.alkabot.util.StringUtils;
 import dev.alkanife.alkabot.util.BuildReader;
@@ -40,7 +41,7 @@ public class Alkabot {
     private static Alkabot instance;
 
     @Getter
-    private final String github = "https://github.com/alkanife/alkabot";
+    private final String github = "https://alka.dev/alkabot";
     @Getter @Setter
     private String version = "unknown";
     @Getter @Setter
@@ -57,7 +58,7 @@ public class Alkabot {
 
     @Getter
     private SecretsManager secretsManager;
-    @Getter
+    @Getter @Setter
     private ConfigManager configManager;
     @Getter
     private LangFilesManager langFilesManager;
@@ -104,11 +105,16 @@ public class Alkabot {
             return;
         }
 
+        if (!getArgs().isStart() && !getArgs().isSetup() && !getArgs().isVersion()) {
+            new UsageFormatter(jCommander).printUsage();
+            return;
+        }
+
         new BuildReader(this);
 
         if (getArgs().isVersion()) {
-            System.out.println("Alkabot version " + getVersion() + " (" + getBuild() + ")");
-            System.out.println(getGithub());
+            System.out.println("Alkabot" + getVersion() + " (" + getBuild() + ")");
+            System.out.println("More on " + getGithub());
             return;
         }
 
@@ -124,6 +130,18 @@ public class Alkabot {
 
         try {
             TimeTracker.isTracking = getArgs().isTrackTime();
+
+            if (getArgs().isSetup()) {
+                try {
+                    if (!new AlkabotSetup(this).setup())
+                        logger.error("A problem occurred while setting up the bot. Perhaps try to see if the bot has the necessary permissions to write and read files in this directory.");
+                } catch (Exception exception) {
+                    logger.error("Fatal: an unexpected error prevented the setup", exception);
+                }
+
+                return;
+            }
+
             TimeTracker.start("total-load-time");
 
             splashText();
@@ -150,12 +168,12 @@ public class Alkabot {
         logger.info("  / ____ \\| |   < (_| | |_) | (_) | |_ ");
         logger.info(" /_/    \\_\\_|_|\\_\\__,_|_.__/ \\___/ \\__|");
         logger.info(" ");
-        logger.info(" Version {}", getFullVersion());
-        logger.info(" " + github);
+        logger.info(" Alkabot{}", getFullVersion());
+        logger.info(" More on " + github);
         logger.info(" ");
 
         if (snapshotBuild)
-            logger.warn("This version of Alkabot is an experiment, bugs or breaking errors may occur!");
+            logger.warn("This version of Alkabot is an experiment and some features are not finished, take extra care!");
 
         if (version.equals("unknown"))
             logger.warn("Unable to find the current Alkabot version, be careful...");

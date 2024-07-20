@@ -9,6 +9,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
+
+import java.awt.*;
 
 public class SelfNotifier extends Notifier {
 
@@ -19,11 +23,11 @@ public class SelfNotifier extends Notifier {
         selfNotifConfig = notificationManager.getAlkabot().getConfig().getNotifConfig().getSelfNotifConfig();
     }
 
-    public void notifyAdmin(MessageEmbed messageEmbed) {
+    public void notifyAdmin(MessageCreateData messageCreateData) {
         if (!selfNotifConfig.isAdmin())
             return;
 
-        notificationManager.sendNotification(notificationChannel, messageEmbed);
+        notificationManager.sendNotification(notificationChannel, messageCreateData);
     }
 
     public void notifyStart() {
@@ -48,7 +52,18 @@ public class SelfNotifier extends Notifier {
                         .getValue()
         );
 
-        notifyAdmin(embedBuilder.build());
+        MessageCreateBuilder messageCreateBuilder = new MessageCreateBuilder();
+
+        if (alkabot.isSnapshotBuild()) {
+            messageCreateBuilder.setEmbeds(embedBuilder.build(), new EmbedBuilder()
+                    .setDescription("### This version of Alkabot is an experiment and some features are not finished, take extra care!")
+                    .setColor(Color.decode("#a1400b"))
+                    .build());
+        } else {
+            messageCreateBuilder.setEmbeds(embedBuilder.build());
+        }
+
+        notifyAdmin(messageCreateBuilder.build());
     }
 
     public void notifyShutdown(MessageEmbed messageEmbed, boolean shutdownAfter) {
@@ -124,6 +139,6 @@ public class SelfNotifier extends Notifier {
                     false);
         }
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 }

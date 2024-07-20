@@ -12,4 +12,11 @@ public class DataManager {
         musicDataManager = new MusicDataManager(alkabot);
     }
 
+    public boolean setupData() {
+        if (!musicDataManager.setup())
+            return false;
+
+        return true;
+    }
+
 }

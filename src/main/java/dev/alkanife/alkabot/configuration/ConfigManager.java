@@ -114,8 +114,10 @@ public class ConfigManager extends JsonFileManipulation {
         }
 
         // Welcome message
-        if (configObject.getWelcomeMessageConfig() == null)
+        if (configObject.getWelcomeMessageConfig() == null) {
             configObject.setWelcomeMessageConfig(new WelcomeMessageConfig());
+            configObject.getWelcomeMessageConfig().setIgnoreBots(true);
+        }
 
         if (configObject.getWelcomeMessageConfig().isEnable()) {
             if (configObject.getWelcomeMessageConfig().getChannelId() == null) {

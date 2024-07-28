@@ -46,7 +46,24 @@ public class MessageListener extends ListenerAdapter {
         if (messageUpdateEvent.getAuthor().isBot())
             return;
 
+        // To prevent the trigger on displaying embedded links
+        for (CachedMessage cachedMessage : cachedMessageList) {
+            if (cachedMessage.getId() == messageUpdateEvent.getMessageIdLong()) {
+                if (cachedMessage.getContent().equals(messageUpdateEvent.getMessage().getContentDisplay())) {
+                    return;
+                }
+            }
+        }
+
         alkabot.getNotificationManager().getMessageNotification().notifyEdit(messageUpdateEvent);
+
+        // Update cached message
+        for (CachedMessage cachedMessage : cachedMessageList) {
+            if (cachedMessage.getId() == messageUpdateEvent.getMessageIdLong()) {
+                cachedMessage.setContent(messageUpdateEvent.getMessage().getContentDisplay());
+                break;
+            }
+        }
     }
 
     @Override

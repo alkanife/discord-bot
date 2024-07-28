@@ -8,7 +8,7 @@ import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
-import dev.alkanife.alkabot.cli.CLIArguments;
+import dev.alkanife.alkabot.CLIArguments;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;

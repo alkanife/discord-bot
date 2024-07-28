@@ -3,8 +3,6 @@ package dev.alkanife.alkabot;
 import ch.qos.logback.classic.Logger;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import dev.alkanife.alkabot.cli.CLIArguments;
-import dev.alkanife.alkabot.cli.UsageFormatter;
 import dev.alkanife.alkabot.command.CommandManager;
 import dev.alkanife.alkabot.configuration.ConfigManager;
 import dev.alkanife.alkabot.configuration.json.AlkabotConfig;
@@ -17,12 +15,9 @@ import dev.alkanife.alkabot.discord.event.EventListenerManager;
 import dev.alkanife.alkabot.music.MusicManager;
 import dev.alkanife.alkabot.notification.NotificationManager;
 import dev.alkanife.alkabot.secrets.SecretsManager;
-import dev.alkanife.alkabot.secrets.json.Secrets;
-import dev.alkanife.alkabot.secrets.json.SpotifySecrets;
-import dev.alkanife.alkabot.util.AlkabotSetup;
-import dev.alkanife.alkabot.util.Logs;
-import dev.alkanife.alkabot.util.StringUtils;
-import dev.alkanife.alkabot.util.BuildReader;
+import dev.alkanife.alkabot.util.*;
+import dev.alkanife.alkabot.util.command.CommandList;
+import dev.alkanife.alkabot.util.command.CommandArranger;
 import dev.alkanife.alkabot.util.timetracker.TimeTracker;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +29,9 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 import java.io.File;
+import java.net.URL;
+import java.security.CodeSource;
+import java.util.List;
 
 public class Alkabot {
 
@@ -101,12 +99,12 @@ public class Alkabot {
         }
 
         if (getArgs().isHelp()) {
-            new UsageFormatter(jCommander).printUsage();
+            printUsage(jCommander);
             return;
         }
 
         if (!getArgs().isStart() && !getArgs().isSetup() && !getArgs().isVersion()) {
-            new UsageFormatter(jCommander).printUsage();
+            printUsage(jCommander);
             return;
         }
 
@@ -177,6 +175,27 @@ public class Alkabot {
 
         if (version.equals("unknown"))
             logger.warn("Unable to find the current Alkabot version, be careful...");
+    }
+
+    private void printUsage(JCommander jCommander) {
+        System.out.println("Usage....: java -jar " + getJarName(Alkabot.class) + " [options...]");
+        System.out.println("           java -jar " + getJarName(Alkabot.class) + " options.txt");
+        System.out.println();
+        System.out.println("Example..: java -jar " + getJarName(Alkabot.class) + " -setup");
+        System.out.println("           java -jar " + getJarName(Alkabot.class) + " -start -debug ...");
+        System.out.println();
+        System.out.println("If you just have placed the bot JAR inside this directory, you must make a setup.");
+        System.out.println("To do so, use the option '-setup', it will create all the files the bot needs.");
+        System.out.println("However, some default values (like the secrets) must be filled manually.");
+        System.out.println();
+        System.out.println("Options:");
+
+        CommandArranger commandArranger = new CommandArranger(jCommander);
+        CommandList commandList = new CommandList(commandArranger.getResult());
+        commandList.setPaddingLeft(3);
+
+        for (String line : commandList.getLines())
+            System.out.println(line);
     }
 
     private boolean load() {
@@ -254,6 +273,21 @@ public class Alkabot {
 
     public Guild getGuild() {
         return guildManager.getGuild();
+    }
+
+    public String getJarName(Class<?> clazz) {
+        String jar = "Alkabot.jar";
+
+        try {
+            CodeSource codeSource = clazz.getProtectionDomain().getCodeSource();
+            if (codeSource != null) {
+                URL jarUrl = codeSource.getLocation();
+                String jarPath = jarUrl.getPath();
+                jar = new File(jarPath).getName();
+            }
+        } catch (Exception ignore) { }
+
+        return jar;
     }
 
     public Activity buildActivity() {

@@ -1,7 +1,6 @@
 package dev.alkanife.alkabot.lang;
 
 import dev.alkanife.alkabot.Alkabot;
-import dev.alkanife.alkabot.command.admin.AdminCommandExecution;
 import dev.alkanife.alkabot.music.AlkabotTrack;
 import dev.alkanife.alkabot.music.AlkabotTrackPlaylist;
 import dev.alkanife.alkabot.music.MusicManager;
@@ -28,7 +27,7 @@ public class TranslationHandler {
     @Getter
     private String value;
 
-    private final String NULL_VALUE = "[null]";
+    public static String NULL_VALUE = "[null]";
 
     public TranslationHandler(String key) {
         // Get object
@@ -37,7 +36,7 @@ public class TranslationHandler {
         // If not found, return a missing translation
         if (obj == null) {
             value = "{" + key + "}";
-            Alkabot.getInstance().getLogger().warn("Missing translation: '" + key + "'");
+            Alkabot.getInstance().getLogger().warn("Missing translation: '{}'", key);
             return;
         }
 
@@ -59,7 +58,7 @@ public class TranslationHandler {
             Object variableObject = Lang.getTranslations().get(variableKey);
 
             if (variableObject == null) {
-                Alkabot.getInstance().getLogger().warn("Missing translation for '" + key + "': '" + variableKey + "'");
+                Alkabot.getInstance().getLogger().warn("Missing translation for '{}': '{}'", key, variableKey);
             } else {
                 value = value.replaceAll("\\{"+variableKey+"}", variableObject.toString());
             }
@@ -196,16 +195,8 @@ public class TranslationHandler {
         return parse("admins", admins.toString()).parse("admin_count", alkabot.getConfig().getAdminIds().size()+"");
     }
 
-    public TranslationHandler parseAdmin(@NotNull AdminCommandExecution execution, @NotNull String adminPath) {
-        if (execution.messageReceivedEvent() == null)
-            return parse("admin", Lang.get(adminPath + ".system"));
-        else
-            return parse("admin",
-                    Lang.t(adminPath + ".admin")
-                            .parseNames(execution.messageReceivedEvent().getAuthor(), "admin")
-                            .parseMention(execution.messageReceivedEvent().getAuthor(), "admin")
-                            .getValue()
-            );
+    public TranslationHandler parseAdminNames(@NotNull String authorName, @NotNull String authorMention) {
+        return parse("admin_name", authorName).parse("admin_mention", authorMention);
     }
 
     public TranslationHandler parseCommand(@NotNull SlashCommandInteractionEvent event) {

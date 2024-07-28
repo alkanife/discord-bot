@@ -62,7 +62,7 @@ public class MessageNotifier extends Notifier {
 
         String after = StringUtils.limitString(event.getMessage().getContentDisplay(), 1000);
 
-        if (after.equals(""))
+        if (after.isEmpty())
             after = Lang.t("notification.generic.attachment").getValue();
 
         embed.addField(Lang.t("notification.message.edit.after").getValue(), after, false);

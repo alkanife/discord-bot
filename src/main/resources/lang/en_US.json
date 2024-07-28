@@ -29,6 +29,10 @@
       "user": {
         "title": "User",
         "field": "<user_mention> (<user_name>)"
+      },
+      "cli": {
+        "name": "CLI",
+        "mention": "CLI"
       }
     },
     "self": {
@@ -36,17 +40,14 @@
         "title": "Successfully connected", // bot client names, guild name
         "color": "{colors.green}",
         "icon": "<bot_avatar_url>", // bot avatars, guild avatar
-        "description": "Version: Alkabot<bot_version>\n\n\uD83D\uDD27 Administrators (<admin_count>) : <admins>\n\nFor more details on the current configuration of the bot, go to my DMs." // bot, admins
+        "description": "Administrators (<admin_count>): <admins>\n\nFor any administrative type of interaction with me (status, configuration...), go to my DMs." // bot, admins
       },
       "power_off": {
         "title": "Shutting down", // bot client names, guild name
         "color": "{colors.orange}",
         "icon": "<bot_avatar_url>", // bot avatars, guild avatar
-        "description": "Requested by: <admin>", // admin_name, admin_mention, bot, guild name
-        "admin": {
-          "system": "`Terminal`",
-          "admin": "<admin_mention> (<admin_name>)"
-        }
+        "description": "Requested by: <admin_mention> (<admin_name>)", // admin name, admin mention, bot, guild name
+        "cli": "CLI (terminal)"
       },
       "command": {
         "command": {

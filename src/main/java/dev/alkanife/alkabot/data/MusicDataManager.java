@@ -42,7 +42,6 @@ public class MusicDataManager extends JsonFileManipulation {
         if (musicDataObject == null)
             musicDataObject = new MusicData(100, new ArrayList<>());
 
-        //TODO revoir ça c'était bizarre
         musicDataObject.setVolume(100);
 
         if (musicDataObject.getShortcutList() == null)

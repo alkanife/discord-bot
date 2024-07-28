@@ -1,12 +1,13 @@
-package dev.alkanife.alkabot.command.admin;
+package dev.alkanife.alkabot.command.admin.general;
 
-import dev.alkanife.alkabot.command.admin.AbstractAdminCommand;
-import dev.alkanife.alkabot.command.admin.AdminCommandExecution;
 import dev.alkanife.alkabot.command.CommandManager;
+import dev.alkanife.alkabot.command.admin.AdminCommand;
+import dev.alkanife.alkabot.command.admin.AdminCommandTarget;
 import dev.alkanife.alkabot.lang.Lang;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-public class StopbotCommand extends AbstractAdminCommand {
+public class StopbotCommand extends AdminCommand {
 
     public StopbotCommand(CommandManager commandManager) {
         super(commandManager);
@@ -19,21 +20,31 @@ public class StopbotCommand extends AbstractAdminCommand {
 
     @Override
     public String getUsage() {
-        return getName();
+        return "stop";
     }
 
     @Override
     public String getDescription() {
-        return "Stops the bot";
+        return "Stop the bot";
     }
 
     @Override
-    public boolean isDiscordOnly() {
-        return false;
+    public AdminCommandTarget getCommandTarget() {
+        return AdminCommandTarget.TERMINAL_AND_DISCORD;
     }
 
     @Override
-    public void execute(AdminCommandExecution execution) {
+    public void handleDiscord(String query, MessageReceivedEvent event) {
+        event.getMessage().reply("OK bye :wave:").queue(message -> alkabot.getNotificationManager().getSelfNotification().notifyShutdown(getEmbed(event.getAuthor().getName(), event.getAuthor().getAsMention()).build(), true));
+    }
+
+    @Override
+    public void handleTerminal(String query) {
+        replyTerminal("Bye!");
+        alkabot.getNotificationManager().getSelfNotification().notifyShutdown(getEmbed(Lang.get("notification.generic.cli.name"), Lang.get("notification.generic.cli.mention")).build(), true);
+    }
+
+    private EmbedBuilder getEmbed(String name, String mention) {
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(
                 Lang.t("notification.self.power_off.title")
@@ -50,17 +61,12 @@ public class StopbotCommand extends AbstractAdminCommand {
         );
         embedBuilder.setDescription(
                 Lang.t("notification.self.power_off.description")
-                        .parseAdmin(execution, "notification.self.power_off.admin")
                         .parseBot(alkabot)
                         .parseGuildName(alkabot.getGuild())
+                        .parseAdminNames(name, mention)
                         .getValue()
         );
 
-        if (execution.isFromDiscord()) {
-            execution.messageReceivedEvent().getMessage().reply("Stopping (may take a moment!)").queue(message -> alkabot.getNotificationManager().getSelfNotification().notifyShutdown(embedBuilder.build(), true));
-        } else {
-            execution.reply("Stopping (may take a moment!)");
-            alkabot.getNotificationManager().getSelfNotification().notifyShutdown(embedBuilder.build(), true);
-        }
+        return embedBuilder;
     }
 }

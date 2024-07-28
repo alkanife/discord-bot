@@ -104,7 +104,12 @@ public abstract class JsonFileManipulation extends FileManipulation {
             return false;
         }
 
+        data = cleanData(data);
+
         boolean validation = validateLoad(data, reload);
+
+        if (!save())
+            getAlkabot().getLogger().warn("Failed to correct a file: {}", getFile().getName());
 
         TimeTracker.end(tracking);
 

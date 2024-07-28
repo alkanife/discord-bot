@@ -37,6 +37,9 @@ public class AutoroleManager {
     public boolean applyRole(Member member) {
         try {
             if (alkabot.getConfig().getAutoRoleConfig().isEnable()) {
+                if (member.getUser().isBot())
+                    return true;
+
                 if (autoRole == null) {
                     alkabot.getLogger().warn("Could not apply auto-role for {}: the Discord role was not found!", member.getEffectiveName());
                     return false;

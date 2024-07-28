@@ -56,7 +56,7 @@ public class SelfNotifier extends Notifier {
 
         if (alkabot.isSnapshotBuild()) {
             messageCreateBuilder.setEmbeds(embedBuilder.build(), new EmbedBuilder()
-                    .setDescription("### This version of Alkabot is an experiment and some features are not finished, take extra care!")
+                    .setDescription("### This version of Alkabot is an experiment and some features are not finished, take extra care!\n\nAlkabot" + alkabot.getVersion() + ", build @ " + alkabot.getBuild())
                     .setColor(Color.decode("#a1400b"))
                     .build());
         } else {

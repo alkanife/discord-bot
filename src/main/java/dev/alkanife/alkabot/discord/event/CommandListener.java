@@ -2,7 +2,6 @@ package dev.alkanife.alkabot.discord.event;
 
 import dev.alkanife.alkabot.Alkabot;
 import dev.alkanife.alkabot.command.SlashCommandHandler;
-import dev.alkanife.alkabot.command.admin.AdminCommandExecution;
 import dev.alkanife.alkabot.command.admin.AdminCommandHandler;
 import lombok.AllArgsConstructor;
 import net.dv8tion.jda.api.entities.channel.ChannelType;
@@ -25,15 +24,16 @@ public class CommandListener extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-        // If in DM, handle admin commands
         if (!event.getChannelType().equals(ChannelType.PRIVATE))
             return;
 
-        // Deny if not administrator
+        if (event.getAuthor().isBot())
+            return;
+
         if (!alkabot.getConfig().getAdminIds().contains(event.getAuthor().getId()))
             return;
 
-        new AdminCommandHandler(alkabot, new AdminCommandExecution(alkabot, event.getMessage().getContentRaw().toLowerCase(Locale.ROOT), event));
+        new AdminCommandHandler(alkabot, event.getMessage().getContentRaw(), event);
     }
 
 }

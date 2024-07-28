@@ -38,6 +38,9 @@ public class WelcomeMessageManager {
     public boolean welcomeMember(Member member) {
         try {
             if (alkabot.getConfig().getWelcomeMessageConfig().isEnable()) {
+                if (alkabot.getConfig().getWelcomeMessageConfig().isIgnoreBots() && member.getUser().isBot())
+                    return true;
+
                 if (textChannel == null) {
                     alkabot.getLogger().warn("Could not to send welcome message for {}: the channel was not found!", member.getEffectiveName());
                     return false;

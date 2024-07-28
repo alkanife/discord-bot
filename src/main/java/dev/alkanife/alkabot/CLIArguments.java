@@ -1,4 +1,4 @@
-package dev.alkanife.alkabot.cli;
+package dev.alkanife.alkabot;
 
 import com.beust.jcommander.Parameter;
 import lombok.Getter;

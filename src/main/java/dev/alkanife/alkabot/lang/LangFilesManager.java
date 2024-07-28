@@ -150,6 +150,8 @@ public class LangFilesManager extends FileManipulation {
         Lang.setTranslations(translations);
         translations = null;
 
+        TranslationHandler.NULL_VALUE = Lang.get("notification.generic.unknown");
+
         getAlkabot().getLogger().debug("Finished loading {} values from the language pack", Lang.getTranslations().size());
         TimeTracker.end(tracking);
         return true;

@@ -29,7 +29,7 @@ public class TerminalCommandRunnable implements Runnable {
                 if (line != null) {
                     if (!line.isEmpty())
                         if (!line.equals("\n"))
-                            new AdminCommandHandler(alkabot, new AdminCommandExecution(alkabot, line.toLowerCase(), null));
+                            new AdminCommandHandler(alkabot, line, null);
                 }
             }
         }

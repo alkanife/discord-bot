@@ -18,7 +18,7 @@ public class MemberNotifier extends Notifier {
         jsonNotificationsMember = alkabot.getConfig().getNotifConfig().getMemberNotifConfig();
     }
 
-    public void notifyJoin(GuildMemberJoinEvent event, boolean failWelcome, boolean failAutorole) {
+    public void notifyJoin(GuildMemberJoinEvent event, boolean welcome, boolean autorole) {
         if (!jsonNotificationsMember.isJoin())
             return;
 
@@ -48,13 +48,13 @@ public class MemberNotifier extends Notifier {
                         .getValue()
         );
 
-        if (failAutorole || failWelcome) {
+        if (!autorole || !welcome) {
             stringBuilder.append("\n");
-            if (failWelcome)
+            if (!welcome)
                 stringBuilder.append(Lang.t("notification.member.join.fail.welcome").getValue());
-            if (failAutorole && failWelcome)
+            if (!autorole && !welcome)
                 stringBuilder.append("\n");
-            if (failAutorole)
+            if (!autorole)
                 stringBuilder.append(Lang.t("notification.member.join.fail.auto_role").getValue());
         }
 

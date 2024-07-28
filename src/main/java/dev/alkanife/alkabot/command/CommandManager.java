@@ -1,14 +1,12 @@
 package dev.alkanife.alkabot.command;
 
 import dev.alkanife.alkabot.Alkabot;
-import dev.alkanife.alkabot.command.admin.AbstractAdminCommand;
+import dev.alkanife.alkabot.command.admin.AdminCommand;
 import dev.alkanife.alkabot.command.admin.TerminalCommandRunnable;
-import dev.alkanife.alkabot.command.admin.PingCommand;
-import dev.alkanife.alkabot.command.admin.ReloadCommand;
-import dev.alkanife.alkabot.command.admin.StatusCommand;
-import dev.alkanife.alkabot.command.admin.StopbotCommand;
+import dev.alkanife.alkabot.command.admin.general.HelpCommand;
+import dev.alkanife.alkabot.command.admin.general.PingCommand;
+import dev.alkanife.alkabot.command.admin.general.StopbotCommand;
 import dev.alkanife.alkabot.command.music.*;
-import dev.alkanife.alkabot.command.utilities.CopyCommand;
 import dev.alkanife.alkabot.util.timetracker.TimeTracker;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +22,7 @@ public class CommandManager {
     @Setter
     private Map<String, AbstractCommand> commands = new HashMap<>();
     @Setter
-    private Map<String, AbstractAdminCommand> adminCommands = new HashMap<>();
+    private LinkedHashMap<String, AdminCommand> adminCommands = new LinkedHashMap<>();
 
     @Setter
     private TerminalCommandRunnable terminalCommandHandler;
@@ -42,12 +40,10 @@ public class CommandManager {
         terminalCommandHandlerThread = new Thread(terminalCommandHandler, "Alkabot TCH");
 
         alkabot.getLogger().debug("Loading commands");
-        registerAdminCommands(new StopbotCommand(this),
-                new StatusCommand(this),
+        registerAdminCommands(
+                new HelpCommand(this),
                 new PingCommand(this),
-                new ReloadCommand(this));
-
-        registerCommand(new AboutCommand(this));
+                new StopbotCommand(this));
 
         registerCommands(new ClearCommand(this),
                 new DestroyCommand(this),
@@ -62,9 +58,6 @@ public class CommandManager {
                 new StopCommand(this),
                 new NowplayingCommand(this),
                 new VolumeCommand(this));
-
-        registerCommands(new CopyCommand(this));/*,
-                new InfoCommand(this)); Info command disabled for now #TODO*/
 
         alkabot.getLogger().debug("{} commands enabled", commands.size());
         TimeTracker.end("load-commands");
@@ -82,12 +75,12 @@ public class CommandManager {
         }
     }
 
-    public void registerAdminCommands(AbstractAdminCommand... abstractAdminCommands) {
-        for (AbstractAdminCommand abstractAdminCommand : abstractAdminCommands)
+    public void registerAdminCommands(AdminCommand... abstractAdminCommands) {
+        for (AdminCommand abstractAdminCommand : abstractAdminCommands)
             registerAdminCommand(abstractAdminCommand);
     }
 
-    public void registerAdminCommand(AbstractAdminCommand abstractAdminCommand) {
+    public void registerAdminCommand(AdminCommand abstractAdminCommand) {
         alkabot.getLogger().debug("Adding command {} (admin)", abstractAdminCommand.getClass().getName());
         adminCommands.put(abstractAdminCommand.getName(), abstractAdminCommand);
     }
@@ -96,7 +89,7 @@ public class CommandManager {
         return commands.get(commandName);
     }
 
-    public AbstractAdminCommand getAdminCommand(String commandName) {
+    public AdminCommand getAdminCommand(String commandName) {
         return adminCommands.get(commandName);
     }
 

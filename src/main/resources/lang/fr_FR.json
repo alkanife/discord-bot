@@ -9,7 +9,8 @@
     "cyan": "#3D8D84",
     "orange": "#EC6F21",
     "red": "#8D3D3D",
-    "big_red": "#C10000"
+    "big_red": "#C10000",
+    "shortcut": "#bde9f2"
   },
   "welcome_messages": "Bienvenue sur le serveur <member_mention> !", // member mention, member names
   "notification": {
@@ -28,6 +29,10 @@
       "user": {
         "title": "Utilisateur",
         "field": "<user_mention> (<user_name>)"
+      },
+      "cli": {
+        "name": "CLI",
+        "mention": "CLI"
       }
     },
     "self": {
@@ -35,15 +40,15 @@
         "title": "Connecté avec succès !", // bot client names, guild name
         "color": "{colors.green}",
         "icon": "<bot_avatar_url>", // bot avatars, guild avatar
-        "description": "Alkabot version <bot_version>\n\n\uD83D\uDD27 Administrators (<admin_count>) : <admins>\n\nPour plus d'informations quant à la configuration actuelle du bot, rendez-vous dans les messages privés." // bot, admins
+        "description": "Administrateurs (<admin_count>): <admins>\n\nPour toute interaction de type administrative (status, configuration...), rendez-vous dans mes messages privés." // bot, admins
       },
       "power_off": {
         "title": "Arrêt en cours", // bot client names, guild name
         "color": "{colors.orange}",
         "icon": "<bot_avatar_url>", // bot avatars, guild avatar
-        "description": "<admin> a demandé mon arrêt.", // admin_name, admin_mention, bot, guild name
+        "description": "Arrêt demandé par : <admin>", // admin_name, admin_mention, bot, guild name
         "admin": {
-          "system": "`CLI`",
+          "system": "CLI (Terminal)",
           "admin": "<admin_mention> (<admin_name>)"
         }
       },
@@ -372,7 +377,7 @@
     "error": "Désolé, une erreur est survenue lors de l'exécution de votre commande.",
     "about": {
       "description": "❔ Qui suis-je ?",
-      "content": "Je suis un bot utilisant ALKABOT version <bot_version>.\n<bot_github>" // bot
+      "content": "Je suis bot utilisant Alkabot !\nVous pouvez en apprendre plus à mon sujet par ici : <bot_github>" // bot
     },
     "utilities": {
       "copy": {
@@ -615,10 +620,10 @@
             "out_of_range": "Il n'y a pas de raccourcis à cette page !"
           },
           "success": {
-            "title": "<shortcut_count> raccourcis", // shortcut_count, guild name
-            "color": "none",
+            "title": "Raccourcis du jukebox (<shortcut_count>)", // shortcut_count, guild name
+            "color": "{colors.shortcut}",
             "icon": "none", // member avatars, bot avatars, guild avatars
-            "description": "<shortcuts>\n**PAGE <page> / <page_count>**", // shortcuts, shortcut_count, page, page count
+            "description": "<shortcuts>\nPour voir tous les détails d'un raccourci,\nutilisez '/shortcut info'.\n\n**PAGE <page> / <page_count>**", // shortcuts, shortcut_count, page, page count
             "shortcuts": "`<index>.` <shortcut_clickable_name> [<shortcut_added_by_mention>]" // shortcut, index
           }
         },
@@ -631,10 +636,10 @@
             "not_existing": "Ce raccourci n'existe pas"
           },
           "success": {
-            "title": "<shortcut_name>", // shortcut, guild name
-            "color": "none",
+            "title": "À propos d'un raccourci", // shortcut, guild name
+            "color": "{colors.shortcut}",
             "icon": "none", // member avatars, bot avatars, guild avatars
-            "description": "Ajouté le : <shortcut_creation_date>\nPar <shortcut_added_by_mention>\n\n__Requête :__\n `<shortcut_query>`" // shortcut
+            "description": "Nom : <shortcut_name>\nAjouté le : <shortcut_creation_date>\nPar : <shortcut_added_by_mention>\n\nRequête : <shortcut_clickable_query>" // shortcut
           }
         }
       }

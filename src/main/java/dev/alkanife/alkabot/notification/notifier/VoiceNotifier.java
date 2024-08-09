@@ -8,6 +8,8 @@ import dev.alkanife.alkabot.notification.NotificationUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 public class VoiceNotifier extends Notifier {
 
@@ -40,7 +42,7 @@ public class VoiceNotifier extends Notifier {
         embed.addField(NotificationUtils.createMemberField("notification.voice.join", member, true));
         embed.addField(NotificationUtils.createChannelField("notification.voice.join", channel, true));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyMove(Member member, AudioChannelUnion channelJoined, AudioChannelUnion channelLeft) {
@@ -66,7 +68,7 @@ public class VoiceNotifier extends Notifier {
         embed.addField(NotificationUtils.createChannelField("notification.voice.move", "channel_joined", channelJoined, true));
         embed.addField(NotificationUtils.createChannelField("notification.voice.move", "channel_left", channelLeft, true));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyLeave(Member member, AudioChannelUnion channel) {
@@ -91,6 +93,6 @@ public class VoiceNotifier extends Notifier {
         embed.addField(NotificationUtils.createMemberField("notification.voice.left", member, true));
         embed.addField(NotificationUtils.createChannelField("notification.voice.left", channel, true));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 }

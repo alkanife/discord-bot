@@ -1,17 +1,16 @@
 package dev.alkanife.alkabot.command;
 
 import dev.alkanife.alkabot.Alkabot;
-import dev.alkanife.alkabot.command.admin.AbstractAdminCommand;
+import dev.alkanife.alkabot.command.admin.AdminCommand;
 import dev.alkanife.alkabot.command.admin.TerminalCommandRunnable;
-import dev.alkanife.alkabot.commands.AboutCommand;
-import dev.alkanife.alkabot.commands.admin.PingCommand;
-import dev.alkanife.alkabot.commands.admin.ReloadCommand;
-import dev.alkanife.alkabot.commands.admin.StatusCommand;
-import dev.alkanife.alkabot.commands.admin.StopbotCommand;
-import dev.alkanife.alkabot.commands.music.*;
-import dev.alkanife.alkabot.commands.utilities.CopyCommand;
+import dev.alkanife.alkabot.command.admin.general.HelpCommand;
+import dev.alkanife.alkabot.command.admin.general.PingCommand;
+import dev.alkanife.alkabot.command.admin.general.StopbotCommand;
+import dev.alkanife.alkabot.command.music.*;
+import dev.alkanife.alkabot.util.timetracker.TimeTracker;
 import lombok.Getter;
 import lombok.Setter;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.util.*;
 
@@ -23,7 +22,7 @@ public class CommandManager {
     @Setter
     private Map<String, AbstractCommand> commands = new HashMap<>();
     @Setter
-    private Map<String, AbstractAdminCommand> adminCommands = new HashMap<>();
+    private LinkedHashMap<String, AdminCommand> adminCommands = new LinkedHashMap<>();
 
     @Setter
     private TerminalCommandRunnable terminalCommandHandler;
@@ -34,18 +33,17 @@ public class CommandManager {
         this.alkabot = alkabot;
     }
 
-    public void initialize() {
+    public void load() {
+        TimeTracker.start("load-commands");
         alkabot.getLogger().debug("Setting up terminal command thread");
         terminalCommandHandler = new TerminalCommandRunnable(alkabot);
         terminalCommandHandlerThread = new Thread(terminalCommandHandler, "Alkabot TCH");
 
-        alkabot.getLogger().info("Loading commands...");
-        registerAdminCommands(new StopbotCommand(this),
-                new StatusCommand(this),
+        alkabot.getLogger().debug("Loading commands");
+        registerAdminCommands(
+                new HelpCommand(this),
                 new PingCommand(this),
-                new ReloadCommand(this));
-
-        registerCommand(new AboutCommand(this));
+                new StopbotCommand(this));
 
         registerCommands(new ClearCommand(this),
                 new DestroyCommand(this),
@@ -61,8 +59,8 @@ public class CommandManager {
                 new NowplayingCommand(this),
                 new VolumeCommand(this));
 
-        registerCommands(new CopyCommand(this));/*,
-                new InfoCommand(this)); Info command disabled for now #TODO*/
+        alkabot.getLogger().debug("{} commands enabled", commands.size());
+        TimeTracker.end("load-commands");
     }
 
     public void registerCommands(AbstractCommand... abstractCommands) {
@@ -72,18 +70,18 @@ public class CommandManager {
 
     public void registerCommand(AbstractCommand abstractCommand) {
         if (abstractCommand.isEnabled()) {
-            alkabot.getLogger().debug("Adding command " + abstractCommand.getClass().getName());
+            alkabot.getLogger().debug("Adding command {}", abstractCommand.getClass().getName());
             commands.put(abstractCommand.getName(), abstractCommand);
         }
     }
 
-    public void registerAdminCommands(AbstractAdminCommand... abstractAdminCommands) {
-        for (AbstractAdminCommand abstractAdminCommand : abstractAdminCommands)
+    public void registerAdminCommands(AdminCommand... abstractAdminCommands) {
+        for (AdminCommand abstractAdminCommand : abstractAdminCommands)
             registerAdminCommand(abstractAdminCommand);
     }
 
-    public void registerAdminCommand(AbstractAdminCommand abstractAdminCommand) {
-        alkabot.getLogger().debug("Adding command " + abstractAdminCommand.getClass().getName() + " (admin)");
+    public void registerAdminCommand(AdminCommand abstractAdminCommand) {
+        alkabot.getLogger().debug("Adding command {} (admin)", abstractAdminCommand.getClass().getName());
         adminCommands.put(abstractAdminCommand.getName(), abstractAdminCommand);
     }
 
@@ -91,8 +89,19 @@ public class CommandManager {
         return commands.get(commandName);
     }
 
-    public AbstractAdminCommand getAdminCommand(String commandName) {
+    public AdminCommand getAdminCommand(String commandName) {
         return adminCommands.get(commandName);
     }
 
+    public void updateCommandsToDiscord() {
+        alkabot.getLogger().debug("Updating commands to Discord");
+
+        List<SlashCommandData> commands = new ArrayList<>();
+
+        for (AbstractCommand abstractCommand : this.commands.values())
+            if (abstractCommand.isEnabled())
+                commands.add(abstractCommand.getCommandData());
+
+        alkabot.getGuild().updateCommands().addCommands(commands).queue();
+    }
 }

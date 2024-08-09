@@ -2,35 +2,43 @@ package dev.alkanife.alkabot.command;
 
 import dev.alkanife.alkabot.Alkabot;
 import dev.alkanife.alkabot.lang.Lang;
+import dev.alkanife.alkabot.util.timetracker.TimeTracker;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 
 import java.util.Locale;
+import java.util.UUID;
 
-public class SlashCommandHandler extends AbstractCommandHandler {
+public class SlashCommandHandler {
 
     public SlashCommandHandler(Alkabot alkabot, SlashCommandInteractionEvent event) {
-        super(alkabot);
+
+        String commandName = event.getName().toLowerCase(Locale.ROOT);
+        String tracking = TimeTracker.startUnique("command");
 
         try {
-            AbstractCommand abstractCommand = alkabot.getCommandManager().getCommand(event.getName().toLowerCase(Locale.ROOT));
+            AbstractCommand abstractCommand = alkabot.getCommandManager().getCommand(commandName);
 
             if (abstractCommand == null)
                 return;
 
-            alkabot.getLogger().debug("Invoking command '" + event.getFullCommandName() + "'");
+            alkabot.getLogger().debug("Invoking command '{}'", event.getFullCommandName());
+
             abstractCommand.execute(event);
+            TimeTracker.end(tracking);
+
             alkabot.getNotificationManager().getSelfNotification().notifyCommand(event, null);
         } catch (Exception exception) {
+            TimeTracker.kill(tracking);
             event.reply(Lang.t("command.error").getValue()).queue();
-            alkabot.getLogger().error("Failed to handle command '" + event.getFullCommandName() + "'", exception);
+            alkabot.getLogger().error("Failed to handle command '{}'", event.getFullCommandName(), exception);
             alkabot.getLogger().debug(buildTrace(event));
             alkabot.getNotificationManager().getSelfNotification().notifyCommand(event, exception);
         }
 
     }
 
-    private String buildTrace(SlashCommandInteractionEvent event) {
+    private String buildTrace(SlashCommandInteractionEvent event) { // TODO rework this
         StringBuilder stringBuilder = new StringBuilder("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv").append("\n");
 
         stringBuilder.append("* Event ID / Command ID -> ").append(event.getId()).append(" / ").append(event.getCommandId()).append("\n");

@@ -1,6 +1,5 @@
 package dev.alkanife.alkabot.util;
 
-import dev.alkanife.alkabot.util.tool.IndexProcessor;
 import lombok.Getter;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
@@ -12,9 +11,9 @@ public class PagedList {
     private int page;
 
     public boolean parsePage(SlashCommandInteractionEvent event, int listSize, String outOfRangeMessage) {
-        if (!StringUtils.endsWithZero(listSize)) {
+        if (!endsWithZero(listSize)) {
             for (int i = 0; i < 11; i++) {
-                if (StringUtils.endsWithZero(listSize))
+                if (endsWithZero(listSize))
                     break;
 
                 listSize++;
@@ -33,7 +32,7 @@ public class PagedList {
         if (page < 0)
             page = 0;
 
-        if ((page+1) >= pages) {
+        if ((page+1) > pages) {
             event.getHook().sendMessage(outOfRangeMessage).queue();
             return false;
         }
@@ -55,4 +54,7 @@ public class PagedList {
         return result.toString();
     }
 
+    private boolean endsWithZero(int i) {
+        return i % 10 == 0;
+    }
 }

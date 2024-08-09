@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
@@ -48,7 +49,7 @@ public class ModeratorNotifier extends Notifier {
         embed.addField(NotificationUtils.createModeratorField("notification.moderator.kick", moderator, true));
         embed.addField(NotificationUtils.createReasonField("notification.moderator.kick", reason));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyBan(User user, User moderator, String reason) {
@@ -76,7 +77,7 @@ public class ModeratorNotifier extends Notifier {
         embed.addField(NotificationUtils.createModeratorField("notification.moderator.ban", moderator, true));
         embed.addField(NotificationUtils.createReasonField("notification.moderator.ban", reason));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyUnban(User user, User moderator) {
@@ -103,7 +104,7 @@ public class ModeratorNotifier extends Notifier {
         embed.addField(NotificationUtils.createUserField("notification.moderator.unban", user, true));
         embed.addField(NotificationUtils.createModeratorField("notification.moderator.unban", moderator, true));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyTimeout(Member member, User moderator, String reason, OffsetDateTime timeout) { // Experimental
@@ -135,7 +136,7 @@ public class ModeratorNotifier extends Notifier {
                 new SimpleDateFormat(Lang.getDateFormat(), Lang.getDateLocale()).format(new Date(timeout.toInstant().toEpochMilli())), false);
         embed.addField(NotificationUtils.createReasonField("notification.moderator.timeout", reason));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyUntimeout(Member member, User moderator) { // Experimental
@@ -162,7 +163,7 @@ public class ModeratorNotifier extends Notifier {
         embed.addField(NotificationUtils.createMemberField("notification.moderator.untimeout", member, true));
         embed.addField(NotificationUtils.createModeratorField("notification.moderator.untimeout", moderator, true));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyTimeoutChange(Member member, User moderator, OffsetDateTime oldTimeout, OffsetDateTime newTimeout) { // Experimental
@@ -197,7 +198,7 @@ public class ModeratorNotifier extends Notifier {
                         .getValue(),
                 new SimpleDateFormat(Lang.getDateFormat(), Lang.getDateLocale()).format(new Date(newTimeout.toInstant().toEpochMilli())), false);
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyDeafenMember(Member member, User moderator) { // Experimental
@@ -228,7 +229,7 @@ public class ModeratorNotifier extends Notifier {
         if (guildVoiceState != null)
             embed.addField(NotificationUtils.createChannelField("notification.moderator.deafen", guildVoiceState.getChannel(), false));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyUndeafenMember(Member member, User moderator) { // Experimental
@@ -259,7 +260,7 @@ public class ModeratorNotifier extends Notifier {
         if (guildVoiceState != null)
             embed.addField(NotificationUtils.createChannelField("notification.moderator.undeafen", guildVoiceState.getChannel(), false));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyMuteMember(Member member, User moderator) { // Experimental
@@ -290,7 +291,7 @@ public class ModeratorNotifier extends Notifier {
         if (guildVoiceState != null)
             embed.addField(NotificationUtils.createChannelField("notification.moderator.mute", guildVoiceState.getChannel(), false));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyUnmuteMember(Member member, User moderator) { // Experimental
@@ -321,12 +322,12 @@ public class ModeratorNotifier extends Notifier {
         if (guildVoiceState != null)
             embed.addField(NotificationUtils.createChannelField("notification.moderator.unmute", guildVoiceState.getChannel(), false));
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyChangeMemberNickname(Member member, User moderator, String oldNickname, String newNickname) { // Experimental
         if (!jsonNotificationsModerator.isChangeMemberNickname())
-            return;
+            return; //todo java.lang.IllegalArgumentException ligne 354
 
         EmbedBuilder embed = new EmbedBuilder();
         embed.setColor(Lang.t("notification.moderator.nickname.color").getColor());
@@ -353,7 +354,7 @@ public class ModeratorNotifier extends Notifier {
 
         embed.addField(Lang.t("notification.moderator.nickname.new").getValue(), newNickname, false);
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
 }

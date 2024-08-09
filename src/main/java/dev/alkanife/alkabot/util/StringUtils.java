@@ -8,7 +8,7 @@ public class StringUtils {
 
     /**
      * Reduce a string's length, and add ... at the end
-     *
+     * <p>
      * Example:
      * It's a beautiful day outside -> It's a beautiful day ou`...`
      *
@@ -33,9 +33,5 @@ public class StringUtils {
         } catch (Exception exception) {
             return false;
         }
-    }
-
-    public static boolean endsWithZero(int i) { //what an ugly way
-        return Integer.toString(i).endsWith("0");
     }
 }

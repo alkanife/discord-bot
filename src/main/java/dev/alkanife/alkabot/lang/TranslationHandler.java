@@ -1,13 +1,12 @@
 package dev.alkanife.alkabot.lang;
 
 import dev.alkanife.alkabot.Alkabot;
-import dev.alkanife.alkabot.command.admin.AdminCommandExecution;
 import dev.alkanife.alkabot.music.AlkabotTrack;
 import dev.alkanife.alkabot.music.AlkabotTrackPlaylist;
 import dev.alkanife.alkabot.music.MusicManager;
 import dev.alkanife.alkabot.music.MusicUtils;
-import dev.alkanife.alkabot.music.data.MusicData;
-import dev.alkanife.alkabot.music.data.Shortcut;
+import dev.alkanife.alkabot.data.music.MusicData;
+import dev.alkanife.alkabot.data.music.Shortcut;
 import lombok.Getter;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.channel.Channel;
@@ -17,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -27,7 +27,7 @@ public class TranslationHandler {
     @Getter
     private String value;
 
-    private final String NULL_VALUE = "[null]";
+    public static String NULL_VALUE = "[null]";
 
     public TranslationHandler(String key) {
         // Get object
@@ -36,7 +36,7 @@ public class TranslationHandler {
         // If not found, return a missing translation
         if (obj == null) {
             value = "{" + key + "}";
-            Alkabot.getInstance().getLogger().warn("Missing translation: '" + key + "'");
+            Alkabot.getInstance().getLogger().warn("Missing translation: '{}'", key);
             return;
         }
 
@@ -58,7 +58,7 @@ public class TranslationHandler {
             Object variableObject = Lang.getTranslations().get(variableKey);
 
             if (variableObject == null) {
-                Alkabot.getInstance().getLogger().warn("Missing translation for '" + key + "': '" + variableKey + "'");
+                Alkabot.getInstance().getLogger().warn("Missing translation for '{}': '{}'", key, variableKey);
             } else {
                 value = value.replaceAll("\\{"+variableKey+"}", variableObject.toString());
             }
@@ -195,16 +195,8 @@ public class TranslationHandler {
         return parse("admins", admins.toString()).parse("admin_count", alkabot.getConfig().getAdminIds().size()+"");
     }
 
-    public TranslationHandler parseAdmin(@NotNull AdminCommandExecution execution, @NotNull String adminPath) {
-        if (execution.messageReceivedEvent() == null)
-            return parse("admin", Lang.get(adminPath + ".system"));
-        else
-            return parse("admin",
-                    Lang.t(adminPath + ".admin")
-                            .parseNames(execution.messageReceivedEvent().getAuthor(), "admin")
-                            .parseMention(execution.messageReceivedEvent().getAuthor(), "admin")
-                            .getValue()
-            );
+    public TranslationHandler parseAdminNames(@NotNull String authorName, @NotNull String authorMention) {
+        return parse("admin_name", authorName).parse("admin_mention", authorMention);
     }
 
     public TranslationHandler parseCommand(@NotNull SlashCommandInteractionEvent event) {
@@ -364,7 +356,7 @@ public class TranslationHandler {
                 .parse("shortcut_clickable_query", shortcut.getClickableQuery())
                 .parse("shortcut_added_by_mention", "<@" + shortcut.getCreatorId() + ">")
                 .parse("shortcut_added_by_id", shortcut.getCreatorId())
-                .parse("shortcut_creation_date", Lang.formatDate(shortcut.getCreationDate()));
+                .parse("shortcut_creation_date", Lang.formatDate(new Date(shortcut.getCreationTime())));
     }
 
     public TranslationHandler parseShortcutCount(@NotNull MusicData musicData) {

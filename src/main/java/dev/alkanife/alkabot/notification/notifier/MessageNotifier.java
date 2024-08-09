@@ -2,7 +2,7 @@ package dev.alkanife.alkabot.notification.notifier;
 
 import dev.alkanife.alkabot.configuration.json.notifications.MessageNotifConfig;
 import dev.alkanife.alkabot.lang.Lang;
-import dev.alkanife.alkabot.listener.MessageListener;
+import dev.alkanife.alkabot.discord.event.MessageListener;
 import dev.alkanife.alkabot.notification.CachedMessage;
 import dev.alkanife.alkabot.notification.NotificationChannel;
 import dev.alkanife.alkabot.notification.NotificationManager;
@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
 public class MessageNotifier extends Notifier {
 
@@ -61,12 +62,12 @@ public class MessageNotifier extends Notifier {
 
         String after = StringUtils.limitString(event.getMessage().getContentDisplay(), 1000);
 
-        if (after.equals(""))
+        if (after.isEmpty())
             after = Lang.t("notification.generic.attachment").getValue();
 
         embed.addField(Lang.t("notification.message.edit.after").getValue(), after, false);
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 
     public void notifyDelete(MessageDeleteEvent event) { // todo: detect moderator
@@ -115,6 +116,6 @@ public class MessageNotifier extends Notifier {
         embed.addField(NotificationUtils.createUserField("notification.message.delete", author, true));
         embed.addField(Lang.t("notification.message.delete.message").getValue(), message, false);
 
-        notificationManager.sendNotification(notificationChannel, embed.build());
+        notificationManager.sendNotification(notificationChannel, new MessageCreateBuilder().addEmbeds(embed.build()).build());
     }
 }

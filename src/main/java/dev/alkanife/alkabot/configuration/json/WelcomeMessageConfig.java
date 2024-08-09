@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 public class WelcomeMessageConfig {
 
     private boolean enable;
+    @SerializedName("ignore_bots")
+    private boolean ignoreBots;
     @SerializedName("channel_id")
     private String channelId;
 }

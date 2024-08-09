@@ -24,13 +24,13 @@ public class AlkabotTrackPlayer {
             return;
         }
 
-        musicManager.getAlkabot().getLogger().debug("Trying to play '" + alkabotTrack.getTitle() + "' by '" + alkabotTrack.getArtists() + "' (" + alkabotTrack.getUrl() + ")...");
+        musicManager.getAlkabot().getLogger().debug("Trying to play '{}' by '{}' ({})...", alkabotTrack.getTitle(), alkabotTrack.getArtists(), alkabotTrack.getUrl());
 
         musicManager.getAudioPlayerManager().loadItemOrdered(musicManager.getPlayer(), alkabotTrack.getQuery(), new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 retrying = false;
-                musicManager.getAlkabot().getLogger().debug("Now playing: " + track.getInfo().uri);
+                musicManager.getAlkabot().getLogger().debug("Now playing: {}", track.getInfo().uri);
                 musicManager.getPlayer().startTrack(track, false);
                 musicManager.getTrackScheduler().setNowPlaying(alkabotTrack);
             }
@@ -46,7 +46,7 @@ public class AlkabotTrackPlayer {
                     firstTrack = playlist.getTracks().get(0);
 
                 if (alkabotTrack.getQuery().startsWith("ytsearch")) {
-                    musicManager.getAlkabot().getLogger().debug("Now playing (from spotify query): " + firstTrack.getInfo().uri);
+                    musicManager.getAlkabot().getLogger().debug("Now playing (from spotify query): {}", firstTrack.getInfo().uri);
                     musicManager.getPlayer().startTrack(firstTrack, false);
                     musicManager.getTrackScheduler().setNowPlaying(alkabotTrack);
                 }
@@ -96,9 +96,9 @@ public class AlkabotTrackPlayer {
 
                     retrying = false;
                     play(musicManager.getTrackScheduler().getQueue().poll());
-                    musicManager.getAlkabot().getLogger().debug("Failed to play this track! Skipping...");
+                    musicManager.getAlkabot().getLogger().debug("(player) Failed to play this track! Skipping...", exception);
                 } else {
-                    musicManager.getAlkabot().getLogger().debug("Failed to play this track! Retrying...");
+                    musicManager.getAlkabot().getLogger().debug("(player) Failed to play this track! Retrying...", exception);
                     retrying = true;
                     play(alkabotTrack);
                 }

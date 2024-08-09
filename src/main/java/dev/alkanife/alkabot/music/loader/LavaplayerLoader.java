@@ -22,7 +22,7 @@ public class LavaplayerLoader extends AbstractMusic {
 
     // If position = 0, the track will go to the end of the queue
     public void load(SlashCommandInteractionEvent event, final String commandSource, final String query, final int position, boolean skipCurrent) {
-        musicManager.getAlkabot().getLogger().debug("Loading audio from query '" + query + "' (pos=" + position + ", skipCurrent=" + skipCurrent + ")");
+        musicManager.getAlkabot().getLogger().debug("Loading audio from query '{}' (pos={}, skipCurrent={})", query, position, skipCurrent);
 
         musicManager.getAudioPlayerManager().loadItemOrdered(musicManager.getPlayer(), query, new AudioLoadResultHandler() {
             @Override
@@ -39,7 +39,7 @@ public class LavaplayerLoader extends AbstractMusic {
                 EmbedBuilder embed = MusicUtils.createTackAddedEmbed(commandSource, event, alkabotTrack, musicManager, pos);
                 event.getHook().sendMessageEmbeds(embed.build()).queue();
 
-                musicManager.getAlkabot().getLogger().debug("Track loaded: " + alkabotTrack.toString());
+                musicManager.getAlkabot().getLogger().debug("Track loaded: {}", alkabotTrack.toString());
             }
 
             @Override
@@ -62,7 +62,7 @@ public class LavaplayerLoader extends AbstractMusic {
                     EmbedBuilder embed = MusicUtils.createTackAddedEmbed(commandSource, event, alkabotTrack, musicManager, pos);
                     event.getHook().sendMessageEmbeds(embed.build()).queue();
 
-                    musicManager.getAlkabot().getLogger().debug("Track loaded (youtube search) pos " + pos + ": " + alkabotTrack.toString());
+                    musicManager.getAlkabot().getLogger().debug("Track loaded (youtube search) pos {}: {}", pos, alkabotTrack.toString());
                 } else {
                     List<AlkabotTrack> alkabotTrackList = new ArrayList<>();
 
@@ -83,7 +83,7 @@ public class LavaplayerLoader extends AbstractMusic {
                     EmbedBuilder embed = MusicUtils.createPlaylistAddedEmbed(commandSource, event, alkabotTrackPlaylist, musicManager, pos);
                     event.getHook().sendMessageEmbeds(embed.build()).queue();
 
-                    musicManager.getAlkabot().getLogger().debug("Playlist '" + playlist.getName() + "' loaded! (" + playlist.getTracks().size() + " tracks) pos " + pos);
+                    musicManager.getAlkabot().getLogger().debug("Playlist '{}' loaded! ({} tracks) pos {}", playlist.getName(), playlist.getTracks().size(), pos);
                 }
             }
 
@@ -97,14 +97,13 @@ public class LavaplayerLoader extends AbstractMusic {
 
             @Override
             public void loadFailed(FriendlyException exception) {
-                musicManager.getAlkabot().getLogger().warn("Load fail - retry = " + retrying);
                 if (retrying) {
                     event.getHook().sendMessage(Lang.get("command.music." + commandSource + ".error.generic")).queue();
                     retrying = false;
                 } else {
                     retrying = true;
                     load(event, commandSource, query, position, skipCurrent);
-                    musicManager.getAlkabot().getLogger().debug("Failed to load! Retrying...");
+                    musicManager.getAlkabot().getLogger().debug("(loader) Failed to load this track! Retrying...", exception);
                 }
 
                 musicManager.getAlkabot().getLogger().debug("Failed to LOAD (loader)!");

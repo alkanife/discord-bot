@@ -14,8 +14,8 @@ import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceM
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import dev.alkanife.alkabot.Alkabot;
+import dev.alkanife.alkabot.data.music.Shortcut;
 import dev.alkanife.alkabot.lang.Lang;
-import dev.alkanife.alkabot.music.data.Shortcut;
 import dev.alkanife.alkabot.music.loader.LavaplayerLoader;
 import dev.alkanife.alkabot.music.loader.SpotifyLoader;
 import dev.alkanife.alkabot.util.StringUtils;
@@ -98,8 +98,6 @@ public class MusicManager {
     }
 
     public void initialize() {
-        alkabot.getLogger().info("Initializing jukebox...");
-
         lavaplayerLoader = new LavaplayerLoader(this);
         spotifyLoader = new SpotifyLoader(this);
         alkabotTrackPlayer = new AlkabotTrackPlayer(this);
@@ -125,7 +123,7 @@ public class MusicManager {
         trackScheduler = new TrackScheduler(this);
         trackListener = new TrackListener(this);
         player.addListener(trackListener);
-        player.setVolume(alkabot.getMusicData().getVolume());
+        player.setVolume(alkabot.getDataManager().getMusicDataManager().getMusicData().getVolume());
     }
 
     public void nowPlaying(SlashCommandInteractionEvent event) {
@@ -184,7 +182,7 @@ public class MusicManager {
             }
         } else {
             if (!StringUtils.isURL(query)) {
-                Shortcut shortcut = alkabot.getShortcut(query);
+                Shortcut shortcut = alkabot.getDataManager().getMusicDataManager().getShortcutByName(query);
 
                 if (shortcut == null) {
                     query = "ytsearch: " + query;

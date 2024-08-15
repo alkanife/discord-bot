@@ -1,5 +1,8 @@
 # Alkabot
 
+> [!IMPORTANT]
+> Alkabot has been renamed and is currently being rewritten from scratch for version 4.0. Visit the [dev branch](https://github.com/alkanife/discord-bot/tree/dev) for more information!
+
 ```
 Usage....: java -jar Alkabot.jar [options...]
            java -jar Alkabot.jar options.txt

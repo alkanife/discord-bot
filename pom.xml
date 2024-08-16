@@ -22,7 +22,7 @@
                 <configuration>
                     <outputDirectory>${project.basedir}/build</outputDirectory>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <finalName>Alkabot</finalName>
+                    <finalName>Alkabot-${project.version}</finalName>
                     <archive>
                         <manifest>
                             <mainClass>dev.alkanife.alkabot.Main</mainClass>

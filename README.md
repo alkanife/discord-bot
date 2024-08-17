@@ -1,7 +1,11 @@
 # Alkabot
 
-> [!IMPORTANT]
-> Alkabot has been renamed and is currently being rewritten from scratch for version 4.0. Visit the [dev branch](https://github.com/alkanife/discord-bot/tree/dev) for more information!
+[![Licence](https://img.shields.io/github/license/alkanife/discord-bot?style=for-the-badge)](LICENSE)
+[![Java version 17 or above](https://img.shields.io/badge/Java-17%2B-FF160B?style=for-the-badge)](pom.xml)
+[![Version - 3.0-indev](https://img.shields.io/badge/Version-3.0--indev-blueviolet?style=for-the-badge)](pom.xml)
+[![Jenkins Build](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.alka.dev%2Fjob%2Fdiscord-bot%2F&style=for-the-badge)](https://jenkins.alka.dev/job/discord-bot/)
+
+## Usage
 
 ```
 Usage....: java -jar Alkabot.jar [options...]

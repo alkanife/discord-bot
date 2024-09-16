@@ -6,7 +6,7 @@
 
     <groupId>dev.alkanife</groupId>
     <artifactId>alkabot</artifactId>
-    <version>3.0-indev</version>
+    <version>3-satania-special</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.0-beta.23</version>
+            <version>5.1.0</version>
             <scope>compile</scope>
         </dependency>
 
@@ -96,7 +96,7 @@
         <dependency>
             <groupId>dev.lavalink.youtube</groupId>
             <artifactId>v2</artifactId>
-            <version>1.4.0</version>
+            <version>1.7.2</version>
         </dependency>
 
         <dependency>
@@ -109,14 +109,14 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.11</version>
+            <version>1.5.8</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.2.11</version>
+            <version>1.5.8</version>
             <scope>compile</scope>
         </dependency>
 

@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.AudioChannel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class TrackListener extends AudioEventAdapter {
 
@@ -33,7 +34,9 @@ public class TrackListener extends AudioEventAdapter {
                 if (voiceChannel.getMembers().size() == 1) {
                     if (!endReason.equals(AudioTrackEndReason.STOPPED)) {
                         musicManager.getAlkabot().getLogger().debug("Stopping the music because I'm alone");
-                        musicManager.getAlkabot().getMusicManager().reset();
+                        player.stopTrack();
+                        musicManager.getTrackScheduler().setQueue(new LinkedBlockingQueue<>());
+                        musicManager.getAlkabot().getGuild().getAudioManager().closeAudioConnection();
 
                         if (musicManager.getAlkabot().getMusicManager().getLastMusicCommandChannel() != null) {
                             EmbedBuilder embed = new EmbedBuilder();

@@ -81,18 +81,6 @@ public class MusicManager {
         }
     }
 
-    public void reset() {
-        disable();
-        initialize();
-    }
-
-    public void disable() {
-        player.stopTrack();
-        player.destroy();
-
-        alkabot.getGuild().getAudioManager().closeAudioConnection();
-    }
-
     public void goNext() {
         alkabotTrackPlayer.play(trackScheduler.getQueue().poll());
     }
@@ -104,6 +92,7 @@ public class MusicManager {
 
         YoutubeAudioSourceManager youtubeSource = new YoutubeAudioSourceManager(true);
         youtubeSource.setPlaylistPageCount(10);
+        youtubeSource.useOauth2(null, false);
 
         audioPlayerManager = new DefaultAudioPlayerManager();
         audioPlayerManager.registerSourceManager(youtubeSource);

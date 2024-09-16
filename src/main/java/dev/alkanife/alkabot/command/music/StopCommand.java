@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class StopCommand extends AbstractCommand {
 
     public StopCommand(CommandManager commandManager) {
@@ -36,6 +38,8 @@ public class StopCommand extends AbstractCommand {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         event.reply(Lang.get("command.music.stop.message")).queue();
+        alkabot.getMusicManager().getPlayer().stopTrack();
+        alkabot.getMusicManager().getTrackScheduler().setQueue(new LinkedBlockingQueue<>());
         alkabot.getGuild().getAudioManager().closeAudioConnection();
     }
 }

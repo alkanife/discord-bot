@@ -46,7 +46,6 @@ public class CommandManager {
                 new StopbotCommand(this));
 
         registerCommands(new ClearCommand(this),
-                new DestroyCommand(this),
                 new ForceplayCommand(this),
                 new PlayCommand(this),
                 new ShortcutCommand(this),

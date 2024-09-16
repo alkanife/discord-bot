@@ -1,2 +1,0 @@
-build: ${build.time}
-version: ${project.version}

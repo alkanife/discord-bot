@@ -19,8 +19,7 @@ Formerly called Alkabot, this bot is currently under development for version 4.0
 - [Download Alkabot 3.0-indev (last version of Alkabot)](https://jenkins.alka.dev/job/discord-bot/3/)
 
 **Features, with their current status :**
-- [ ] Basic functionalities
-- [ ] Web dashboard
+- [x] Basic functionalities
 - [ ] Welcome messages
 - [ ] Default roles for new members
 - [ ] Music system
@@ -35,4 +34,5 @@ Formerly called Alkabot, this bot is currently under development for version 4.0
     - [ ] Temporary bans
     - [ ] Advanced logging system
 - [ ] Leveling system
+- [ ] Web dashboard
 - [ ] ... and more to come!

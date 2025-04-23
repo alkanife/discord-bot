@@ -12,12 +12,19 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-package dev.alka.discordbot.main;
+package dev.alka.discordbot.main.event;
 
-public class Main {
+import dev.alka.discordbot.main.DiscordBot;
+import lombok.AllArgsConstructor;
+import net.dv8tion.jda.api.JDABuilder;
 
-    public static void main(String[] args) {
-        new DiscordBot(args);
+@AllArgsConstructor
+public class EventListenerManager {
+
+    private final DiscordBot bot;
+
+    public void addEventListeners(JDABuilder jdaBuilder) {
+        jdaBuilder.addEventListeners(new ReadyListener(bot));
     }
 
 }

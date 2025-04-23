@@ -1,16 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2024 Arthur Beau ("Alkanife", "Alka") @ https://alka.dev/
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>dev.alka</groupId>
-    <artifactId>alka</artifactId>
+    <artifactId>discord-bot</artifactId>
     <version>4.0-indev</version>
 
+    <name>Alka's Discord bot</name>
+    <description>My self-hosted, highly configurable Discord bot</description>
+    <url>https://github.com/alkanife/discord-bot</url>
+
+    <licenses>
+        <license>
+            <name>GPL-3.0</name>
+            <url>https://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>alkanife</id>
+            <name>Arthur Beau</name>
+            <email>alkanife@gmail.com</email>
+            <url>https://alka.dev/</url>
+        </developer>
+    </developers>
+
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
 
         <timestamp>${maven.build.timestamp}</timestamp>
     </properties>
@@ -22,7 +58,7 @@
                 <configuration>
                     <outputDirectory>${project.basedir}/build</outputDirectory>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <finalName>discord-bot-${project.version}</finalName>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
                     <archive>
                         <manifest>
                             <mainClass>dev.alka.discordbot.main.Main</mainClass>
@@ -72,79 +108,64 @@
 
     <repositories>
         <repository>
-            <id>arbjergDev-snapshots</id>
-            <name>Lavalink Repository</name>
-            <url>https://maven.lavalink.dev/releases</url>
+            <id>alka-repo</id>
+            <url>https://repo.alka.dev/repository/maven-public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
+            <groupId>dev.alka.javautils</groupId>
+            <artifactId>build-utils</artifactId>
+            <version>1.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.alka.javautils</groupId>
+            <artifactId>cli-utils</artifactId>
+            <version>1.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.alka.javautils</groupId>
+            <artifactId>jcommander-utils</artifactId>
+            <version>1.0.1</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>5.0.0-beta.23</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.arbjerg</groupId>
-            <artifactId>lavaplayer</artifactId>
-            <version>2.2.1</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.lavalink.youtube</groupId>
-            <artifactId>v2</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.11.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.2.11</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>1.2.11</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.17.2</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>se.michaelthelin.spotify</groupId>
-            <artifactId>spotify-web-api-java</artifactId>
-            <version>8.4.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.beust</groupId>
-            <artifactId>jcommander</artifactId>
-            <version>1.82</version>
+            <version>5.4.0</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.34</version>
+            <version>1.18.38</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jcommander</groupId>
+            <artifactId>jcommander</artifactId>
+            <version>2.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.6</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

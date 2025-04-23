@@ -12,12 +12,22 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-package dev.alka.discordbot.main;
+package dev.alka.discordbot.main.event;
 
-public class Main {
+import dev.alka.discordbot.main.DiscordBot;
+import lombok.AllArgsConstructor;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 
-    public static void main(String[] args) {
-        new DiscordBot(args);
+@AllArgsConstructor
+public class ReadyListener extends ListenerAdapter {
+
+    private final DiscordBot bot;
+
+    @Override
+    public void onReady(@NotNull ReadyEvent readyEvent) {
+        bot.getLogger().info("Ready! Serving {} guilds", readyEvent.getJDA().getGuilds().size());
     }
 
 }

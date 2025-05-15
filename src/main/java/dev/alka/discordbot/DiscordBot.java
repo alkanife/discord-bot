@@ -12,13 +12,18 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-package dev.alka.discordbot.main;
+package dev.alka.discordbot;
 
 import ch.qos.logback.classic.Logger;
 import com.beust.jcommander.JCommander;
+import com.beust.jcommander.ParameterDescription;
 import com.beust.jcommander.ParameterException;
-import dev.alka.discordbot.main.event.EventListenerManager;
-import dev.alka.discordbot.main.util.Logs;
+import dev.alka.discordbot.command.CommandManager;
+import dev.alka.discordbot.discord.GuildManager;
+import dev.alka.discordbot.discord.event.EventListenerManager;
+import dev.alka.discordbot.file.ConfigManager;
+import dev.alka.discordbot.file.SecretsManager;
+import dev.alka.discordbot.util.Logs;
 import dev.alka.utils.builds.BuildMeta;
 import dev.alka.utils.builds.BuildUtils;
 import dev.alka.utils.cli.PrettyUsage;
@@ -29,11 +34,13 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.EnumSet;
+import java.util.List;
 
 public class DiscordBot {
 
@@ -52,6 +59,12 @@ public class DiscordBot {
     private EventListenerManager eventListenerManager;
     @Getter
     private SecretsManager secretsManager;
+    @Getter
+    private ConfigManager configManager;
+    @Getter
+    private GuildManager guildManager;
+    @Getter
+    private CommandManager commandManager;
 
     public DiscordBot(String[] args) {
         instance = this;
@@ -115,12 +128,16 @@ public class DiscordBot {
         if (BuildUtils.isSnapshot(buildMeta.getVersion()))
             logger.warn("This version is an experiment and some features are not finished, take extra care!");
 
+        eventListenerManager = new EventListenerManager(this);
         secretsManager = new SecretsManager(this);
+        configManager = new ConfigManager(this);
+        guildManager = new GuildManager(this);
+        commandManager = new CommandManager(this);
 
-        if (!secretsManager.getSecrets())
+        if (!secretsManager.grab() || !configManager.grab())
             return;
 
-        eventListenerManager = new EventListenerManager(this);
+        commandManager.load();
 
         createAndBuildJDA();
     }
@@ -128,12 +145,19 @@ public class DiscordBot {
     private void createAndBuildJDA() {
         logger.debug("Creating JDA");
 
-        if (secretsManager.getBotToken().isEmpty()) {
-            logger.error("No discord token was found, or there was an error while getting the bot token.");
+        String error = "No discord token was found, or there was an error while getting the bot token";
+
+        if (secretsManager.getDiscordToken() == null) {
+            logger.error(error);
             return;
         }
 
-        JDABuilder jdaBuilder = JDABuilder.create(secretsManager.getBotToken(), EnumSet.allOf(GatewayIntent.class));
+        if (secretsManager.getDiscordToken().isEmpty()) {
+            logger.error(error);
+            return;
+        }
+
+        JDABuilder jdaBuilder = JDABuilder.create(secretsManager.getDiscordToken(), EnumSet.allOf(GatewayIntent.class));
         jdaBuilder.setRawEventsEnabled(true);
         jdaBuilder.enableCache(EnumSet.allOf(CacheFlag.class));
         jdaBuilder.setMemberCachePolicy(MemberCachePolicy.ALL);
@@ -166,13 +190,62 @@ public class DiscordBot {
         System.out.println("Example..: \u001B[0;32mjava -jar \u001B[0;34m" + jarName + "\u001B[0;32m -start -debug \u001B[1;30m...\u001B[0m");
         System.out.println();
         System.out.println("Options:");
+        System.out.println();
 
-        PrettyUsage prettyUsage = new PrettyUsage();
-        prettyUsage.importValues(new JCommandArranger(jCommander).getOrderedParameters());
-        prettyUsage.setPaddingLeft(2);
+        List<ParameterDescription> orderedParameters = JCommandArranger.arrange(jCommander);
+        PrettyUsage prettyUsage = getPrettyUsage(orderedParameters);
 
         for (String command : prettyUsage.getLines())
             System.out.println(command);
+    }
+
+    @NotNull
+    private PrettyUsage getPrettyUsage(List<ParameterDescription> orderedParameters) {
+        PrettyUsage prettyUsage = new PrettyUsage();
+        prettyUsage.setPaddingLeft(2);
+        prettyUsage.importValue("\u001B[0;32mArgument\u001B[0m", "    \u001B[0mDescription \u001B[1;30m(default value)\u001B[0m");
+        prettyUsage.importValue(" ", " ");
+
+        for (ParameterDescription param : orderedParameters) {
+            String name = "\u001B[0;32m" + param.getNames().replaceAll(",", "\u001B[1;30m,\u001B[0;32m");
+
+            String description = "\u001B[0m" + param.getDescription();
+
+            if (name.contains(","))
+                description = "              " + description;
+
+            String defaultValue = ""+param.getDefault();
+
+            if (!defaultValue.equals("null") && !defaultValue.isEmpty()) {
+                if (defaultValue.equals("false"))
+                    defaultValue = "not active";
+
+                if (defaultValue.equals("true"))
+                    defaultValue = "active";
+            }
+
+            defaultValue = " \u001B[1;30m(" + defaultValue + ")\u001B[0m";
+
+            prettyUsage.importValue(name, description + defaultValue);
+        }
+
+        return prettyUsage;
+    }
+
+    public void shutdown() {
+        commandManager.getTerminalCommandHandler().setRunning(false);
+        commandManager.getTerminalCommandHandlerThread().interrupt();
+        jda.shutdown();
+        System.exit(0);
+    }
+
+    public void setPresence() {
+        jda.getPresence().setStatus(configManager.getOnlineStatus());
+
+        if (configManager.isShowingActivity())
+            jda.getPresence().setActivity(configManager.getActivity());
+        else
+            jda.getPresence().setActivity(null);
     }
 
 }

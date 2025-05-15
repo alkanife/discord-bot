@@ -2,7 +2,7 @@
 <div align="center">
 
 [![Licence](https://img.shields.io/github/license/alkanife/discord-bot?style=flat-square)](LICENSE)
-[![Java version 17 or above](https://img.shields.io/badge/Java-17%2B-FF160B?style=flat-square)](pom.xml)
+[![Java version 21 or above](https://img.shields.io/badge/Java-21%2B-FF160B?style=flat-square)](pom.xml)
 [![Version - 4.0-indev](https://img.shields.io/badge/Version-4.0--indev-blueviolet?style=flat-square)](pom.xml)
 [![Jenkins Build](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins.alka.dev%2Fjob%2Fdiscord-bot%2F&style=flat-square)](https://jenkins.alka.dev/job/discord-bot/)
 ![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/alkanife/discord-bot?style=flat-square)
@@ -19,7 +19,7 @@ Formerly called Alkabot, this bot is currently under development for version 4.0
 - [Download Alkabot 3.0-indev (last version of Alkabot)](https://jenkins.alka.dev/job/discord-bot/3/)
 
 **Features, with their current status :**
-- [x] Basic functionalities
+- [ ] Basic functionalities
 - [ ] Welcome messages
 - [ ] Default roles for new members
 - [ ] Music system
@@ -34,5 +34,4 @@ Formerly called Alkabot, this bot is currently under development for version 4.0
     - [ ] Temporary bans
     - [ ] Advanced logging system
 - [ ] Leveling system
-- [ ] Web dashboard
-- [ ] ... and more to come!
+- [ ] ... and maybe more

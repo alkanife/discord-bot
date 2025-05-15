@@ -61,7 +61,7 @@
                     <finalName>${project.artifactId}-${project.version}</finalName>
                     <archive>
                         <manifest>
-                            <mainClass>dev.alka.discordbot.main.Main</mainClass>
+                            <mainClass>dev.alka.discordbot.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -123,21 +123,28 @@
         <dependency>
             <groupId>dev.alka.javautils</groupId>
             <artifactId>build-utils</artifactId>
-            <version>1.0.1</version>
+            <version>1.1.0</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.alka.javautils</groupId>
             <artifactId>cli-utils</artifactId>
-            <version>1.0.1</version>
+            <version>1.1.0</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>dev.alka.javautils</groupId>
             <artifactId>jcommander-utils</artifactId>
-            <version>1.0.1</version>
+            <version>1.2.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.alka.javautils</groupId>
+            <artifactId>json-keys</artifactId>
+            <version>1.1.1</version>
             <scope>compile</scope>
         </dependency>
 

@@ -12,7 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-package dev.alka.discordbot.main.util;
+package dev.alka.discordbot.util;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -22,7 +22,7 @@ import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.util.FileSize;
-import dev.alka.discordbot.main.CliArguments;
+import dev.alka.discordbot.CliArguments;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;

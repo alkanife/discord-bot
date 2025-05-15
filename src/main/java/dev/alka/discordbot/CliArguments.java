@@ -12,7 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-package dev.alka.discordbot.main;
+package dev.alka.discordbot;
 
 import com.beust.jcommander.Parameter;
 import lombok.Getter;
@@ -43,64 +43,78 @@ public class CliArguments {
             names = { "-start" },
             description = "Start the bot!",
             help = true,
-            order = 4
+            order = 3
     )
     private boolean start = false;
 
     @Parameter(
             names = { "-debug" },
             description = "Enable debug mode",
-            order = 5
+            order = 4
     )
     private boolean debug = false;
 
     @Parameter(
             names = { "-debug-jda" },
             description = "Enable debug mode for JDA and Lavaplayer",
-            order = 6
+            order = 5
     )
     private boolean debugJDA = false;
 
     @Parameter(
             names = { "-disable-file-logging" },
             description = "Disable file logging",
-            order = 7
+            order = 6
     )
     private boolean disableFileLogging = false;
 
     @Parameter(
             names = { "-latest-log-file-path" },
             description = "Path to the latest log file, with extension",
-            order = 8
+            order = 7
     )
     private String latestLogFilePath = "latest.log";
 
     @Parameter(
             names = { "-archive-log-file-path" },
             description = "Path to the log archive, with name pattern",
-            order = 9
+            order = 8
     )
     private String archiveLogFilePath = "logs/%d{yyyy-MM-dd}.%i.log";
 
     @Parameter(
             names = { "-log-file-max-size" },
             description = "Maximum size of a log file",
-            order = 10
+            order = 9
     )
     private String logFileMaxSize = "10MB";
 
     @Parameter(
             names = { "-log-file-total-size-cap" },
             description = "Maximum size of all log files",
-            order = 11
+            order = 10
     )
     private String logFileTotalSizeCap = "1GB";
 
     @Parameter(
             names = { "-log-archive-max-history" },
             description = "Maximum number of log files to keep",
-            order = 12
+            order = 11
     )
     private int logArchiveMaxHistory = 10;
+
+    @Parameter(
+            names = { "-secrets" },
+            description = "JSON file containing secret tokens",
+            order = 11
+    )
+    private String secretsPath = "secrets.json";
+
+    @Parameter(
+            names = { "-config" },
+            description = "JSON file containing the configuration",
+            order = 11
+    )
+    private String configPath = "config.json";
 
 }

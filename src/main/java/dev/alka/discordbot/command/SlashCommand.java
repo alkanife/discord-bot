@@ -12,12 +12,19 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-package dev.alka.discordbot.main;
+package dev.alka.discordbot.command;
 
-public class Main {
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
-    public static void main(String[] args) {
-        new DiscordBot(args);
+public abstract class SlashCommand extends BotCommand {
+
+    public SlashCommand(CommandManager commandManager) {
+        super(commandManager);
     }
 
+    public abstract boolean isEnabled();
+    public abstract SlashCommandData getCommandData();
+
+    public abstract void execute(SlashCommandInteractionEvent event);
 }

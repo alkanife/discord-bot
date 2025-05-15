@@ -12,19 +12,27 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-package dev.alka.discordbot.main.event;
+package dev.alka.discordbot.command;
 
-import dev.alka.discordbot.main.DiscordBot;
-import lombok.AllArgsConstructor;
-import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-@AllArgsConstructor
-public class EventListenerManager {
+public abstract class AdminCommand extends BotCommand {
 
-    private final DiscordBot bot;
-
-    public void addEventListeners(JDABuilder jdaBuilder) {
-        jdaBuilder.addEventListeners(new ReadyListener(bot));
+    public AdminCommand(CommandManager commandManager) {
+        super(commandManager);
     }
 
+    public abstract String getUsage();
+    public abstract AdminCommandTarget getCommandTarget();
+
+    public abstract void handleDiscord(String query, MessageReceivedEvent event);
+    public abstract void handleTerminal(String query);
+
+    public void replyTerminal(String message) {
+        discordBot.getLogger().info("[{}] {}", getName(), message);
+    }
+
+    public enum AdminCommandTarget {
+        DISCORD, TERMINAL, TERMINAL_AND_DISCORD;
+    }
 }

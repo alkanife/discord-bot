@@ -12,22 +12,25 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
-package dev.alka.discordbot.main.event;
+package dev.alka.discordbot.file;
 
-import dev.alka.discordbot.main.DiscordBot;
-import lombok.AllArgsConstructor;
-import net.dv8tion.jda.api.events.session.ReadyEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
+public enum ManipulationState {
 
-@AllArgsConstructor
-public class ReadyListener extends ListenerAdapter {
+    SUCCESS,
+    ERROR_READ,
+    ERROR_WRITE,
+    ERROR_DELETE,
+    FILE_DONT_EXISTS,
+    FILE_IS_DIRECTORY,
+    PARENT_DIRECTORY_ERROR,
+    NO_CONTENT_GIVEN;
 
-    private final DiscordBot bot;
+    public boolean failed() {
+        return this != SUCCESS;
+    }
 
-    @Override
-    public void onReady(@NotNull ReadyEvent readyEvent) {
-        bot.getLogger().info("Ready! Serving {} guilds", readyEvent.getJDA().getGuilds().size());
+    public boolean succeed() {
+        return this == SUCCESS;
     }
 
 }
